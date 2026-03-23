@@ -23,13 +23,15 @@ html, body {
 }
 
 body {
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .app {
   display: grid;
   grid-template-columns: 360px 1fr;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .timeline-panel {
@@ -37,6 +39,7 @@ body {
   border-right: 1px solid var(--line);
   padding: 24px 20px 28px;
   overflow-y: auto;
+  height: 100vh;
 }
 
 .app-title {
@@ -117,6 +120,7 @@ body {
 .detail-panel {
   padding: 28px;
   overflow-y: auto;
+  height: 100vh;
 }
 
 .detail {
