@@ -8,21 +8,23 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <div class="layout">
-    <div class="layout-left">
-      <div class="timeline-panel">
+  <div class="shell">
+    <aside class="left-column">
+      <div class="left-header">
         <h1 class="app-title">Canción latinoamericana</h1>
+      </div>
+      <div class="left-scroll" id="leftScroll">
         <div id="timeline" class="timeline"></div>
       </div>
-    </div>
+    </aside>
 
-    <div class="layout-right">
-      <div class="detail-panel">
+    <main class="right-column">
+      <div class="right-fixed">
         <div id="detail" class="detail empty">
           <p>Selecciona un elemento de la línea de tiempo.</p>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 
   <script src="script.js"></script>
