@@ -185,3 +185,38 @@ function loadCSV() {
 }
 
 loadCSV();
+
+function lockPageScroll() {
+  document.documentElement.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
+
+  const leftScroll = document.getElementById("leftScroll");
+
+  if (!leftScroll) return;
+
+  window.addEventListener(
+    "wheel",
+    function (e) {
+      const isInsideLeft = e.target.closest("#leftScroll");
+
+      if (!isInsideLeft) {
+        e.preventDefault();
+      }
+    },
+    { passive: false }
+  );
+
+  window.addEventListener(
+    "touchmove",
+    function (e) {
+      const isInsideLeft = e.target.closest("#leftScroll");
+
+      if (!isInsideLeft) {
+        e.preventDefault();
+      }
+    },
+    { passive: false }
+  );
+}
+
+lockPageScroll();
