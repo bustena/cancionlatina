@@ -7,6 +7,7 @@
   --card: #ffffff;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   --radius: 18px;
+  --timeline-width: 360px;
 }
 
 * {
@@ -30,20 +31,22 @@ body {
 }
 
 .app {
-  display: grid;
-  grid-template-columns: 360px 1fr;
   width: 100%;
   height: 100vh;
-  overflow: hidden;
 }
 
+/* COLUMNA IZQUIERDA: fija y con scroll propio */
 .timeline-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--timeline-width);
+  height: 100vh;
   background: var(--panel);
   border-right: 1px solid var(--line);
   padding: 24px 20px 28px;
-  height: 100%;
   overflow-y: auto;
-  min-height: 0;
+  z-index: 2;
 }
 
 .app-title {
@@ -55,7 +58,6 @@ body {
 .timeline {
   position: relative;
   padding-left: 18px;
-  min-height: 0;
 }
 
 .timeline::before {
@@ -122,28 +124,30 @@ body {
   margin-top: 2px;
 }
 
+/* COLUMNA DERECHA: fija e independiente */
 .detail-panel {
+  position: fixed;
+  top: 0;
+  left: var(--timeline-width);
+  right: 0;
+  height: 100vh;
   padding: 28px;
-  height: 100%;
   overflow: hidden;
-  min-height: 0;
   display: flex;
   align-items: flex-start;
+  justify-content: center;
 }
 
 .detail {
-  max-width: 980px;
   width: 100%;
-  margin: 0 auto;
-  position: sticky;
-  top: 0;
+  max-width: 980px;
 }
 
 .detail.empty {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
+  min-height: calc(100vh - 56px);
   color: var(--muted);
   font-size: 1.1rem;
 }
@@ -154,20 +158,17 @@ body {
   box-shadow: var(--shadow);
   overflow: hidden;
   border-top: 10px solid #c9b79c;
-  min-height: 0;
 }
 
 .card-inner {
   display: grid;
   grid-template-columns: minmax(280px, 420px) 1fr;
   gap: 0;
-  min-height: 0;
 }
 
 .media-column {
   background: #efe7da;
   padding: 22px;
-  min-height: 0;
 }
 
 .media-column img {
@@ -200,7 +201,8 @@ body {
 
 .content-column {
   padding: 26px 28px 28px;
-  min-height: 0;
+  overflow: auto;
+  max-height: calc(100vh - 56px);
 }
 
 .meta-top {
@@ -259,27 +261,31 @@ body {
   }
 
   .app {
-    grid-template-columns: 1fr;
     height: auto;
-    overflow: visible;
   }
 
   .timeline-panel {
+    position: relative;
+    width: 100%;
+    height: auto;
+    max-height: 42vh;
     border-right: 0;
     border-bottom: 1px solid var(--line);
-    max-height: 42vh;
-    height: auto;
   }
 
   .detail-panel {
+    position: relative;
+    left: 0;
+    right: auto;
+    top: auto;
+    height: auto;
     padding: 18px;
     overflow: visible;
-    height: auto;
     display: block;
   }
 
   .detail {
-    position: static;
+    max-width: none;
   }
 
   .card-inner {
@@ -288,6 +294,8 @@ body {
 
   .content-column {
     padding: 22px 20px 24px;
+    max-height: none;
+    overflow: visible;
   }
 
   .work-title {
