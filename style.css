@@ -1,12 +1,12 @@
 :root {
-  --bg: #f5f2eb;
-  --panel: #fbf8f3;
-  --text: #1f1f1f;
-  --muted: #666;
-  --line: #d8d0c4;
+  --bg: #f6f7fb;
+  --panel: #ffffff;
+  --text: #16181d;
+  --muted: #6b7280;
+  --line: #e2e6ef;
   --card: #ffffff;
-  --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --radius: 18px;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --radius: 20px;
   --left-width: 360px;
 }
 
@@ -23,7 +23,7 @@ body {
   overflow: hidden;
   background: var(--bg);
   color: var(--text);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 body {
@@ -45,7 +45,7 @@ body {
   width: var(--left-width);
   height: 100vh;
   background: var(--panel);
-  border-right: 1px solid var(--line);
+  border-right: 1px solid rgba(15, 23, 42, 0.06);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -53,7 +53,7 @@ body {
 
 .left-header {
   flex: 0 0 auto;
-  padding: 24px 20px 12px;
+  padding: 26px 22px 14px;
   background: var(--panel);
   position: relative;
   z-index: 2;
@@ -61,8 +61,10 @@ body {
 
 .app-title {
   margin: 0;
-  font-size: 1.5rem;
-  line-height: 1.2;
+  font-size: 1.35rem;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .left-scroll {
@@ -70,7 +72,7 @@ body {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 8px 20px 28px;
+  padding: 10px 22px 28px;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
@@ -109,7 +111,7 @@ body {
   justify-content: center;
   height: 100%;
   color: var(--muted);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   background: var(--card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -120,22 +122,23 @@ body {
 /* TIMELINE */
 .timeline {
   position: relative;
-  padding-left: 18px;
+  padding-left: 20px;
 }
 
 .timeline::before {
   content: "";
   position: absolute;
-  left: 8px;
+  left: 9px;
   top: 0;
   bottom: 0;
   width: 2px;
-  background: var(--line);
+  background: linear-gradient(to bottom, #e5e9f2, #d7deea);
+  border-radius: 999px;
 }
 
 .timeline-item {
   position: relative;
-  padding: 0 0 18px 22px;
+  padding: 0 0 20px 24px;
 }
 
 .timeline-button {
@@ -148,34 +151,48 @@ body {
   cursor: pointer;
   color: inherit;
   font: inherit;
+  position: relative;
 }
 
 .timeline-button::before {
+  content: "";
+  position: absolute;
+  left: -21px;
+  top: 7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
   background: var(--item-color, #b8ab95);
+  border: 2px solid var(--panel);
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .timeline-item.active .timeline-button::before {
   transform: scale(1.15);
+  box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06);
 }
 
 .timeline-year {
   display: block;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
 }
 
 .timeline-title {
   display: block;
-  font-size: 0.98rem;
-  line-height: 1.25;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  font-weight: 500;
 }
 
 .timeline-author {
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--muted);
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 /* FICHA */
@@ -183,10 +200,11 @@ body {
   width: 100%;
   height: 100%;
   background: var(--card);
-  border-radius: var(--radius);
+  border-radius: 22px;
   box-shadow: var(--shadow);
   overflow: hidden;
-  border-top: 10px solid #c9b79c;
+  border-top: 6px solid #c9b79c;
+  border: 1px solid rgba(15, 23, 42, 0.06);
 }
 
 .card-inner {
@@ -197,7 +215,7 @@ body {
 }
 
 .media-column {
-  background: #efe7da;
+  background: #f2f4f8;
   padding: 22px;
   overflow-y: auto;
 }
@@ -206,15 +224,15 @@ body {
   width: 100%;
   aspect-ratio: 4 / 3;
   display: block;
-  border-radius: 14px;
+  border-radius: 16px;
   object-fit: cover;
   object-position: center;
 }
 
 .no-image {
   min-height: 260px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.45);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -231,7 +249,7 @@ body {
 }
 
 .content-column {
-  padding: 26px 28px 28px;
+  padding: 28px 30px 30px;
   overflow-y: auto;
   min-height: 0;
 }
@@ -239,34 +257,37 @@ body {
 .meta-top {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 14px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
 .tag {
   display: inline-flex;
   align-items: center;
-  padding: 6px 12px;
+  padding: 7px 12px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.07);
-  font-size: 0.9rem;
+  background: #eef1f6;
+  color: #374151;
+  font-size: 0.8rem;
+  font-weight: 600;
   line-height: 1;
 }
 
 .work-title {
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   font-size: 2rem;
-  line-height: 1.1;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
 }
 
 .author {
-  margin: 0 0 20px;
-  font-size: 1.15rem;
-  color: #3d3d3d;
+  margin: 0 0 18px;
+  font-size: 1rem;
+  color: #4b5563;
 }
 
 .text {
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: 1.65;
   white-space: pre-line;
 }
