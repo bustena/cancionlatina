@@ -139,6 +139,16 @@ body {
 .timeline-item {
   position: relative;
   padding: 0 0 20px 24px;
+  border-radius: 10px;
+  transition: background-color 0.18s ease;
+}
+
+.timeline-item:hover {
+  background: rgba(15, 23, 42, 0.03);
+}
+
+.timeline-item.active {
+  background: rgba(15, 23, 42, 0.04);
 }
 
 .timeline-button {
@@ -152,6 +162,11 @@ body {
   color: inherit;
   font: inherit;
   position: relative;
+  transition: opacity 0.18s ease;
+}
+
+.timeline-button:hover {
+  opacity: 0.9;
 }
 
 .timeline-button::before {
@@ -205,6 +220,11 @@ body {
   overflow: hidden;
   border-top: 6px solid #c9b79c;
   border: 1px solid rgba(15, 23, 42, 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
 }
 
 .card-inner {
@@ -359,6 +379,10 @@ body {
 
   .card {
     height: auto;
+  }
+
+  .card:hover {
+    transform: none;
   }
 
   .card-inner {
