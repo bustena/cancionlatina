@@ -14,6 +14,17 @@ function normalizeHeader(header) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+function normalizeColor(value) {
+  const raw = String(value || "").trim();
+
+  if (!raw) return "#64748b";
+
+  if (/^#[0-9a-fA-F]{6}$/.test(raw)) return raw;
+  if (/^[0-9a-fA-F]{6}$/.test(raw)) return `#${raw}`;
+
+  return "#64748b";
+}
+
 function mapRow(row) {
   const normalized = {};
   for (const key in row) {
@@ -29,7 +40,7 @@ function mapRow(row) {
     audio: normalized.audio || "",
     imagen: normalized.imagen || "",
     texto: normalized.texto || "",
-    color: normalized.color || "#c9b79c"
+    color: normalizeColor(normalized.color)
   };
 }
 
@@ -42,7 +53,7 @@ function sortItems(data) {
 }
 
 function escapeHtml(text) {
-  return text.replace(/[&<>"']/g, function (m) {
+  return String(text || "").replace(/[&<>"']/g, function (m) {
     return ({
       "&": "&amp;",
       "<": "&lt;",
@@ -53,12 +64,31 @@ function escapeHtml(text) {
   });
 }
 
+function escapeAttribute(text) {
+  return String(text || "").replace(/"/g, "&quot;");
+}
+
+function hexToRgba(hex, alpha) {
+  const clean = String(hex || "").replace("#", "").trim();
+
+  if (!/^[0-9a-fA-F]{6}$/.test(clean)) {
+    return `rgba(100, 116, 139, ${alpha})`;
+  }
+
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 function renderTimeline() {
   timelineEl.innerHTML = "";
 
   items.forEach((item, index) => {
     const wrapper = document.createElement("div");
     wrapper.className = `timeline-item${index === activeIndex ? " active" : ""}`;
+    wrapper.style.setProperty("--item-color", item.color || "#64748b");
 
     const button = document.createElement("button");
     button.className = "timeline-button";
@@ -83,15 +113,15 @@ function renderTimeline() {
 }
 
 function renderDetail(item) {
-  const color = item.color || "#c9b79c";
+  const color = item.color || "#64748b";
   const hasImage = Boolean(item.imagen);
   const hasAudio = Boolean(item.audio);
 
   detailEl.classList.remove("empty");
   detailEl.innerHTML = `
-    <article class="card" style="border-top-color: ${escapeHtml(color)};">
+    <article class="card" style="--accent: ${escapeHtml(color)};">
       <div class="card-inner">
-        <div class="media-column" style="background: ${escapeHtml(hexToRgba(color, 0.20))};">
+        <div class="media-column" style="background: ${escapeHtml(hexToRgba(color, 0.10))};">
           ${
             hasImage
               ? `<img src="${escapeAttribute(item.imagen)}" alt="${escapeHtml(item.titulo)}">`
@@ -111,6 +141,7 @@ function renderDetail(item) {
           <div class="meta-top">
             ${item.pais ? `<span class="tag">${escapeHtml(item.pais)}</span>` : ""}
             ${item.genero ? `<span class="tag">${escapeHtml(item.genero)}</span>` : ""}
+            ${item.ano ? `<span class="tag">${escapeHtml(item.ano)}</span>` : ""}
           </div>
 
           <h2 class="work-title">${escapeHtml(item.titulo || "Sin título")}</h2>
@@ -120,24 +151,6 @@ function renderDetail(item) {
       </div>
     </article>
   `;
-}
-
-function escapeAttribute(text) {
-  return String(text).replace(/"/g, "&quot;");
-}
-
-function hexToRgba(hex, alpha) {
-  const clean = (hex || "").replace("#", "").trim();
-
-  if (!/^[0-9a-fA-F]{6}$/.test(clean)) {
-    return `rgba(201, 183, 156, ${alpha})`;
-  }
-
-  const r = parseInt(clean.slice(0, 2), 16);
-  const g = parseInt(clean.slice(2, 4), 16);
-  const b = parseInt(clean.slice(4, 6), 16);
-
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function showLoading() {
@@ -184,8 +197,6 @@ function loadCSV() {
   });
 }
 
-loadCSV();
-
 function lockPageScroll() {
   document.documentElement.style.overflow = "hidden";
   document.body.style.overflow = "hidden";
@@ -219,4 +230,5 @@ function lockPageScroll() {
   );
 }
 
+loadCSV();
 lockPageScroll();
