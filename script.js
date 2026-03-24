@@ -145,7 +145,7 @@ function renderDetail(item) {
 
           <h2 class="work-title">${escapeHtml(item.titulo || "Sin título")}</h2>
           <p class="author">${escapeHtml(item.autor || "")}</p>
-          <div class="text">${escapeHtml(item.texto || "")}</div>
+          <div class="text">${item.texto || ""}</div>
         </div>
       </div>
     </article>
