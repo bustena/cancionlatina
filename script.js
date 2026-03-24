@@ -88,6 +88,7 @@ function renderTimeline() {
   items.forEach((item, index) => {
     const wrapper = document.createElement("div");
     wrapper.className = `timeline-item${index === activeIndex ? " active" : ""}`;
+    wrapper.style.setProperty("--item-color", item.color || "#c9b79c");
 
     const button = document.createElement("button");
     button.className = "timeline-button";
