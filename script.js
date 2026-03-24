@@ -18,7 +18,6 @@ function normalizeColor(value) {
   const raw = String(value || "").trim();
 
   if (!raw) return "#64748b";
-
   if (/^#[0-9a-fA-F]{6}$/.test(raw)) return raw;
   if (/^[0-9a-fA-F]{6}$/.test(raw)) return `#${raw}`;
 
@@ -27,8 +26,9 @@ function normalizeColor(value) {
 
 function mapRow(row) {
   const normalized = {};
+
   for (const key in row) {
-    normalized[normalizeHeader(key)] = (row[key] || "").trim();
+    normalized[normalizeHeader(key)] = String(row[key] || "").trim();
   }
 
   return {
@@ -65,7 +65,7 @@ function escapeHtml(text) {
 }
 
 function escapeAttribute(text) {
-  return String(text || "").replace(/"/g, "&quot;");
+  return String(text || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
 }
 
 function hexToRgba(hex, alpha) {
@@ -88,17 +88,20 @@ function renderTimeline() {
   items.forEach((item, index) => {
     const wrapper = document.createElement("div");
     wrapper.className = `timeline-item${index === activeIndex ? " active" : ""}`;
-    wrapper.style.setProperty("--item-color", item.color || "#64748b");
+    wrapper.style.setProperty("--item-color", item.color);
 
     const button = document.createElement("button");
     button.className = "timeline-button";
     button.type = "button";
-    button.setAttribute("aria-label", `${item.ano} ${item.titulo} ${item.autor}`);
+    button.setAttribute(
+      "aria-label",
+      `${item.ano || ""} ${item.titulo || ""} ${item.autor || ""}`.trim()
+    );
 
     button.innerHTML = `
       <span class="timeline-year">${escapeHtml(item.ano || "s. f.")}</span>
       <span class="timeline-title">${escapeHtml(item.titulo || "Sin título")}</span>
-      <span class="timeline-author">${escapeHtml(item.autor || "")}</span>
+      ${item.autor ? `<span class="timeline-author">${escapeHtml(item.autor)}</span>` : ""}
     `;
 
     button.addEventListener("click", () => {
@@ -114,26 +117,31 @@ function renderTimeline() {
 
 function renderDetail(item) {
   const color = item.color || "#64748b";
-  const hasImage = Boolean(item.imagen);
-  const hasAudio = Boolean(item.audio);
+  const hasImage = !!item.imagen;
+  const hasAudio = !!item.audio;
 
-  detailEl.classList.remove("empty");
+  detailEl.className = "detail";
   detailEl.innerHTML = `
-    <article class="card" style="--accent: ${escapeHtml(color)};">
+    <article class="card" style="--accent: ${color};">
       <div class="card-inner">
-        <div class="media-column" style="background: ${escapeHtml(hexToRgba(color, 0.10))};">
+        <div class="media-column" style="background: ${hexToRgba(color, 0.10)};">
           ${
             hasImage
-              ? `<img src="${escapeAttribute(item.imagen)}" alt="${escapeHtml(item.titulo)}">`
+              ? `<img src="${escapeAttribute(item.imagen)}" alt="${escapeHtml(item.titulo || "Imagen")}">`
               : `<div class="no-image">Sin imagen</div>`
           }
 
           ${
             hasAudio
-              ? `<div class="audio-wrap">
-                   <audio controls preload="none" src="${escapeAttribute(item.audio)}"></audio>
-                 </div>`
-              : ``
+              ? `
+                <div class="audio-wrap">
+                  <audio controls preload="none">
+                    <source src="${escapeAttribute(item.audio)}">
+                    Tu navegador no puede reproducir este audio.
+                  </audio>
+                </div>
+              `
+              : ""
           }
         </div>
 
@@ -145,8 +153,8 @@ function renderDetail(item) {
           </div>
 
           <h2 class="work-title">${escapeHtml(item.titulo || "Sin título")}</h2>
-          <p class="author">${escapeHtml(item.autor || "")}</p>
-          <div class="text">${escapeHtml(item.texto || "")}</div>
+          ${item.autor ? `<p class="author">${escapeHtml(item.autor)}</p>` : ""}
+          <div class="text">${escapeHtml(item.texto || "Sin texto descriptivo.")}</div>
         </div>
       </div>
     </article>
@@ -154,12 +162,12 @@ function renderDetail(item) {
 }
 
 function showLoading() {
-  detailEl.classList.remove("empty");
+  detailEl.className = "detail";
   detailEl.innerHTML = `<div class="loading">Cargando datos…</div>`;
 }
 
 function showError(message) {
-  detailEl.classList.remove("empty");
+  detailEl.className = "detail";
   detailEl.innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
 }
 
@@ -202,17 +210,13 @@ function lockPageScroll() {
   document.body.style.overflow = "hidden";
 
   const leftScroll = document.getElementById("leftScroll");
-
   if (!leftScroll) return;
 
   window.addEventListener(
     "wheel",
     function (e) {
       const isInsideLeft = e.target.closest("#leftScroll");
-
-      if (!isInsideLeft) {
-        e.preventDefault();
-      }
+      if (!isInsideLeft) e.preventDefault();
     },
     { passive: false }
   );
@@ -221,10 +225,7 @@ function lockPageScroll() {
     "touchmove",
     function (e) {
       const isInsideLeft = e.target.closest("#leftScroll");
-
-      if (!isInsideLeft) {
-        e.preventDefault();
-      }
+      if (!isInsideLeft) e.preventDefault();
     },
     { passive: false }
   );
