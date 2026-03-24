@@ -158,7 +158,7 @@ body {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #b8ab95;
+  background: var(--item-color, #b8ab95);
   border: 2px solid var(--panel);
   transition: transform 0.15s ease;
 }
