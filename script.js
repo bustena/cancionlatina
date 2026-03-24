@@ -119,9 +119,9 @@ function renderDetail(item) {
 
   detailEl.classList.remove("empty");
   detailEl.innerHTML = `
-    <article class="card" style="border-top-color: ${escapeHtml(color)};">
+    <article class="card" style="--accent: ${escapeHtml(color)};">
       <div class="card-inner">
-        <div class="media-column" style="background: ${hexToRgba(color, 0.20)};">
+        <div class="media-column" style="background: ${hexToRgba(color, 0.08)};">
           ${
             hasImage
               ? `<img src="${escapeAttribute(item.imagen)}" alt="${escapeHtml(item.titulo || "Imagen")}">`
