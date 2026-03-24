@@ -55,6 +55,8 @@ body {
   flex: 0 0 auto;
   padding: 24px 20px 12px;
   background: var(--panel);
+  position: relative;
+  z-index: 2;
 }
 
 .app-title {
@@ -82,25 +84,37 @@ body {
   height: 100vh;
   overflow: hidden;
   padding: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .right-fixed {
   width: 100%;
   max-width: 980px;
-  margin: 0 auto;
+  height: 78vh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
 }
 
 .detail {
   width: 100%;
+  height: 100%;
 }
 
 .detail.empty {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
+  height: 100%;
   color: var(--muted);
   font-size: 1.1rem;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  text-align: center;
 }
 
 /* TIMELINE */
@@ -176,6 +190,7 @@ body {
 /* FICHA */
 .card {
   width: 100%;
+  height: 100%;
   background: var(--card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -187,11 +202,13 @@ body {
   display: grid;
   grid-template-columns: minmax(280px, 420px) 1fr;
   gap: 0;
+  height: 100%;
 }
 
 .media-column {
   background: #efe7da;
   padding: 22px;
+  overflow-y: auto;
 }
 
 .media-column img {
@@ -224,6 +241,8 @@ body {
 
 .content-column {
   padding: 26px 28px 28px;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .meta-top {
@@ -263,8 +282,9 @@ body {
 
 .loading,
 .error {
-  max-width: 720px;
-  margin: 40px auto;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
   background: #fff;
   border-radius: 16px;
   box-shadow: var(--shadow);
@@ -279,6 +299,12 @@ body {
   html,
   body {
     overflow: auto;
+  }
+
+  .shell {
+    width: 100%;
+    height: auto;
+    overflow: visible;
   }
 
   .left-column,
@@ -299,10 +325,38 @@ body {
 
   .right-column {
     padding: 18px;
+    display: block;
+    overflow: visible;
+  }
+
+  .right-fixed {
+    max-width: none;
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .detail {
+    height: auto;
+  }
+
+  .detail.empty {
+    min-height: 40vh;
+    height: auto;
+  }
+
+  .card {
+    height: auto;
   }
 
   .card-inner {
     grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .media-column,
+  .content-column {
+    overflow: visible;
   }
 
   .work-title {
