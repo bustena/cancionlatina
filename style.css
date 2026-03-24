@@ -151,16 +151,7 @@ body {
 }
 
 .timeline-button::before {
-  content: "";
-  position: absolute;
-  left: 2px;
-  top: 7px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
   background: var(--item-color, #b8ab95);
-  border: 2px solid var(--panel);
-  transition: transform 0.15s ease;
 }
 
 .timeline-item.active .timeline-button::before {
