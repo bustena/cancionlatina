@@ -281,6 +281,15 @@ body {
   margin-bottom: 20px;
 }
 
+.meta-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px; /* antes ~22px */
+  padding-top: 18px;
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+
 .tag {
   display: inline-flex;
   align-items: center;
