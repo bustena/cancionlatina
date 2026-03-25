@@ -218,9 +218,20 @@ body {
   border-radius: 22px;
   box-shadow: var(--shadow);
   overflow: hidden;
-  border-top: 6px solid #c9b79c;
-  border: 1px solid rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  position: relative;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 3px;
+  background: var(--accent, #c9b79c);
+  border-radius: 999px;
 }
 
 .card:hover {
@@ -235,7 +246,7 @@ body {
 }
 
 .media-column {
-  background: #f2f4f8;
+  background: #f4f6fa;
   padding: 22px;
   overflow-y: auto;
 }
@@ -269,7 +280,7 @@ body {
 }
 
 .content-column {
-  padding: 28px 30px 30px;
+  padding: 30px 34px 32px;
   overflow-y: auto;
   min-height: 0;
 }
@@ -278,7 +289,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .tag {
@@ -293,23 +304,44 @@ body {
   line-height: 1;
 }
 
-.work-title {
-  margin: 0 0 10px;
-  font-size: 2rem;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
+.author {
+  margin: 0 0 8px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.55rem;
+  line-height: 1.15;
+  font-weight: 400;
+  color: #2f3440;
+  letter-spacing: -0.01em;
 }
 
-.author {
+.work-title {
   margin: 0 0 18px;
-  font-size: 1rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.28rem;
+  line-height: 1.22;
+  font-weight: 400;
   color: #4b5563;
+  position: relative;
+  padding-left: 14px;
+}
+
+.work-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.22em;
+  width: 5px;
+  height: 1.05em;
+  border-radius: 999px;
+  background: var(--accent, #c9b79c);
 }
 
 .text {
-  font-size: 1rem;
-  line-height: 1.65;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.03rem;
+  line-height: 1.72;
   white-space: pre-line;
+  color: #2f3440;
 }
 
 .loading,
@@ -395,7 +427,11 @@ body {
     overflow: visible;
   }
 
+  .author {
+    font-size: 1.35rem;
+  }
+
   .work-title {
-    font-size: 1.7rem;
+    font-size: 1.15rem;
   }
 }
