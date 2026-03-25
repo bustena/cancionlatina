@@ -138,14 +138,14 @@ function renderDetail(item) {
         </div>
 
         <div class="content-column">
-          <div class="meta-top">
-            ${item.pais ? `<span class="tag">${escapeHtml(item.pais)}</span>` : ""}
-            ${item.genero ? `<span class="tag">${escapeHtml(item.genero)}</span>` : ""}
-          </div>
-
           <p class="author">${escapeHtml(item.autor || "")}</p>
           <h2 class="work-title">${escapeHtml(item.titulo || "Sin título")}</h2>
           <div class="text">${item.texto || ""}</div>
+
+          <div class="meta-bottom">
+            ${item.pais ? `<span class="tag">${escapeHtml(item.pais)}</span>` : ""}
+            ${item.genero ? `<span class="tag">${escapeHtml(item.genero)}</span>` : ""}
+          </div>
         </div>
       </div>
     </article>
