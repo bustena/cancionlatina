@@ -132,7 +132,7 @@ body {
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(to bottom, #e5e9f2, #d7deea);
+  background: linear-gradient(to bottom, #d0d6e2, #c2c9d8);
   border-radius: 999px;
 }
 
@@ -140,15 +140,17 @@ body {
   position: relative;
   padding: 0 0 20px 24px;
   border-radius: 10px;
-  transition: background-color 0.18s ease;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
 }
 
 .timeline-item:hover {
-  background: rgba(15, 23, 42, 0.03);
+  background: rgba(15, 23, 42, 0.05);
 }
 
 .timeline-item.active {
-  background: rgba(15, 23, 42, 0.04);
+  background: rgba(15, 23, 42, 0.12);
+  border-left: 3px solid var(--item-color, #b8ab95);
+  padding-left: 21px; /* compensar el borde */
 }
 
 .timeline-button {
@@ -166,7 +168,7 @@ body {
 }
 
 .timeline-button:hover {
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
 .timeline-button::before {
@@ -184,8 +186,8 @@ body {
 }
 
 .timeline-item.active .timeline-button::before {
-  transform: scale(1.15);
-  box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06);
+  transform: scale(1.25);
+  box-shadow: 0 0 0 6px rgba(15, 23, 42, 0.10);
 }
 
 .timeline-year {
@@ -208,6 +210,12 @@ body {
   font-size: 0.85rem;
   color: var(--muted);
   margin-top: 4px;
+}
+
+/* refuerzo visual del activo */
+.timeline-item.active .timeline-year,
+.timeline-item.active .timeline-title {
+  color: #111318;
 }
 
 /* FICHA */
