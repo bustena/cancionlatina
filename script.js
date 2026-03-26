@@ -68,6 +68,16 @@ function escapeAttribute(text) {
     .replace(/"/g, "&quot;");
 }
 
+function renderTags(value) {
+  return String(value || "")
+    .split(";")
+    .map(tag => tag.trim())
+    .filter(Boolean)
+    .slice(0, 3)
+    .map(tag => `<span class="tag">${escapeHtml(tag)}</span>`)
+    .join("");
+}
+
 function hexToRgba(hex, alpha) {
   const clean = String(hex || "").replace("#", "").trim();
 
@@ -144,7 +154,7 @@ function renderDetail(item) {
 
           <div class="meta-bottom">
             ${item.pais ? `<span class="tag">${escapeHtml(item.pais)}</span>` : ""}
-            ${item.genero ? `<span class="tag">${escapeHtml(item.genero)}</span>` : ""}
+            ${renderTags(item.genero)}
           </div>
         </div>
       </div>
