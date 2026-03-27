@@ -5,6 +5,7 @@ const detailEl = document.getElementById("detail");
 
 let items = [];
 let activeIndex = 0;
+let activeFilter = null;
 
 function normalizeHeader(header) {
   return header
@@ -12,6 +13,12 @@ function normalizeHeader(header) {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
+}
+
+function normalizeHeaderLabel(header) {
+  if (header === "pais") return "País";
+  if (header === "genero") return "Género";
+  return header;
 }
 
 function normalizeColor(value) {
@@ -82,33 +89,173 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-function renderTimeline() {
-  timelineEl.innerHTML = "";
+function normalizeFilterValue(value) {
+  return String(value || "").trim().toLowerCase();
+}
 
-  items.forEach((item, index) => {
-    const wrapper = document.createElement("div");
-    wrapper.className = `timeline-item${index === activeIndex ? " active" : ""}`;
-    wrapper.style.setProperty("--item-color", item.color || "#c9b79c");
+function parseGenres(value) {
+  return String(value || "")
+    .split(";")
+    .map(part => part.trim())
+    .filter(Boolean);
+}
 
-    const button = document.createElement("button");
-    button.className = "timeline-button";
-    button.type = "button";
-    button.setAttribute("aria-label", `${item.ano} ${item.titulo} ${item.autor}`.trim());
+function getFilteredItems() {
+  if (!activeFilter) return items;
 
-    button.innerHTML = `
-      <span class="timeline-year">${escapeHtml(item.ano || "s. f.")}</span>
-      <span class="timeline-title">${escapeHtml(item.titulo || "Sin título")}</span>
-      <span class="timeline-author">${escapeHtml(item.autor || "")}</span>
-    `;
+  if (activeFilter.type === "pais") {
+    return items.filter(item => normalizeFilterValue(item.pais) === activeFilter.value);
+  }
 
-    button.onclick = () => {
-      activeIndex = index;
-      renderTimeline();
-      renderDetail(items[index]);
+  if (activeFilter.type === "genero") {
+    return items.filter(item =>
+      parseGenres(item.genero).some(genre => normalizeFilterValue(genre) === activeFilter.value)
+    );
+  }
+
+  return items;
+}
+
+function isFilterActive(type, label) {
+  return Boolean(
+    activeFilter &&
+    activeFilter.type === type &&
+    activeFilter.value === normalizeFilterValue(label)
+  );
+}
+
+function setFilter(type, label) {
+  const value = normalizeFilterValue(label);
+
+  if (!value) return;
+
+  if (activeFilter && activeFilter.type === type && activeFilter.value === value) {
+    activeFilter = null;
+  } else {
+    activeFilter = {
+      type,
+      value,
+      label: String(label || "").trim()
     };
+  }
 
-    wrapper.appendChild(button);
-    timelineEl.appendChild(wrapper);
+  const filteredItems = getFilteredItems();
+
+  if (filteredItems.length) {
+    const currentStillVisible = filteredItems.includes(items[activeIndex]);
+    activeIndex = currentStillVisible ? activeIndex : items.indexOf(filteredItems[0]);
+  }
+
+  renderTimeline();
+  renderCurrentDetail();
+}
+
+function renderFilterBanner() {
+  if (!activeFilter) return "";
+
+  return `
+    <div class="active-filter-banner">
+      <span class="active-filter-text">
+        Mostrando: <strong>${escapeHtml(activeFilter.label)}</strong>
+        <span class="active-filter-kind">(${escapeHtml(normalizeHeaderLabel(activeFilter.type))})</span>
+      </span>
+      <button type="button" class="clear-filter-button" id="clearFilterButton">Ver todo</button>
+    </div>
+  `;
+}
+
+function renderTimeline() {
+  const filteredItems = getFilteredItems();
+
+  timelineEl.innerHTML = `
+    ${renderFilterBanner()}
+    <div class="timeline-list"></div>
+  `;
+
+  const timelineListEl = timelineEl.querySelector(".timeline-list");
+
+  if (!filteredItems.length) {
+    timelineListEl.innerHTML = `<div class="timeline-empty">No hay elementos para este filtro.</div>`;
+  } else {
+    filteredItems.forEach((item) => {
+      const originalIndex = items.indexOf(item);
+      const wrapper = document.createElement("div");
+      wrapper.className = `timeline-item${originalIndex === activeIndex ? " active" : ""}`;
+      wrapper.style.setProperty("--item-color", item.color || "#c9b79c");
+
+      const button = document.createElement("button");
+      button.className = "timeline-button";
+      button.type = "button";
+      button.setAttribute("aria-label", `${item.ano} ${item.titulo} ${item.autor}`.trim());
+
+      button.innerHTML = `
+        <span class="timeline-year">${escapeHtml(item.ano || "s. f.")}</span>
+        <span class="timeline-title">${escapeHtml(item.titulo || "Sin título")}</span>
+        <span class="timeline-author">${escapeHtml(item.autor || "")}</span>
+      `;
+
+      button.onclick = () => {
+        activeIndex = originalIndex;
+        renderTimeline();
+        renderDetail(items[originalIndex]);
+      };
+
+      wrapper.appendChild(button);
+      timelineListEl.appendChild(wrapper);
+    });
+  }
+
+  const clearButton = document.getElementById("clearFilterButton");
+  if (clearButton) {
+    clearButton.onclick = () => {
+      activeFilter = null;
+      renderTimeline();
+      renderCurrentDetail();
+    };
+  }
+}
+
+function renderCountryTag(country) {
+  const activeClass = isFilterActive("pais", country) ? " active" : "";
+  return `
+    <button
+      type="button"
+      class="tag filter-tag country-tag${activeClass}"
+      data-filter-type="pais"
+      data-filter-value="${escapeAttribute(country)}"
+      aria-pressed="${isFilterActive("pais", country) ? "true" : "false"}"
+    >
+      ${escapeHtml(country)}
+    </button>
+  `;
+}
+
+function renderGenreTags(value) {
+  return parseGenres(value)
+    .map(genre => {
+      const activeClass = isFilterActive("genero", genre) ? " active" : "";
+      return `
+        <button
+          type="button"
+          class="tag filter-tag genre-tag${activeClass}"
+          data-filter-type="genero"
+          data-filter-value="${escapeAttribute(genre)}"
+          aria-pressed="${isFilterActive("genero", genre) ? "true" : "false"}"
+        >
+          ${escapeHtml(genre)}
+        </button>
+      `;
+    })
+    .join("");
+}
+
+function bindFilterTagEvents() {
+  detailEl.querySelectorAll(".filter-tag").forEach(tag => {
+    tag.addEventListener("click", () => {
+      const type = tag.dataset.filterType;
+      const value = tag.dataset.filterValue;
+      setFilter(type, value);
+    });
   });
 }
 
@@ -116,6 +263,8 @@ function renderDetail(item) {
   const color = item.color || "#c9b79c";
   const hasImage = Boolean(item.imagen);
   const hasAudio = Boolean(item.audio);
+  const countryTag = item.pais ? renderCountryTag(item.pais) : "";
+  const genreTags = item.genero ? renderGenreTags(item.genero) : "";
 
   detailEl.classList.remove("empty");
   detailEl.innerHTML = `
@@ -143,13 +292,31 @@ function renderDetail(item) {
           <div class="text">${item.texto || ""}</div>
 
           <div class="meta-bottom">
-            ${item.pais ? `<span class="tag">${escapeHtml(item.pais)}</span>` : ""}
-            ${item.genero ? `<span class="tag">${escapeHtml(item.genero)}</span>` : ""}
+            ${countryTag}
+            ${genreTags}
           </div>
         </div>
       </div>
     </article>
   `;
+
+  bindFilterTagEvents();
+}
+
+function renderCurrentDetail() {
+  const filteredItems = getFilteredItems();
+
+  if (!filteredItems.length) {
+    detailEl.classList.remove("empty");
+    detailEl.innerHTML = `<div class="error">No hay elementos para este filtro.</div>`;
+    return;
+  }
+
+  if (!filteredItems.includes(items[activeIndex])) {
+    activeIndex = items.indexOf(filteredItems[0]);
+  }
+
+  renderDetail(items[activeIndex]);
 }
 
 function showLoading() {
@@ -186,9 +353,10 @@ function loadCSV() {
         return;
       }
 
+      activeFilter = null;
       activeIndex = 0;
       renderTimeline();
-      renderDetail(items[0]);
+      renderCurrentDetail();
     },
     error: function () {
       showError("No se ha podido leer el CSV de Google Sheets.");
