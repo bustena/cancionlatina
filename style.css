@@ -122,10 +122,14 @@ body {
 /* TIMELINE */
 .timeline {
   position: relative;
+}
+
+.timeline-list {
+  position: relative;
   padding-left: 20px;
 }
 
-.timeline::before {
+.timeline-list::before {
   content: "";
   position: absolute;
   left: 11px;
@@ -134,6 +138,52 @@ body {
   width: 2px;
   background: linear-gradient(to bottom, #d0d6e2, #c2c9d8);
   border-radius: 999px;
+}
+
+.active-filter-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.active-filter-text {
+  font-size: 0.82rem;
+  line-height: 1.25;
+  color: var(--muted);
+}
+
+.active-filter-kind {
+  color: #6b7280;
+}
+
+.clear-filter-button {
+  border: 0;
+  background: transparent;
+  color: #1f3b73;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.clear-filter-button:hover {
+  text-decoration: underline;
+}
+
+.timeline-empty {
+  margin-left: 32px;
+  padding: 6px 0 12px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-style: italic;
 }
 
 .timeline-item {
@@ -150,7 +200,7 @@ body {
 .timeline-item.active {
   background: rgba(15, 23, 42, 0.12);
   border-left: 3px solid var(--item-color, #b8ab95);
-  padding-left: 29px; /* compensa el borde manteniendo aire para el punto */
+  padding-left: 29px;
 }
 
 .timeline-button {
@@ -212,7 +262,6 @@ body {
   margin-top: 4px;
 }
 
-/* refuerzo visual del activo */
 .timeline-item.active .timeline-year,
 .timeline-item.active .timeline-title {
   color: #111318;
@@ -311,6 +360,26 @@ body {
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
+}
+
+.filter-tag {
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.filter-tag:hover {
+  transform: translateY(-1px);
+  background: #e6ebf3;
+}
+
+.filter-tag.active {
+  background: #2f3440;
+  border-color: #2f3440;
+  color: #ffffff;
+}
+
+.filter-tag.active:hover {
+  background: #252a35;
 }
 
 .author {
