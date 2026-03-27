@@ -145,7 +145,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin: 0 0 14px;
+  margin: 0;
   padding: 10px 12px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.45);
@@ -160,6 +160,15 @@ body {
 
 .active-filter-kind {
   color: #6b7280;
+}
+
+.filter-bar {
+  margin-top: 10px;
+  min-height: 0;
+}
+
+.filter-bar.visible {
+  min-height: 44px;
 }
 
 .clear-filter-button {
