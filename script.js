@@ -2,6 +2,7 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSJM_fPxtlc5UEy
 
 const timelineEl = document.getElementById("timeline");
 const detailEl = document.getElementById("detail");
+const filterBarEl = document.getElementById("filterBar");
 
 let items = [];
 let activeIndex = 0;
@@ -183,10 +184,14 @@ function bindFilterTagEventsInDetail() {
   });
 }
 
-function renderFilterBanner() {
-  if (!activeFilter) return "";
+function renderFilterBar() {
+  if (!activeFilter) {
+    filterBarEl.innerHTML = "";
+    filterBarEl.classList.remove("visible");
+    return;
+  }
 
-  return `
+  filterBarEl.innerHTML = `
     <div class="active-filter-banner">
       <span class="active-filter-text">
         Mostrando: <strong>${escapeHtml(activeFilter.label)}</strong>
@@ -195,13 +200,26 @@ function renderFilterBanner() {
       <button type="button" class="clear-filter-button" id="clearFilterButton">Ver todo</button>
     </div>
   `;
+
+  filterBarEl.classList.add("visible");
+
+  const clearButton = document.getElementById("clearFilterButton");
+  if (clearButton) {
+    clearButton.onclick = () => {
+      activeFilter = null;
+      renderFilterBar();
+      renderTimeline();
+      renderCurrentDetail();
+    };
+  }
 }
 
 function renderTimeline() {
   const filteredItems = getFilteredItems();
 
+  renderFilterBar();
+
   timelineEl.innerHTML = `
-    ${renderFilterBanner()}
     <div class="timeline-list"></div>
   `;
 
@@ -209,43 +227,35 @@ function renderTimeline() {
 
   if (!filteredItems.length) {
     timelineListEl.innerHTML = `<div class="timeline-empty">No hay elementos para este filtro.</div>`;
-  } else {
-    filteredItems.forEach((item) => {
-      const originalIndex = items.indexOf(item);
-      const wrapper = document.createElement("div");
-      wrapper.className = `timeline-item${originalIndex === activeIndex ? " active" : ""}`;
-      wrapper.style.setProperty("--item-color", item.color || "#c9b79c");
-
-      const button = document.createElement("button");
-      button.className = "timeline-button";
-      button.type = "button";
-      button.setAttribute("aria-label", `${item.ano} ${item.titulo} ${item.autor}`.trim());
-
-      button.innerHTML = `
-        <span class="timeline-year">${escapeHtml(item.ano || "s. f.")}</span>
-        <span class="timeline-title">${escapeHtml(item.titulo || "Sin título")}</span>
-        <span class="timeline-author">${escapeHtml(item.autor || "")}</span>
-      `;
-
-      button.onclick = () => {
-        activeIndex = originalIndex;
-        renderTimeline();
-        renderDetail(items[originalIndex]);
-      };
-
-      wrapper.appendChild(button);
-      timelineListEl.appendChild(wrapper);
-    });
+    return;
   }
 
-  const clearButton = document.getElementById("clearFilterButton");
-  if (clearButton) {
-    clearButton.onclick = () => {
-      activeFilter = null;
+  filteredItems.forEach((item) => {
+    const originalIndex = items.indexOf(item);
+    const wrapper = document.createElement("div");
+    wrapper.className = `timeline-item${originalIndex === activeIndex ? " active" : ""}`;
+    wrapper.style.setProperty("--item-color", item.color || "#c9b79c");
+
+    const button = document.createElement("button");
+    button.className = "timeline-button";
+    button.type = "button";
+    button.setAttribute("aria-label", `${item.ano} ${item.titulo} ${item.autor}`.trim());
+
+    button.innerHTML = `
+      <span class="timeline-year">${escapeHtml(item.ano || "s. f.")}</span>
+      <span class="timeline-title">${escapeHtml(item.titulo || "Sin título")}</span>
+      <span class="timeline-author">${escapeHtml(item.autor || "")}</span>
+    `;
+
+    button.onclick = () => {
+      activeIndex = originalIndex;
       renderTimeline();
-      renderCurrentDetail();
+      renderDetail(items[originalIndex]);
     };
-  }
+
+    wrapper.appendChild(button);
+    timelineListEl.appendChild(wrapper);
+  });
 }
 
 function renderCountryTag(country) {
