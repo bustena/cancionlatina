@@ -126,8 +126,10 @@ function isFilterActive(type, label) {
 
 function setFilter(type, label) {
   const value = normalizeFilterValue(label);
-
   if (!value) return;
+
+  const previousIndex = activeIndex;
+  const previousItem = items[previousIndex];
 
   if (activeFilter && activeFilter.type === type && activeFilter.value === value) {
     activeFilter = null;
@@ -141,13 +143,44 @@ function setFilter(type, label) {
 
   const filteredItems = getFilteredItems();
 
-  if (filteredItems.length) {
-    const currentStillVisible = filteredItems.includes(items[activeIndex]);
-    activeIndex = currentStillVisible ? activeIndex : items.indexOf(filteredItems[0]);
+  if (!filteredItems.length) {
+    renderTimeline();
+    renderCurrentDetail();
+    return;
   }
 
-  renderTimeline();
-  renderCurrentDetail();
+  const currentStillVisible = filteredItems.includes(previousItem);
+
+  if (currentStillVisible) {
+    activeIndex = previousIndex;
+    renderTimeline();
+    bindFilterTagEventsInDetail();
+  } else {
+    activeIndex = items.indexOf(filteredItems[0]);
+    renderTimeline();
+    renderCurrentDetail();
+  }
+}
+
+function bindFilterTagEventsInDetail() {
+  detailEl.querySelectorAll(".filter-tag").forEach(tag => {
+    tag.onclick = () => {
+      const type = tag.dataset.filterType;
+      const value = tag.dataset.filterValue;
+      setFilter(type, value);
+    };
+  });
+
+  detailEl.querySelectorAll(".filter-tag").forEach(tag => {
+    const type = tag.dataset.filterType;
+    const value = tag.dataset.filterValue;
+    const isActive = activeFilter &&
+      activeFilter.type === type &&
+      activeFilter.value === normalizeFilterValue(value);
+
+    tag.classList.toggle("active", Boolean(isActive));
+    tag.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
 }
 
 function renderFilterBanner() {
@@ -250,13 +283,7 @@ function renderGenreTags(value) {
 }
 
 function bindFilterTagEvents() {
-  detailEl.querySelectorAll(".filter-tag").forEach(tag => {
-    tag.addEventListener("click", () => {
-      const type = tag.dataset.filterType;
-      const value = tag.dataset.filterValue;
-      setFilter(type, value);
-    });
-  });
+  bindFilterTagEventsInDetail();
 }
 
 function renderDetail(item) {
