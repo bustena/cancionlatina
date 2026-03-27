@@ -127,6 +127,15 @@ function renderDetail(item) {
   const hasImage = Boolean(item.imagen);
   const hasAudio = Boolean(item.audio);
 
+  const countryTag = item.pais
+    ? `<span class="tag">${escapeHtml(item.pais)}</span>`
+    : "";
+
+  const genreTags = renderTags(item.genero);
+  const metaBottom = (countryTag || genreTags)
+    ? `<div class="meta-bottom">${countryTag}${genreTags}</div>`
+    : "";
+
   detailEl.classList.remove("empty");
   detailEl.innerHTML = `
     <article class="card" style="--accent: ${escapeHtml(color)};">
@@ -151,11 +160,7 @@ function renderDetail(item) {
           <p class="author">${escapeHtml(item.autor || "")}</p>
           <h2 class="work-title">${escapeHtml(item.titulo || "Sin título")}</h2>
           <div class="text">${item.texto || ""}</div>
-
-          <div class="meta-bottom">
-            ${item.pais ? `<span class="tag">${escapeHtml(item.pais)}</span>` : ""}
-            ${renderTags(item.genero)}
-          </div>
+          ${metaBottom}
         </div>
       </div>
     </article>
