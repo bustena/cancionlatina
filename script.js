@@ -68,16 +68,6 @@ function escapeAttribute(text) {
     .replace(/"/g, "&quot;");
 }
 
-function renderTags(value) {
-  return String(value || "")
-    .split(";")
-    .map(tag => tag.trim())
-    .filter(Boolean)
-    .slice(0, 3)
-    .map(tag => `<span class="tag">${escapeHtml(tag)}</span>`)
-    .join("");
-}
-
 function hexToRgba(hex, alpha) {
   const clean = String(hex || "").replace("#", "").trim();
 
@@ -127,15 +117,6 @@ function renderDetail(item) {
   const hasImage = Boolean(item.imagen);
   const hasAudio = Boolean(item.audio);
 
-  const countryTag = item.pais
-    ? `<span class="tag">${escapeHtml(item.pais)}</span>`
-    : "";
-
-  const genreTags = renderTags(item.genero);
-  const metaBottom = (countryTag || genreTags)
-    ? `<div class="meta-bottom">${countryTag}${genreTags}</div>`
-    : "";
-
   detailEl.classList.remove("empty");
   detailEl.innerHTML = `
     <article class="card" style="--accent: ${escapeHtml(color)};">
@@ -160,7 +141,11 @@ function renderDetail(item) {
           <p class="author">${escapeHtml(item.autor || "")}</p>
           <h2 class="work-title">${escapeHtml(item.titulo || "Sin título")}</h2>
           <div class="text">${item.texto || ""}</div>
-          ${metaBottom}
+
+          <div class="meta-bottom">
+            ${item.pais ? `<span class="tag">${escapeHtml(item.pais)}</span>` : ""}
+            ${item.genero ? `<span class="tag">${escapeHtml(item.genero)}</span>` : ""}
+          </div>
         </div>
       </div>
     </article>
