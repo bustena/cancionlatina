@@ -299,7 +299,6 @@ function bindFilterTagEvents() {
 function renderDetail(item) {
   const color = item.color || "#c9b79c";
   const hasImage = Boolean(item.imagen);
-  const hasAudio = Boolean(item.audio);
   const countryTag = item.pais ? renderCountryTag(item.pais) : "";
   const genreTags = item.genero ? renderGenreTags(item.genero) : "";
 
@@ -314,13 +313,28 @@ function renderDetail(item) {
               : `<div class="no-image">Sin imagen</div>`
           }
 
-          ${
-            hasAudio
-              ? `<div class="audio-wrap">
-                   <audio controls preload="none" src="${escapeAttribute(item.audio)}"></audio>
-                 </div>`
-              : ``
-          }
+          <div class="player">
+            <div class="controls">
+              <button type="button" class="control-btn prev-btn" title="Anterior" aria-label="Anterior">⏮</button>
+
+              <button type="button" class="control-btn play-btn" title="Reproducir o pausar" aria-label="Reproducir o pausar">▶</button>
+
+              <button type="button" class="control-btn next-btn" title="Siguiente" aria-label="Siguiente">⏭</button>
+
+              <button type="button" class="control-btn shuffle-btn" title="Modo aleatorio" aria-label="Modo aleatorio" aria-pressed="false">🔀</button>
+            </div>
+
+            <div class="progress-wrap">
+              <div class="progress-bar" role="progressbar" aria-label="Progreso de reproducción" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="progress-fill"></div>
+              </div>
+
+              <div class="time-row">
+                <span class="time-current">0:00</span>
+                <span class="time-total">0:00</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="content-column">
