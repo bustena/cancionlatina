@@ -8,6 +8,12 @@ let items = [];
 let activeIndex = 0;
 let activeFilter = null;
 
+const audioPlayer = new Audio();
+
+let isShuffle = false;
+let isPlaying = false;
+let loadedTrackIndex = null;
+
 function normalizeHeader(header) {
   return header
     .trim()
@@ -88,6 +94,140 @@ function hexToRgba(hex, alpha) {
   const b = parseInt(clean.slice(4, 6), 16);
 
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+
+  const totalSeconds = Math.floor(seconds);
+  const mins = Math.floor(totalSeconds / 60);
+  const secs = totalSeconds % 60;
+
+  return `${mins}:${String(secs).padStart(2, "0")}`;
+}
+
+function loadTrack(index) {
+  const item = items[index];
+  if (!item || !item.audio) return false;
+
+  if (loadedTrackIndex !== index) {
+    audioPlayer.src = item.audio;
+    loadedTrackIndex = index;
+  }
+
+  return true;
+}
+
+function updatePlayerUI() {
+  const playBtn = detailEl.querySelector(".play-btn");
+  const shuffleBtn = detailEl.querySelector(".shuffle-btn");
+  const progressFill = detailEl.querySelector(".progress-fill");
+  const progressBar = detailEl.querySelector(".progress-bar");
+  const currentTimeEl = detailEl.querySelector(".time-current");
+  const totalTimeEl = detailEl.querySelector(".time-total");
+
+  if (playBtn) {
+    playBtn.textContent = isPlaying ? "⏸" : "▶";
+  }
+
+  if (shuffleBtn) {
+    shuffleBtn.classList.toggle("active", isShuffle);
+    shuffleBtn.setAttribute("aria-pressed", isShuffle ? "true" : "false");
+  }
+
+  const duration = audioPlayer.duration || 0;
+  const currentTime = audioPlayer.currentTime || 0;
+  const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  if (progressFill) {
+    progressFill.style.width = `${percent}%`;
+  }
+
+  if (progressBar) {
+    progressBar.setAttribute("aria-valuenow", String(Math.round(percent)));
+  }
+
+  if (currentTimeEl) {
+    currentTimeEl.textContent = formatTime(currentTime);
+  }
+
+  if (totalTimeEl) {
+    totalTimeEl.textContent = formatTime(duration);
+  }
+}
+
+function togglePlayPause() {
+  const item = items[activeIndex];
+  if (!item || !item.audio) return;
+
+  if (loadedTrackIndex !== activeIndex) {
+    const ok = loadTrack(activeIndex);
+    if (!ok) return;
+  }
+
+  if (audioPlayer.paused) {
+    audioPlayer.play()
+      .then(() => {
+        isPlaying = true;
+        updatePlayerUI();
+      })
+      .catch(() => {
+        isPlaying = false;
+        updatePlayerUI();
+      });
+  } else {
+    audioPlayer.pause();
+    isPlaying = false;
+    updatePlayerUI();
+  }
+}
+
+function bindPlayerControls() {
+  const playBtn = detailEl.querySelector(".play-btn");
+  const prevBtn = detailEl.querySelector(".prev-btn");
+  const nextBtn = detailEl.querySelector(".next-btn");
+  const shuffleBtn = detailEl.querySelector(".shuffle-btn");
+  const progressBar = detailEl.querySelector(".progress-bar");
+
+  if (playBtn) {
+    playBtn.onclick = () => {
+      togglePlayPause();
+    };
+  }
+
+  if (shuffleBtn) {
+    shuffleBtn.onclick = () => {
+      isShuffle = !isShuffle;
+      updatePlayerUI();
+    };
+  }
+
+  if (progressBar) {
+    progressBar.onclick = (event) => {
+      const rect = progressBar.getBoundingClientRect();
+      const ratio = (event.clientX - rect.left) / rect.width;
+      const duration = audioPlayer.duration || 0;
+
+      if (duration > 0) {
+        audioPlayer.currentTime = Math.max(0, Math.min(duration, ratio * duration));
+        updatePlayerUI();
+      }
+    };
+  }
+
+  if (prevBtn) {
+    prevBtn.onclick = () => {
+      // de momento lo dejamos conectado luego
+    };
+  }
+
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      // de momento lo dejamos conectado luego
+    };
+  }
+
+  updatePlayerUI();
 }
 
 function normalizeFilterValue(value) {
@@ -351,7 +491,9 @@ function renderDetail(item) {
     </article>
   `;
 
-  bindFilterTagEvents();
+bindFilterTagEvents();
+bindPlayerControls();
+updatePlayerUI();
 }
 
 function renderCurrentDetail() {
@@ -379,6 +521,24 @@ function showError(message) {
   detailEl.classList.remove("empty");
   detailEl.innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
 }
+
+audioPlayer.addEventListener("timeupdate", () => {
+  updatePlayerUI();
+});
+
+audioPlayer.addEventListener("loadedmetadata", () => {
+  updatePlayerUI();
+});
+
+audioPlayer.addEventListener("play", () => {
+  isPlaying = true;
+  updatePlayerUI();
+});
+
+audioPlayer.addEventListener("pause", () => {
+  isPlaying = false;
+  updatePlayerUI();
+});
 
 function loadCSV() {
   showLoading();
