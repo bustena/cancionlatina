@@ -587,7 +587,11 @@ function renderDetail(item) {
   detailEl.innerHTML = `
     <article class="card" style="--accent: ${escapeHtml(color)};">
       <div class="card-inner">
-        <div class="media-column" style="background: ${hexToRgba(color, 0.08)};">
+        <div class="media-column" style="background: linear-gradient(
+  180deg,
+  ${hexToRgba(color, 0.35)},
+  ${hexToRgba(color, 0.15)}
+);">
           ${
             hasImage
               ? `<img src="${escapeAttribute(item.imagen)}" alt="${escapeHtml(item.titulo || "Imagen")}">`
