@@ -604,7 +604,9 @@ function renderDetail(item) {
 
               <button type="button" class="control-btn next-btn" title="Siguiente" aria-label="Siguiente">⏭</button>
 
-              <button type="button" class="control-btn shuffle-btn" title="Modo aleatorio" aria-label="Modo aleatorio" aria-pressed="false">🔀</button>
+              <button class="control-btn shuffle-btn" aria-label="Modo aleatorio">
+  <span class="shuffle-icon"></span>
+</button>
             </div>
 
             <div class="progress-wrap">
