@@ -599,14 +599,12 @@ function renderDetail(item) {
           <div class="player">
             <div class="controls">
               <button type="button" class="control-btn prev-btn" title="Anterior" aria-label="Anterior">⏮</button>
-
-              <button type="button" class="control-btn play-btn" title="Reproducir o pausar" aria-label="Reproducir o pausar">▶</button>
-
+            
+              <button type="button" class="control-btn play-btn" title="Reproducir o pausar" aria-label="Reproducir">▶</button>
+            
               <button type="button" class="control-btn next-btn" title="Siguiente" aria-label="Siguiente">⏭</button>
-
-              <button class="control-btn shuffle-btn" aria-label="Modo aleatorio">
-  <span class="shuffle-icon"></span>
-</button>
+            
+              <button type="button" class="control-btn shuffle-btn" title="Modo aleatorio" aria-label="Modo aleatorio" aria-pressed="false">⤮</button>
             </div>
 
             <div class="progress-wrap">
