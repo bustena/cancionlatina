@@ -371,8 +371,38 @@ body {
 
 .shuffle-btn.active {
   background: #2f3440;
-  color: #fff;
+  color: #ffffff;
   border-color: #2f3440;
+}
+
+.shuffle-icon {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+
+/* línea principal */
+.shuffle-icon::before,
+.shuffle-icon::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+}
+
+/* línea superior */
+.shuffle-icon::before {
+  top: 4px;
+  transform: rotate(25deg);
+}
+
+/* línea inferior */
+.shuffle-icon::after {
+  bottom: 4px;
+  transform: rotate(-25deg);
 }
 
 .progress-wrap {
