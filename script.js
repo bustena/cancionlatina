@@ -241,10 +241,11 @@ function updatePlayerUI() {
   const progressFill = detailEl.querySelector(".progress-fill");
   const progressBar = detailEl.querySelector(".progress-bar");
   const currentTimeEl = detailEl.querySelector(".time-current");
-  const totalTimeEl = detailEl.querySelector(".time-total");
 
   if (playBtn) {
     playBtn.textContent = isPlaying ? "⏸" : "▶";
+    playBtn.setAttribute("aria-label", isPlaying ? "Pausar" : "Reproducir");
+    playBtn.setAttribute("title", isPlaying ? "Pausar" : "Reproducir");
   }
 
   if (shuffleBtn) {
@@ -262,14 +263,11 @@ function updatePlayerUI() {
 
   if (progressBar) {
     progressBar.setAttribute("aria-valuenow", String(Math.round(percent)));
+    progressBar.setAttribute("aria-valuetext", `${formatTime(currentTime)} transcurridos`);
   }
 
   if (currentTimeEl) {
     currentTimeEl.textContent = formatTime(currentTime);
-  }
-
-  if (totalTimeEl) {
-    totalTimeEl.textContent = formatTime(duration);
   }
 }
 
