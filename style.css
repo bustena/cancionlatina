@@ -199,15 +199,17 @@ body {
   position: relative;
   padding: 0 0 20px 32px;
   border-radius: 10px;
-  transition: background-color 0.18s ease, border-color 0.18s ease;
+  background: color-mix(in srgb, var(--item-color, #b8ab95) 18%, transparent);
+  transition: background-color 0.18s ease, color 0.18s ease;
 }
 
 .timeline-item:hover {
-  background: rgba(15, 23, 42, 0.05);
+  background: color-mix(in srgb, var(--item-color, #b8ab95) 28%, transparent);
 }
 
 .timeline-item.active {
-  background: rgba(15, 23, 42, 0.12);
+  background: var(--item-color, #b8ab95);
+  color: #ffffff;
 }
 
 .timeline-button {
@@ -270,8 +272,9 @@ body {
 }
 
 .timeline-item.active .timeline-year,
-.timeline-item.active .timeline-title {
-  color: #111318;
+.timeline-item.active .timeline-title,
+.timeline-item.active .timeline-author {
+  color: #ffffff;
 }
 
 /* FICHA */
