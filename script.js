@@ -118,6 +118,123 @@ function loadTrack(index) {
   return true;
 }
 
+function goToTrack(newIndex, autoplay = false) {
+  if (newIndex < 0 || newIndex >= items.length) return;
+  if (!items[newIndex] || !items[newIndex].audio) return;
+
+  activeIndex = newIndex;
+  renderTimeline();
+  renderDetail(items[activeIndex]);
+
+  loadTrack(activeIndex);
+
+  if (autoplay) {
+    audioPlayer.play()
+      .then(() => {
+        isPlaying = true;
+        updatePlayerUI();
+      })
+      .catch(() => {
+        isPlaying = false;
+        updatePlayerUI();
+      });
+  } else {
+    updatePlayerUI();
+  }
+}
+
+function getNextTrackIndex() {
+  const filteredItems = getFilteredItems().filter(item => item.audio);
+  if (filteredItems.length <= 1) return null;
+
+  const currentItem = items[activeIndex];
+  const currentFilteredIndex = filteredItems.indexOf(currentItem);
+
+  if (currentFilteredIndex === -1) {
+    return items.indexOf(filteredItems[0]);
+  }
+
+  if (isShuffle) {
+    const candidates = filteredItems.filter(item => item !== currentItem);
+    if (!candidates.length) return null;
+
+    const randomItem = candidates[Math.floor(Math.random() * candidates.length)];
+    return items.indexOf(randomItem);
+  }
+
+  const nextFilteredIndex = currentFilteredIndex + 1;
+
+  if (nextFilteredIndex >= filteredItems.length) {
+    return null;
+  }
+
+  return items.indexOf(filteredItems[nextFilteredIndex]);
+}
+
+function getPreviousTrackIndex() {
+  const filteredItems = getFilteredItems().filter(item => item.audio);
+  if (!filteredItems.length) return null;
+
+  const currentItem = items[activeIndex];
+  const currentFilteredIndex = filteredItems.indexOf(currentItem);
+
+  if (currentFilteredIndex === -1) {
+    return items.indexOf(filteredItems[0]);
+  }
+
+  if (audioPlayer.currentTime > 3) {
+    return activeIndex;
+  }
+
+  const previousFilteredIndex = currentFilteredIndex - 1;
+
+  if (previousFilteredIndex < 0) {
+    return null;
+  }
+
+  return items.indexOf(filteredItems[previousFilteredIndex]);
+}
+
+function playNextTrack(autoplay = true) {
+  const nextIndex = getNextTrackIndex();
+  if (nextIndex === null) {
+    isPlaying = false;
+    updatePlayerUI();
+    return;
+  }
+
+  goToTrack(nextIndex, autoplay);
+}
+
+function playPreviousTrack(autoplay = true) {
+  const previousIndex = getPreviousTrackIndex();
+  if (previousIndex === null) {
+    return;
+  }
+
+  if (previousIndex === activeIndex) {
+    audioPlayer.currentTime = 0;
+
+    if (autoplay && audioPlayer.paused) {
+      audioPlayer.play()
+        .then(() => {
+          isPlaying = true;
+          updatePlayerUI();
+        })
+        .catch(() => {
+          isPlaying = false;
+          updatePlayerUI();
+        });
+    } else {
+      updatePlayerUI();
+    }
+
+    return;
+  }
+
+  goToTrack(previousIndex, autoplay);
+}
+
 function updatePlayerUI() {
   const playBtn = detailEl.querySelector(".play-btn");
   const shuffleBtn = detailEl.querySelector(".shuffle-btn");
@@ -217,13 +334,13 @@ function bindPlayerControls() {
 
   if (prevBtn) {
     prevBtn.onclick = () => {
-      // de momento lo dejamos conectado luego
+      playPreviousTrack(isPlaying);
     };
   }
 
   if (nextBtn) {
     nextBtn.onclick = () => {
-      // de momento lo dejamos conectado luego
+      playNextTrack(isPlaying || !audioPlayer.paused);
     };
   }
 
@@ -255,6 +372,12 @@ function getFilteredItems() {
   }
 
   return items;
+}
+
+function getCurrentFilteredIndex() {
+  const filteredItems = getFilteredItems();
+  const currentItem = items[activeIndex];
+  return filteredItems.indexOf(currentItem);
 }
 
 function isFilterActive(type, label) {
@@ -387,11 +510,31 @@ function renderTimeline() {
       <span class="timeline-author">${escapeHtml(item.autor || "")}</span>
     `;
 
-    button.onclick = () => {
-      activeIndex = originalIndex;
-      renderTimeline();
-      renderDetail(items[originalIndex]);
-    };
+button.onclick = () => {
+  const shouldAutoplay = isPlaying;
+
+  activeIndex = originalIndex;
+  renderTimeline();
+  renderDetail(items[originalIndex]);
+
+  if (items[activeIndex] && items[activeIndex].audio) {
+    loadTrack(activeIndex);
+
+    if (shouldAutoplay) {
+      audioPlayer.play()
+        .then(() => {
+          isPlaying = true;
+          updatePlayerUI();
+        })
+        .catch(() => {
+          isPlaying = false;
+          updatePlayerUI();
+        });
+    } else {
+      updatePlayerUI();
+    }
+  }
+};
 
     wrapper.appendChild(button);
     timelineListEl.appendChild(wrapper);
@@ -538,6 +681,11 @@ audioPlayer.addEventListener("play", () => {
 audioPlayer.addEventListener("pause", () => {
   isPlaying = false;
   updatePlayerUI();
+});
+
+audioPlayer.addEventListener("ended", () => {
+  isPlaying = false;
+  playNextTrack(true);
 });
 
 function loadCSV() {
