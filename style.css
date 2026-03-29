@@ -326,6 +326,83 @@ body {
   font-style: italic;
 }
 
+.player {
+  margin-top: 16px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.control-btn {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #ffffff;
+  color: #2f3440;
+  border-radius: 999px;
+  width: 38px;
+  height: 38px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s ease;
+}
+
+.control-btn:hover {
+  background: #e9eef6;
+  transform: translateY(-1px);
+}
+
+.play-btn {
+  width: 48px;
+  height: 48px;
+  font-size: 1.1rem;
+  background: #2f3440;
+  color: #fff;
+}
+
+.play-btn:hover {
+  background: #252a35;
+}
+
+.shuffle-btn.active {
+  background: #2f3440;
+  color: #fff;
+  border-color: #2f3440;
+}
+
+.progress-wrap {
+  margin-top: 14px;
+}
+
+.progress-bar {
+  position: relative;
+  height: 6px;
+  background: #e3e7ef;
+  border-radius: 999px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #2f3440;
+  transition: width 0.1s linear;
+}
+
+.time-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
 .audio-wrap {
   margin-top: 16px;
 }
