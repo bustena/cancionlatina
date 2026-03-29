@@ -614,7 +614,6 @@ function renderDetail(item) {
 
               <div class="time-row">
                 <span class="time-current">0:00</span>
-                <span class="time-total">0:00</span>
               </div>
             </div>
           </div>
