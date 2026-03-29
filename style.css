@@ -470,13 +470,14 @@ body {
   justify-content: center;
   padding: 7px 12px;
   border-radius: 999px;
-  background: #eef1f6;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  color: #374151;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  color: #2f3440;
   font-size: 0.78rem;
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
 
 .filter-tag {
@@ -486,13 +487,15 @@ body {
 
 .filter-tag:hover {
   transform: translateY(-1px);
-  background: #e6ebf3;
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.18);
 }
 
 .filter-tag.active {
-  background: #2f3440;
-  border-color: #2f3440;
+  background: var(--accent, #2f3440);
+  border-color: var(--accent, #2f3440);
   color: #ffffff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
 }
 
 .filter-tag.active:hover {
