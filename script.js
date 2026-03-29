@@ -589,8 +589,8 @@ function renderDetail(item) {
       <div class="card-inner">
         <div class="media-column" style="background: linear-gradient(
               180deg,
-              ${hexToRgba(color, 0.35)},
-              ${hexToRgba(color, 0.15)}
+              ${hexToRgba(color, 0.75)},
+              ${hexToRgba(color, 0.45)}
             );">
           ${
             hasImage
