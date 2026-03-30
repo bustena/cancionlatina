@@ -338,6 +338,12 @@ body {
   gap: 12px;
 }
 
+.icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
 .control-btn {
   border: 1px solid rgba(15, 23, 42, 0.08);
   background: #ffffff;
@@ -364,6 +370,11 @@ body {
   font-size: 1.1rem;
   background: #2f3440;
   color: #fff;
+}
+
+.play-btn .icon {
+  width: 22px;
+  height: 22px;
 }
 
 .play-btn:hover {
