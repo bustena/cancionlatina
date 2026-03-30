@@ -599,15 +599,33 @@ function renderDetail(item) {
           }
 
           <div class="player">
-            <div class="controls">
-              <button type="button" class="control-btn prev-btn" title="Anterior" aria-label="Anterior">⏮</button>
-            
-              <button type="button" class="control-btn play-btn" title="Reproducir o pausar" aria-label="Reproducir">▶</button>
-            
-              <button type="button" class="control-btn next-btn" title="Siguiente" aria-label="Siguiente">⏭</button>
-            
-              <button type="button" class="control-btn shuffle-btn" title="Modo aleatorio" aria-label="Modo aleatorio" aria-pressed="false">⤮</button>
-            </div>
+<div class="controls">
+  <button type="button" class="control-btn prev-btn" aria-label="Anterior">
+    <svg viewBox="0 0 24 24" class="icon">
+      <path d="M6 5v14M18 6l-8 6 8 6z" fill="currentColor"/>
+    </svg>
+  </button>
+
+  <button type="button" class="control-btn play-btn" aria-label="Reproducir">
+    <svg viewBox="0 0 24 24" class="icon play-icon">
+      <path d="M8 5v14l11-7z" fill="currentColor"/>
+    </svg>
+  </button>
+
+  <button type="button" class="control-btn next-btn" aria-label="Siguiente">
+    <svg viewBox="0 0 24 24" class="icon">
+      <path d="M18 5v14M6 6l8 6-8 6z" fill="currentColor"/>
+    </svg>
+  </button>
+
+  <button type="button" class="control-btn shuffle-btn" aria-label="Modo aleatorio" aria-pressed="false">
+    <svg viewBox="0 0 24 24" class="icon">
+      <path d="M4 7h3l5 5-5 5H4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M14 7h6v6" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M20 7l-6 6" fill="none" stroke="currentColor" stroke-width="2"/>
+    </svg>
+  </button>
+</div>
 
             <div class="progress-wrap">
               <div class="progress-bar" role="progressbar" aria-label="Progreso de reproducción" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
