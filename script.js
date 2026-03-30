@@ -613,11 +613,15 @@ function renderDetail(item) {
     </svg>
   </button>
 
-  <button type="button" class="control-btn play-btn" aria-label="Reproducir">
-    <svg viewBox="0 0 24 24" class="icon play-icon">
-      <path d="M8 5v14l11-7z" fill="currentColor"/>
-    </svg>
-  </button>
+<button type="button" class="control-btn play-btn" aria-label="Reproducir" title="Reproducir">
+  <svg viewBox="0 0 24 24" class="icon play-symbol icon-play" aria-hidden="true">
+    <path d="M8 5v14l11-7z" fill="currentColor"/>
+  </svg>
+
+  <svg viewBox="0 0 24 24" class="icon play-symbol icon-pause" aria-hidden="true">
+    <path d="M6 5h4v14H6zm8 0h4v14h-4z" fill="currentColor"/>
+  </svg>
+</button>
 
   <button type="button" class="control-btn next-btn" aria-label="Siguiente">
     <svg viewBox="0 0 24 24" class="icon">
