@@ -449,36 +449,53 @@ function startCrossfadeToNextTrack() {
 
           if (progress >= 1) {
             clearCrossfadeInterval();
-
+          
+            const finalSrc = nextAudioPlayer.src;
+            const finalIndex = nextTrackIndex;
+            const finalFragmentStart = nextFragmentStart;
+            const finalFragmentDuration = nextFragmentDuration;
+            const finalCurrentTime = nextAudioPlayer.currentTime;
+          
             audioPlayer.pause();
             audioPlayer.currentTime = 0;
             audioPlayer.volume = 1;
-
-            audioPlayer.src = nextAudioPlayer.src;
-            loadedTrackIndex = nextTrackIndex;
-            fragmentStart = nextFragmentStart;
-            fragmentDuration = nextFragmentDuration;
-            activeIndex = nextTrackIndex;
-
-            audioPlayer.currentTime = nextFragmentStart;
-            audioPlayer.volume = 1;
-
+          
             nextAudioPlayer.pause();
+          
+            audioPlayer.src = finalSrc;
+            loadedTrackIndex = finalIndex;
+            fragmentStart = finalFragmentStart;
+            fragmentDuration = finalFragmentDuration;
+            activeIndex = finalIndex;
+          
+            audioPlayer.currentTime = finalCurrentTime;
+            audioPlayer.volume = 1;
+          
             nextAudioPlayer.currentTime = 0;
             nextAudioPlayer.src = "";
             nextAudioPlayer.volume = 1;
-
+          
             nextTrackIndex = null;
             nextFragmentStart = 0;
             nextFragmentDuration = 0;
-
+          
             isCrossfading = false;
             isPlaying = true;
-
+          
             renderTimeline();
             renderDetail(items[activeIndex]);
             updatePlayerUI();
-            scheduleFragmentEnd();
+          
+            audioPlayer.play()
+              .then(() => {
+                isPlaying = true;
+                updatePlayerUI();
+                scheduleFragmentEnd();
+              })
+              .catch(() => {
+                isPlaying = false;
+                updatePlayerUI();
+              });
           }
         }, 50);
       })
