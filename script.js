@@ -238,6 +238,7 @@ function goToTrack(newIndex, autoplay = false, mode = "manual") {
   currentPlaybackMode = mode;
 
   renderTimeline();
+  scrollActiveTimelineItemIntoView();
   renderDetail(items[activeIndex]);
 
   const ok = loadTrack(activeIndex);
@@ -445,8 +446,8 @@ function startCrossfadeToNextTrack() {
             
             // refrescar interfaz completa
             renderTimeline();
+            scrollActiveTimelineItemIntoView();
             renderDetail(items[activeIndex]);
-            
             // mantener estado visual correcto
             isPlaying = true;
             updatePlayerUI();
@@ -712,11 +713,13 @@ function setFilter(type, label) {
   if (currentStillVisible) {
     activeIndex = previousIndex;
     renderTimeline();
+    scrollActiveTimelineItemIntoView();
     bindFilterTagEventsInDetail();
   } else {
-    activeIndex = items.indexOf(filteredItems[0]);
-    renderTimeline();
-    renderCurrentDetail();
+      activeIndex = items.indexOf(filteredItems[0]);
+      renderTimeline();
+      scrollActiveTimelineItemIntoView();
+      renderCurrentDetail();
   }
 }
 
@@ -763,10 +766,11 @@ function renderFilterBar() {
   const clearButton = document.getElementById("clearFilterButton");
   if (clearButton) {
     clearButton.onclick = () => {
-      activeFilter = null;
-      renderFilterBar();
-      renderTimeline();
-      renderCurrentDetail();
+    activeFilter = null;
+    renderFilterBar();
+    renderTimeline();
+    scrollActiveTimelineItemIntoView();
+    renderCurrentDetail();
     };
   }
 }
@@ -830,6 +834,18 @@ function renderTimeline() {
 
     wrapper.appendChild(button);
     timelineListEl.appendChild(wrapper);
+  });
+}
+
+function scrollActiveTimelineItemIntoView() {
+  requestAnimationFrame(() => {
+    const activeItem = timelineEl.querySelector(".timeline-item.active");
+    if (!activeItem) return;
+
+    activeItem.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
   });
 }
 
@@ -1064,6 +1080,7 @@ function loadCSV() {
       activeFilter = null;
       activeIndex = 0;
       renderTimeline();
+      scrollActiveTimelineItemIntoView();
       renderCurrentDetail();
     },
     error: function () {
