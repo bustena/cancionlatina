@@ -151,11 +151,11 @@ function clearAllPlaybackTimers() {
 }
 
 function getTrackDuration() {
-  return Number.isFinite(currentaudioPlayer.duration) ? currentaudioPlayer.duration : 0;
+  return Number.isFinite(currentAudioPlayer.duration) ? currentAudioPlayer.duration : 0;
 }
 
 function getFragmentCurrentTime() {
-  return Math.max(0, currentaudioPlayer.currentTime - fragmentStart);
+  return Math.max(0, currentAudioPlayer.currentTime - fragmentStart);
 }
 
 function getMaxFragmentStart(duration) {
@@ -176,7 +176,7 @@ function setFragmentForCurrentTrack(mode = "manual") {
   fragmentStart = chooseFragmentStart(duration, mode);
   fragmentDuration = Math.min(MAX_FRAGMENT_SECONDS, Math.max(0, duration - fragmentStart));
 
-  currentaudioPlayer.currentTime = fragmentStart;
+  currentAudioPlayer.currentTime = fragmentStart;
   updatePlayerUI();
 }
 
@@ -197,7 +197,7 @@ function scheduleFragmentEnd() {
   if (!isPlaying || isCrossfading) return;
 
   const fragmentEndTime = fragmentStart + fragmentDuration;
-  const remainingMs = Math.max(0, (fragmentEndTime - currentaudioPlayer.currentTime) * 1000);
+  const remainingMs = Math.max(0, (fragmentEndTime - currentAudioPlayer.currentTime) * 1000);
 
   if (remainingMs <= 0) {
     playNextTrack(true, "auto");
@@ -230,7 +230,7 @@ function loadTrack(index) {
   clearFragmentTimer();
 
   if (loadedTrackIndex !== index) {
-    currentaudioPlayer.src = item.audio;
+    currentAudioPlayer.src = item.audio;
     loadedTrackIndex = index;
     fragmentStart = 0;
     fragmentDuration = 0;
@@ -269,10 +269,10 @@ function goToTrack(newIndex, autoplay = false, mode = "manual") {
     setFragmentForCurrentTrack(mode);
 
     if (autoplay) {
-      currentaudioPlayer.play()
+      currentAudioPlayer.play()
         .then(() => {
           isPlaying = true;
-          currentaudioPlayer.volume = 1;
+          currentAudioPlayer.volume = 1;
           updatePlayerUI();
           scheduleFragmentEnd();
         })
@@ -285,10 +285,10 @@ function goToTrack(newIndex, autoplay = false, mode = "manual") {
       updatePlayerUI();
     }
 
-    currentaudioPlayer.removeEventListener("loadedmetadata", onMetadata);
+    currentAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
   };
 
-  currentaudioPlayer.addEventListener("loadedmetadata", onMetadata);
+  currentAudioPlayer.addEventListener("loadedmetadata", onMetadata);
 }
 
 function getNextTrackIndex() {
@@ -306,7 +306,7 @@ function getPreviousTrackIndex() {
     return items.indexOf(filteredItems[0]);
   }
 
-  if (currentaudioPlayer.currentTime > 3) {
+  if (currentAudioPlayer.currentTime > 3) {
     return activeIndex;
   }
 
@@ -366,11 +366,11 @@ function playPreviousTrack(autoplay = true) {
   }
 
   if (previousIndex === activeIndex) {
-    currentaudioPlayer.currentTime = fragmentStart;
+    currentAudioPlayer.currentTime = fragmentStart;
     updatePlayerUI();
 
-    if (autoplay && currentaudioPlayer.paused) {
-      currentaudioPlayer.play()
+    if (autoplay && currentAudioPlayer.paused) {
+      currentAudioPlayer.play()
         .then(() => {
           isPlaying = true;
           updatePlayerUI();
@@ -388,32 +388,6 @@ function playPreviousTrack(autoplay = true) {
   }
 
   goToTrack(previousIndex, autoplay, "manual");
-}
-
-function prepareNextTrackForCrossfade() {
-  const candidateIndex = getNextTrackIndexFromIndex(activeIndex);
-  if (candidateIndex === null) return false;
-
-  const item = items[candidateIndex];
-  if (!item || !item.audio) return false;
-
-  nextTrackIndex = candidateIndex;
-  incomingAudioPlayer.src = item.audio;
-  incomingAudioPlayer.volume = 0;
-
-  const onMetadata = () => {
-    const duration = Number.isFinite(incomingAudioPlayer.duration) ? incomingAudioPlayer.duration : 0;
-    const fragmentData = getFragmentDataForDuration(duration, "auto");
-
-    nextFragmentStart = fragmentData.start;
-    nextFragmentDuration = fragmentData.duration;
-
-    incomingAudioPlayer.currentTime = nextFragmentStart;
-    incomingAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
-  };
-
-  incomingAudioPlayer.addEventListener("loadedmetadata", onMetadata);
-  return true;
 }
 
 function startCrossfadeToNextTrack() {
@@ -463,10 +437,14 @@ function startCrossfadeToNextTrack() {
           clearCrossfadeInterval();
 
           // 🔁 SWAP REAL
+          detachCurrentPlayerListeners();
+          
           const oldPlayer = currentAudioPlayer;
           currentAudioPlayer = incomingAudioPlayer;
           incomingAudioPlayer = oldPlayer;
-
+          
+          attachCurrentPlayerListeners();
+          
           // actualizar estado
           activeIndex = candidateIndex;
           loadedTrackIndex = candidateIndex;
@@ -545,7 +523,7 @@ function togglePlayPause() {
     const onMetadata = () => {
       setFragmentForCurrentTrack("manual");
 
-      currentaudioPlayer.play()
+      currentAudioPlayer.play()
         .then(() => {
           isPlaying = true;
           updatePlayerUI();
@@ -556,20 +534,20 @@ function togglePlayPause() {
           updatePlayerUI();
         });
 
-      currentaudioPlayer.removeEventListener("loadedmetadata", onMetadata);
+      currentAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
     };
 
-    currentaudioPlayer.addEventListener("loadedmetadata", onMetadata);
+    currentAudioPlayer.addEventListener("loadedmetadata", onMetadata);
     return;
   }
 
-  if (currentaudioPlayer.paused) {
+  if (currentAudioPlayer.paused) {
     const startPlayback = () => {
       if (!fragmentDuration || fragmentDuration <= 0) {
         setFragmentForCurrentTrack("manual");
       }
 
-      currentaudioPlayer.play()
+      currentAudioPlayer.play()
         .then(() => {
           isPlaying = true;
           updatePlayerUI();
@@ -581,18 +559,18 @@ function togglePlayPause() {
         });
     };
 
-    if (!Number.isFinite(currentaudioPlayer.duration) || currentaudioPlayer.duration <= 0) {
+    if (!Number.isFinite(currentAudioPlayer.duration) || currentAudioPlayer.duration <= 0) {
       const onMetadata = () => {
         startPlayback();
-        currentaudioPlayer.removeEventListener("loadedmetadata", onMetadata);
+        currentAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
       };
 
-      currentaudioPlayer.addEventListener("loadedmetadata", onMetadata);
+      currentAudioPlayer.addEventListener("loadedmetadata", onMetadata);
     } else {
       startPlayback();
     }
   } else {
-    currentaudioPlayer.pause();
+    currentAudioPlayer.pause();
     clearAllPlaybackTimers();
     incomingAudioPlayer.pause();
     incomingAudioPlayer.currentTime = 0;
@@ -632,7 +610,7 @@ function bindPlayerControls() {
   
       if (duration > 0) {
         const newTime = fragmentStart + Math.max(0, Math.min(duration, ratio * duration));
-        currentaudioPlayer.currentTime = newTime;
+        currentAudioPlayer.currentTime = newTime;
         updatePlayerUI();
   
         if (isPlaying) {
@@ -650,7 +628,7 @@ function bindPlayerControls() {
 
   if (nextBtn) {
     nextBtn.onclick = () => {
-      playNextTrack(isPlaying || !currentaudioPlayer.paused);
+      playNextTrack(isPlaying || !currentAudioPlayer.paused);
     };
   }
 
@@ -836,10 +814,10 @@ function renderTimeline() {
           const onMetadata = () => {
             setFragmentForCurrentTrack("manual");
             updatePlayerUI();
-            currentaudioPlayer.removeEventListener("loadedmetadata", onMetadata);
+            currentAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
           };
           
-          currentaudioPlayer.addEventListener("loadedmetadata", onMetadata);
+          currentAudioPlayer.addEventListener("loadedmetadata", onMetadata);
         }
       }
     };
@@ -998,21 +976,25 @@ function showError(message) {
   detailEl.innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
 }
 
-currentaudioPlayer.addEventListener("timeupdate", () => {
+currentAudioPlayer.addEventListener("timeupdate", () => {
   updatePlayerUI();
 });
 
-currentaudioPlayer.addEventListener("loadedmetadata", () => {
+function handleCurrentPlayerTimeUpdate() {
   updatePlayerUI();
-});
+}
 
-currentaudioPlayer.addEventListener("play", () => {
+function handleCurrentPlayerLoadedMetadata() {
+  updatePlayerUI();
+}
+
+function handleCurrentPlayerPlay() {
   isPlaying = true;
-  currentaudioPlayer.volume = 1;
+  currentAudioPlayer.volume = 1;
   updatePlayerUI();
-});
+}
 
-currentaudioPlayer.addEventListener("pause", () => {
+function handleCurrentPlayerPause() {
   clearAllPlaybackTimers();
 
   if (!isCrossfading) {
@@ -1020,7 +1002,21 @@ currentaudioPlayer.addEventListener("pause", () => {
   }
 
   updatePlayerUI();
-});
+}
+
+function attachCurrentPlayerListeners() {
+  currentAudioPlayer.addEventListener("timeupdate", handleCurrentPlayerTimeUpdate);
+  currentAudioPlayer.addEventListener("loadedmetadata", handleCurrentPlayerLoadedMetadata);
+  currentAudioPlayer.addEventListener("play", handleCurrentPlayerPlay);
+  currentAudioPlayer.addEventListener("pause", handleCurrentPlayerPause);
+}
+
+function detachCurrentPlayerListeners() {
+  currentAudioPlayer.removeEventListener("timeupdate", handleCurrentPlayerTimeUpdate);
+  currentAudioPlayer.removeEventListener("loadedmetadata", handleCurrentPlayerLoadedMetadata);
+  currentAudioPlayer.removeEventListener("play", handleCurrentPlayerPlay);
+  currentAudioPlayer.removeEventListener("pause", handleCurrentPlayerPause);
+}
 
 function loadCSV() {
   showLoading();
@@ -1057,4 +1053,5 @@ function loadCSV() {
   });
 }
 
+attachCurrentPlayerListeners();
 loadCSV();
