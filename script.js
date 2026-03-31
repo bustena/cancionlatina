@@ -300,7 +300,7 @@ function getPreviousTrackIndex() {
 
 function getNextTrackIndexFromIndex(baseIndex) {
   const filteredItems = getFilteredItems().filter(item => item.audio);
-  if (filteredItems.length <= 1) return null;
+  if (!filteredItems.length) return null;
 
   const baseItem = items[baseIndex];
   const currentFilteredIndex = filteredItems.indexOf(baseItem);
@@ -317,13 +317,13 @@ function getNextTrackIndexFromIndex(baseIndex) {
     return items.indexOf(randomItem);
   }
 
-  const nextFilteredIndex = currentFilteredIndex + 1;
-
-  if (nextFilteredIndex >= filteredItems.length) {
-    return null;
-  }
-
-  return items.indexOf(filteredItems[nextFilteredIndex]);
+    const nextFilteredIndex = currentFilteredIndex + 1;
+    
+    if (nextFilteredIndex >= filteredItems.length) {
+      return items.indexOf(filteredItems[0]);
+    }
+    
+    return items.indexOf(filteredItems[nextFilteredIndex]);
 }
 
 function preloadNextTrack() {
