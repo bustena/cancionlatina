@@ -14,6 +14,13 @@ let isShuffle = false;
 let isPlaying = false;
 let loadedTrackIndex = null;
 
+const MAX_FRAGMENT_SECONDS = 120;
+
+let fragmentStart = 0;
+let fragmentDuration = 0;
+let fragmentTimer = null;
+let currentPlaybackMode = "manual"; // "manual" | "auto"
+
 function normalizeHeader(header) {
   return header
     .trim()
@@ -106,41 +113,110 @@ function formatTime(seconds) {
   return `${mins}:${String(secs).padStart(2, "0")}`;
 }
 
+function clearFragmentTimer() {
+  if (fragmentTimer) {
+    clearTimeout(fragmentTimer);
+    fragmentTimer = null;
+  }
+}
+
+function getTrackDuration() {
+  return Number.isFinite(audioPlayer.duration) ? audioPlayer.duration : 0;
+}
+
+function getFragmentCurrentTime() {
+  return Math.max(0, audioPlayer.currentTime - fragmentStart);
+}
+
+function getMaxFragmentStart(duration) {
+  return Math.max(0, duration - MAX_FRAGMENT_SECONDS);
+}
+
+function chooseFragmentStart(duration, mode = "manual") {
+  if (duration <= MAX_FRAGMENT_SECONDS) return 0;
+  if (mode === "manual") return 0;
+
+  const maxStart = getMaxFragmentStart(duration);
+  return Math.random() * maxStart;
+}
+
+function setFragmentForCurrentTrack(mode = "manual") {
+  const duration = getTrackDuration();
+
+  fragmentStart = chooseFragmentStart(duration, mode);
+  fragmentDuration = Math.min(MAX_FRAGMENT_SECONDS, Math.max(0, duration - fragmentStart));
+
+  audioPlayer.currentTime = fragmentStart;
+  updatePlayerUI();
+}
+
+function scheduleFragmentEnd() {
+  clearFragmentTimer();
+
+  if (!isPlaying) return;
+
+  const remaining = Math.max(0, (fragmentStart + fragmentDuration - audioPlayer.currentTime) * 1000);
+
+  fragmentTimer = setTimeout(() => {
+    isPlaying = false;
+    playNextTrack(true, "auto");
+  }, remaining);
+}
+
 function loadTrack(index) {
   const item = items[index];
   if (!item || !item.audio) return false;
 
+  clearFragmentTimer();
+
   if (loadedTrackIndex !== index) {
     audioPlayer.src = item.audio;
     loadedTrackIndex = index;
+    fragmentStart = 0;
+    fragmentDuration = 0;
   }
 
   return true;
 }
 
-function goToTrack(newIndex, autoplay = false) {
+function goToTrack(newIndex, autoplay = false, mode = "manual") {
   if (newIndex < 0 || newIndex >= items.length) return;
   if (!items[newIndex] || !items[newIndex].audio) return;
 
+  clearFragmentTimer();
+
   activeIndex = newIndex;
+  currentPlaybackMode = mode;
+
   renderTimeline();
   renderDetail(items[activeIndex]);
 
-  loadTrack(activeIndex);
+  const ok = loadTrack(activeIndex);
+  if (!ok) return;
 
-  if (autoplay) {
-    audioPlayer.play()
-      .then(() => {
-        isPlaying = true;
-        updatePlayerUI();
-      })
-      .catch(() => {
-        isPlaying = false;
-        updatePlayerUI();
-      });
-  } else {
-    updatePlayerUI();
-  }
+  const onMetadata = () => {
+    setFragmentForCurrentTrack(mode);
+
+    if (autoplay) {
+      audioPlayer.play()
+        .then(() => {
+          isPlaying = true;
+          updatePlayerUI();
+          scheduleFragmentEnd();
+        })
+        .catch(() => {
+          isPlaying = false;
+          updatePlayerUI();
+        });
+    } else {
+      isPlaying = false;
+      updatePlayerUI();
+    }
+
+    audioPlayer.removeEventListener("loadedmetadata", onMetadata);
+  };
+
+  audioPlayer.addEventListener("loadedmetadata", onMetadata);
 }
 
 function getNextTrackIndex() {
@@ -195,15 +271,16 @@ function getPreviousTrackIndex() {
   return items.indexOf(filteredItems[previousFilteredIndex]);
 }
 
-function playNextTrack(autoplay = true) {
+function playNextTrack(autoplay = true, mode = "auto") {
   const nextIndex = getNextTrackIndex();
   if (nextIndex === null) {
+    clearFragmentTimer();
     isPlaying = false;
     updatePlayerUI();
     return;
   }
 
-  goToTrack(nextIndex, autoplay);
+  goToTrack(nextIndex, autoplay, mode);
 }
 
 function playPreviousTrack(autoplay = true) {
@@ -213,26 +290,28 @@ function playPreviousTrack(autoplay = true) {
   }
 
   if (previousIndex === activeIndex) {
-    audioPlayer.currentTime = 0;
+    audioPlayer.currentTime = fragmentStart;
+    updatePlayerUI();
 
     if (autoplay && audioPlayer.paused) {
       audioPlayer.play()
         .then(() => {
           isPlaying = true;
           updatePlayerUI();
+          scheduleFragmentEnd();
         })
         .catch(() => {
           isPlaying = false;
           updatePlayerUI();
         });
-    } else {
-      updatePlayerUI();
+    } else if (autoplay) {
+      scheduleFragmentEnd();
     }
 
     return;
   }
 
-  goToTrack(previousIndex, autoplay);
+  goToTrack(previousIndex, autoplay, "manual");
 }
 
 function updatePlayerUI() {
@@ -242,27 +321,27 @@ function updatePlayerUI() {
   const progressBar = detailEl.querySelector(".progress-bar");
   const currentTimeEl = detailEl.querySelector(".time-current");
 
-if (playBtn) {
-  playBtn.classList.toggle("is-playing", isPlaying);
-  playBtn.setAttribute("aria-label", isPlaying ? "Pausar" : "Reproducir");
-  playBtn.setAttribute("title", isPlaying ? "Pausar" : "Reproducir");
-}
+  if (playBtn) {
+    playBtn.classList.toggle("is-playing", isPlaying);
+    playBtn.setAttribute("aria-label", isPlaying ? "Pausar" : "Reproducir");
+    playBtn.setAttribute("title", isPlaying ? "Pausar" : "Reproducir");
+  }
 
   if (shuffleBtn) {
     shuffleBtn.classList.toggle("active", isShuffle);
     shuffleBtn.setAttribute("aria-pressed", isShuffle ? "true" : "false");
   }
 
-  const duration = audioPlayer.duration || 0;
-  const currentTime = audioPlayer.currentTime || 0;
+  const currentTime = getFragmentCurrentTime();
+  const duration = fragmentDuration || Math.min(getTrackDuration(), MAX_FRAGMENT_SECONDS);
   const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   if (progressFill) {
-    progressFill.style.width = `${percent}%`;
+    progressFill.style.width = `${Math.max(0, Math.min(100, percent))}%`;
   }
 
   if (progressBar) {
-    progressBar.setAttribute("aria-valuenow", String(Math.round(percent)));
+    progressBar.setAttribute("aria-valuenow", String(Math.round(Math.max(0, Math.min(100, percent)))));
     progressBar.setAttribute("aria-valuetext", `${formatTime(currentTime)} transcurridos`);
   }
 
@@ -276,8 +355,29 @@ function togglePlayPause() {
   if (!item || !item.audio) return;
 
   if (loadedTrackIndex !== activeIndex) {
+    currentPlaybackMode = "manual";
     const ok = loadTrack(activeIndex);
     if (!ok) return;
+
+    const onMetadata = () => {
+      setFragmentForCurrentTrack("manual");
+
+      audioPlayer.play()
+        .then(() => {
+          isPlaying = true;
+          updatePlayerUI();
+          scheduleFragmentEnd();
+        })
+        .catch(() => {
+          isPlaying = false;
+          updatePlayerUI();
+        });
+
+      audioPlayer.removeEventListener("loadedmetadata", onMetadata);
+    };
+
+    audioPlayer.addEventListener("loadedmetadata", onMetadata);
+    return;
   }
 
   if (audioPlayer.paused) {
@@ -285,6 +385,7 @@ function togglePlayPause() {
       .then(() => {
         isPlaying = true;
         updatePlayerUI();
+        scheduleFragmentEnd();
       })
       .catch(() => {
         isPlaying = false;
@@ -292,6 +393,7 @@ function togglePlayPause() {
       });
   } else {
     audioPlayer.pause();
+    clearFragmentTimer();
     isPlaying = false;
     updatePlayerUI();
   }
@@ -321,15 +423,20 @@ function bindPlayerControls() {
     progressBar.onclick = (event) => {
       const rect = progressBar.getBoundingClientRect();
       const ratio = (event.clientX - rect.left) / rect.width;
-      const duration = audioPlayer.duration || 0;
-
+      const duration = fragmentDuration || Math.min(getTrackDuration(), MAX_FRAGMENT_SECONDS);
+  
       if (duration > 0) {
-        audioPlayer.currentTime = Math.max(0, Math.min(duration, ratio * duration));
+        const newTime = fragmentStart + Math.max(0, Math.min(duration, ratio * duration));
+        audioPlayer.currentTime = newTime;
         updatePlayerUI();
+  
+        if (isPlaying) {
+          scheduleFragmentEnd();
+        }
       }
     };
   }
-
+  
   if (prevBtn) {
     prevBtn.onclick = () => {
       playPreviousTrack(isPlaying);
@@ -508,31 +615,22 @@ function renderTimeline() {
       <span class="timeline-author">${escapeHtml(item.autor || "")}</span>
     `;
 
-button.onclick = () => {
-  const shouldAutoplay = isPlaying;
-
-  activeIndex = originalIndex;
-  renderTimeline();
-  renderDetail(items[originalIndex]);
-
-  if (items[activeIndex] && items[activeIndex].audio) {
-    loadTrack(activeIndex);
-
-    if (shouldAutoplay) {
-      audioPlayer.play()
-        .then(() => {
-          isPlaying = true;
+    button.onclick = () => {
+      const shouldAutoplay = isPlaying;
+    
+      if (shouldAutoplay) {
+        goToTrack(originalIndex, true, "manual");
+      } else {
+        activeIndex = originalIndex;
+        renderTimeline();
+        renderDetail(items[originalIndex]);
+    
+        if (items[activeIndex] && items[activeIndex].audio) {
+          loadTrack(activeIndex);
           updatePlayerUI();
-        })
-        .catch(() => {
-          isPlaying = false;
-          updatePlayerUI();
-        });
-    } else {
-      updatePlayerUI();
-    }
-  }
-};
+        }
+      }
+    };
 
     wrapper.appendChild(button);
     timelineListEl.appendChild(wrapper);
@@ -606,30 +704,30 @@ function renderDetail(item) {
     </svg>
   </button>
 
-<button type="button" class="control-btn play-btn" aria-label="Reproducir" title="Reproducir">
-  <svg viewBox="0 0 24 24" class="icon play-symbol icon-play" aria-hidden="true">
-    <path d="M8 5v14l11-7z" fill="currentColor"/>
-  </svg>
-
-  <svg viewBox="0 0 24 24" class="icon play-symbol icon-pause" aria-hidden="true">
-    <path d="M6 5h4v14H6zm8 0h4v14h-4z" fill="currentColor"/>
-  </svg>
-</button>
-
-  <button type="button" class="control-btn next-btn" aria-label="Siguiente">
-    <svg viewBox="0 0 24 24" class="icon">
-      <path d="M18 5v14M6 6l8 6-8 6z" fill="currentColor"/>
-    </svg>
-  </button>
-
-  <button type="button" class="control-btn shuffle-btn" aria-label="Modo aleatorio" aria-pressed="false">
-    <svg viewBox="0 0 24 24" class="icon">
-      <path d="M4 7h3l5 5-5 5H4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      <path d="M14 7h6v6" fill="none" stroke="currentColor" stroke-width="2"/>
-      <path d="M20 7l-6 6" fill="none" stroke="currentColor" stroke-width="2"/>
-    </svg>
-  </button>
-</div>
+    <button type="button" class="control-btn play-btn" aria-label="Reproducir" title="Reproducir">
+      <svg viewBox="0 0 24 24" class="icon play-symbol icon-play" aria-hidden="true">
+        <path d="M8 5v14l11-7z" fill="currentColor"/>
+      </svg>
+    
+      <svg viewBox="0 0 24 24" class="icon play-symbol icon-pause" aria-hidden="true">
+        <path d="M6 5h4v14H6zm8 0h4v14h-4z" fill="currentColor"/>
+      </svg>
+    </button>
+    
+      <button type="button" class="control-btn next-btn" aria-label="Siguiente">
+        <svg viewBox="0 0 24 24" class="icon">
+          <path d="M18 5v14M6 6l8 6-8 6z" fill="currentColor"/>
+        </svg>
+      </button>
+    
+      <button type="button" class="control-btn shuffle-btn" aria-label="Modo aleatorio" aria-pressed="false">
+        <svg viewBox="0 0 24 24" class="icon">
+          <path d="M4 7h3l5 5-5 5H4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M14 7h6v6" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M20 7l-6 6" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      </button>
+    </div>
 
             <div class="progress-wrap">
               <div class="progress-bar" role="progressbar" aria-label="Progreso de reproducción" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
