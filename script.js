@@ -804,11 +804,6 @@ audioPlayer.addEventListener("pause", () => {
   updatePlayerUI();
 });
 
-audioPlayer.addEventListener("ended", () => {
-  isPlaying = false;
-  playNextTrack(true);
-});
-
 function loadCSV() {
   showLoading();
 
