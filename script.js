@@ -339,10 +339,8 @@ function preloadNextTrack() {
 
 function playNextTrack(autoplay = true, mode = "auto") {
   const nextIndex = getNextTrackIndex();
+
   if (nextIndex === null) {
-    clearAllPlaybackTimers();
-    isPlaying = false;
-    updatePlayerUI();
     return;
   }
 
