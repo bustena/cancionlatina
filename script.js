@@ -13,17 +13,17 @@ let isPlaying = false;
 let loadedTrackIndex = null;
 
 const MAX_FRAGMENT_SECONDS = 120;
+const CROSSFADE_SECONDS = 4;
 
 let fragmentStart = 0;
 let fragmentDuration = 0;
 let fragmentTimer = null;
+let preloadTimer = null;
 let currentPlaybackMode = "manual"; // "manual" | "auto"
 
-const CROSSFADE_SECONDS = 4;
 let currentAudioPlayer = new Audio();
-let incomingAudioPlayer = new Audio();
+let incomingAudioPlayer = null;
 
-let crossfadeTimer = null;
 let crossfadeInterval = null;
 let isCrossfading = false;
 
@@ -187,18 +187,18 @@ function getFragmentDataForDuration(duration, mode = "manual") {
 }
 
 function scheduleFragmentEnd() {
-  const timeToEnd = (fragmentStart + fragmentDuration) - currentAudioPlayer.currentTime;
+  clearFragmentTimer();
 
-  // 🔹 PRELOAD justo antes del crossfade
-  const preloadTime = fragmentDuration - CROSSFADE_DURATION - 1;
+  const timeToEnd = (fragmentStart + fragmentDuration) - currentAudioPlayer.currentTime;
+  const preloadTime = fragmentDuration - CROSSFADE_SECONDS - 1;
 
   if (preloadTime > 0) {
     setTimeout(preloadNextTrack, preloadTime * 1000);
   }
 
-  fragmentEndTimeout = setTimeout(() => {
+  fragmentTimer = setTimeout(() => {
     startCrossfadeToNextTrack();
-  }, timeToEnd * 1000);
+  }, Math.max(0, timeToEnd * 1000));
 }
 
 function loadTrack(index) {
@@ -329,7 +329,10 @@ function preloadNextTrack() {
   const nextIndex = getNextTrackIndex();
   if (nextIndex === null) return;
 
-  const audio = new Audio(trackList[nextIndex].url);
+  const item = items[nextIndex];
+  if (!item || !item.audio) return;
+
+  const audio = new Audio(item.audio);
   audio.preload = "auto";
 }
 
@@ -396,13 +399,12 @@ function startCrossfadeToNextTrack() {
   incomingAudioPlayer.src = item.audio;
   incomingAudioPlayer.volume = 0;
 
-  const onMetadata = () => {
+  const onCanPlay = () => {
     const duration = Number.isFinite(incomingAudioPlayer.duration)
       ? incomingAudioPlayer.duration
       : 0;
 
     const fragmentData = getFragmentDataForDuration(duration, "auto");
-
     const start = fragmentData.start;
     const fragDuration = fragmentData.duration;
 
@@ -410,40 +412,53 @@ function startCrossfadeToNextTrack() {
 
     incomingAudioPlayer.play()
       .then(() => {
-        console.log("Crossfade started");
-    
         const fadeSteps = 20;
-        const fadeInterval = (CROSSFADE_DURATION * 1000) / fadeSteps;
+        const fadeInterval = (CROSSFADE_SECONDS * 1000) / fadeSteps;
         let currentStep = 0;
-    
+
         crossfadeInterval = setInterval(() => {
           currentStep++;
           const progress = currentStep / fadeSteps;
-    
+
           currentAudioPlayer.volume = Math.max(0, 1 - progress);
           incomingAudioPlayer.volume = Math.min(1, progress);
-    
+
           if (currentStep >= fadeSteps) {
-            clearInterval(crossfadeInterval);
-            finishCrossfade();
+            clearCrossfadeInterval();
+
+            // 🔹 swap limpio
+            detachCurrentPlayerListeners();
+            currentAudioPlayer.pause();
+            currentAudioPlayer.volume = 1;
+
+            currentAudioPlayer = incomingAudioPlayer;
+            incomingAudioPlayer = null;
+
+            // 🔹 actualizar estado
+            activeIndex = candidateIndex;
+            loadedTrackIndex = candidateIndex;
+            fragmentStart = start;
+            fragmentDuration = fragDuration;
+
+            attachCurrentPlayerListeners();
+
+            isCrossfading = false;
+            updatePlayerUI();
+            scheduleFragmentEnd();
           }
         }, fadeInterval);
       })
       .catch((err) => {
         console.error("Crossfade failed:", err);
-    
-        // fallback limpio
         isCrossfading = false;
-        clearInterval(crossfadeInterval);
-    
-        // seguimos con el actual
-        scheduleNextTrack(); 
+        clearCrossfadeInterval();
+        scheduleFragmentEnd();
       });
 
-    incomingAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
+    incomingAudioPlayer.removeEventListener("canplay", onCanPlay);
   };
 
-  incomingAudioPlayer.addEventListener("canplay", () => {ener("loadedmetadata", onMetadata);
+  incomingAudioPlayer.addEventListener("canplay", onCanPlay);
 }
 
 function finishCrossfade() {
