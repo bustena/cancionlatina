@@ -126,13 +126,6 @@ function clearFragmentTimer() {
   }
 }
 
-function clearCrossfadeTimer() {
-  if (crossfadeTimer) {
-    clearTimeout(crossfadeTimer);
-    crossfadeTimer = null;
-  }
-}
-
 function clearCrossfadeInterval() {
   if (crossfadeInterval) {
     clearInterval(crossfadeInterval);
@@ -142,7 +135,6 @@ function clearCrossfadeInterval() {
 
 function clearAllPlaybackTimers() {
   clearFragmentTimer();
-  clearCrossfadeTimer();
   clearCrossfadeInterval();
 }
 
@@ -225,10 +217,14 @@ function goToTrack(newIndex, autoplay = false, mode = "manual") {
   isCrossfading = false;
 
   currentAudioPlayer.pause();
-  incomingAudioPlayer.pause();
-  incomingAudioPlayer.currentTime = 0;
-  incomingAudioPlayer.src = "";
-  incomingAudioPlayer.volume = 1;
+  
+  if (incomingAudioPlayer) {
+    incomingAudioPlayer.pause();
+    incomingAudioPlayer.currentTime = 0;
+    incomingAudioPlayer.src = "";
+    incomingAudioPlayer.volume = 1;
+    incomingAudioPlayer = null;
+  }
 
   let nextTrackIndex = null;
   let nextFragmentStart = 0;
@@ -465,20 +461,6 @@ function startCrossfadeToNextTrack() {
 
   incomingAudioPlayer.addEventListener("canplay", onCanPlay);
 }
-
-function finishCrossfade() {
-  currentAudioPlayer.pause();
-  currentAudioPlayer.volume = 1;
-
-  currentAudioPlayer = incomingAudioPlayer;
-  incomingAudioPlayer = null;
-
-  attachCurrentPlayerListeners();
-
-  isCrossfading = false;
-
-  scheduleNextTrack();
-}
   
 function updatePlayerUI() {
   const playBtn = detailEl.querySelector(".play-btn");
@@ -577,10 +559,13 @@ function togglePlayPause() {
   } else {
     currentAudioPlayer.pause();
     clearAllPlaybackTimers();
-    incomingAudioPlayer.pause();
-    incomingAudioPlayer.currentTime = 0;
-    incomingAudioPlayer.src = "";
-    incomingAudioPlayer.volume = 1;
+    if (incomingAudioPlayer) {
+      incomingAudioPlayer.pause();
+      incomingAudioPlayer.currentTime = 0;
+      incomingAudioPlayer.src = "";
+      incomingAudioPlayer.volume = 1;
+      incomingAudioPlayer = null;
+    }
     isCrossfading = false;
     isPlaying = false;
     updatePlayerUI();
