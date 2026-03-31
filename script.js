@@ -27,10 +27,6 @@ let crossfadeTimer = null;
 let crossfadeInterval = null;
 let isCrossfading = false;
 
-let nextTrackIndex = null;
-let nextFragmentStart = 0;
-let nextFragmentDuration = 0;
-
 function normalizeHeader(header) {
   return header
     .trim()
@@ -975,10 +971,6 @@ function showError(message) {
   detailEl.classList.remove("empty");
   detailEl.innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
 }
-
-currentAudioPlayer.addEventListener("timeupdate", () => {
-  updatePlayerUI();
-});
 
 function handleCurrentPlayerTimeUpdate() {
   updatePlayerUI();
