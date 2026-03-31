@@ -8,8 +8,6 @@ let items = [];
 let activeIndex = 0;
 let activeFilter = null;
 
-const audioPlayer = new Audio();
-
 let isShuffle = false;
 let isPlaying = false;
 let loadedTrackIndex = null;
@@ -22,7 +20,8 @@ let fragmentTimer = null;
 let currentPlaybackMode = "manual"; // "manual" | "auto"
 
 const CROSSFADE_SECONDS = 4;
-const nextAudioPlayer = new Audio();
+let currentAudioPlayer = new Audio();
+let incomingAudioPlayer = new Audio();
 
 let crossfadeTimer = null;
 let crossfadeInterval = null;
@@ -152,11 +151,11 @@ function clearAllPlaybackTimers() {
 }
 
 function getTrackDuration() {
-  return Number.isFinite(audioPlayer.duration) ? audioPlayer.duration : 0;
+  return Number.isFinite(currentaudioPlayer.duration) ? currentaudioPlayer.duration : 0;
 }
 
 function getFragmentCurrentTime() {
-  return Math.max(0, audioPlayer.currentTime - fragmentStart);
+  return Math.max(0, currentaudioPlayer.currentTime - fragmentStart);
 }
 
 function getMaxFragmentStart(duration) {
@@ -177,7 +176,7 @@ function setFragmentForCurrentTrack(mode = "manual") {
   fragmentStart = chooseFragmentStart(duration, mode);
   fragmentDuration = Math.min(MAX_FRAGMENT_SECONDS, Math.max(0, duration - fragmentStart));
 
-  audioPlayer.currentTime = fragmentStart;
+  currentaudioPlayer.currentTime = fragmentStart;
   updatePlayerUI();
 }
 
@@ -198,7 +197,7 @@ function scheduleFragmentEnd() {
   if (!isPlaying || isCrossfading) return;
 
   const fragmentEndTime = fragmentStart + fragmentDuration;
-  const remainingMs = Math.max(0, (fragmentEndTime - audioPlayer.currentTime) * 1000);
+  const remainingMs = Math.max(0, (fragmentEndTime - currentaudioPlayer.currentTime) * 1000);
 
   if (remainingMs <= 0) {
     playNextTrack(true, "auto");
@@ -231,7 +230,7 @@ function loadTrack(index) {
   clearFragmentTimer();
 
   if (loadedTrackIndex !== index) {
-    audioPlayer.src = item.audio;
+    currentaudioPlayer.src = item.audio;
     loadedTrackIndex = index;
     fragmentStart = 0;
     fragmentDuration = 0;
@@ -247,10 +246,11 @@ function goToTrack(newIndex, autoplay = false, mode = "manual") {
   clearAllPlaybackTimers();
   isCrossfading = false;
 
-  nextAudioPlayer.pause();
-  nextAudioPlayer.currentTime = 0;
-  nextAudioPlayer.src = "";
-  nextAudioPlayer.volume = 1;
+  currentAudioPlayer.pause();
+  incomingAudioPlayer.pause();
+  incomingAudioPlayer.currentTime = 0;
+  incomingAudioPlayer.src = "";
+  incomingAudioPlayer.volume = 1;
 
   nextTrackIndex = null;
   nextFragmentStart = 0;
@@ -269,10 +269,10 @@ function goToTrack(newIndex, autoplay = false, mode = "manual") {
     setFragmentForCurrentTrack(mode);
 
     if (autoplay) {
-      audioPlayer.play()
+      currentaudioPlayer.play()
         .then(() => {
           isPlaying = true;
-          audioPlayer.volume = 1;
+          currentaudioPlayer.volume = 1;
           updatePlayerUI();
           scheduleFragmentEnd();
         })
@@ -285,10 +285,10 @@ function goToTrack(newIndex, autoplay = false, mode = "manual") {
       updatePlayerUI();
     }
 
-    audioPlayer.removeEventListener("loadedmetadata", onMetadata);
+    currentaudioPlayer.removeEventListener("loadedmetadata", onMetadata);
   };
 
-  audioPlayer.addEventListener("loadedmetadata", onMetadata);
+  currentaudioPlayer.addEventListener("loadedmetadata", onMetadata);
 }
 
 function getNextTrackIndex() {
@@ -306,7 +306,7 @@ function getPreviousTrackIndex() {
     return items.indexOf(filteredItems[0]);
   }
 
-  if (audioPlayer.currentTime > 3) {
+  if (currentaudioPlayer.currentTime > 3) {
     return activeIndex;
   }
 
@@ -366,11 +366,11 @@ function playPreviousTrack(autoplay = true) {
   }
 
   if (previousIndex === activeIndex) {
-    audioPlayer.currentTime = fragmentStart;
+    currentaudioPlayer.currentTime = fragmentStart;
     updatePlayerUI();
 
-    if (autoplay && audioPlayer.paused) {
-      audioPlayer.play()
+    if (autoplay && currentaudioPlayer.paused) {
+      currentaudioPlayer.play()
         .then(() => {
           isPlaying = true;
           updatePlayerUI();
@@ -398,127 +398,103 @@ function prepareNextTrackForCrossfade() {
   if (!item || !item.audio) return false;
 
   nextTrackIndex = candidateIndex;
-  nextAudioPlayer.src = item.audio;
-  nextAudioPlayer.volume = 0;
+  incomingAudioPlayer.src = item.audio;
+  incomingAudioPlayer.volume = 0;
 
   const onMetadata = () => {
-    const duration = Number.isFinite(nextAudioPlayer.duration) ? nextAudioPlayer.duration : 0;
+    const duration = Number.isFinite(incomingAudioPlayer.duration) ? incomingAudioPlayer.duration : 0;
     const fragmentData = getFragmentDataForDuration(duration, "auto");
 
     nextFragmentStart = fragmentData.start;
     nextFragmentDuration = fragmentData.duration;
 
-    nextAudioPlayer.currentTime = nextFragmentStart;
-    nextAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
+    incomingAudioPlayer.currentTime = nextFragmentStart;
+    incomingAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
   };
 
-  nextAudioPlayer.addEventListener("loadedmetadata", onMetadata);
+  incomingAudioPlayer.addEventListener("loadedmetadata", onMetadata);
   return true;
 }
 
 function startCrossfadeToNextTrack() {
   if (isCrossfading) return;
 
-  const prepared = prepareNextTrackForCrossfade();
-  if (!prepared) {
+  const candidateIndex = getNextTrackIndexFromIndex(activeIndex);
+  if (candidateIndex === null) {
     clearAllPlaybackTimers();
     isPlaying = false;
     updatePlayerUI();
     return;
   }
 
+  const item = items[candidateIndex];
+  if (!item || !item.audio) return;
+
   isCrossfading = true;
 
-  const startFade = () => {
-    nextAudioPlayer.currentTime = nextFragmentStart;
-    nextAudioPlayer.volume = 0;
+  incomingAudioPlayer = new Audio();
+  incomingAudioPlayer.src = item.audio;
+  incomingAudioPlayer.volume = 0;
 
-    nextAudioPlayer.play()
-      .then(() => {
-        const fadeStartTime = performance.now();
-        const fadeDurationMs = CROSSFADE_SECONDS * 1000;
+  const onMetadata = () => {
+    const duration = Number.isFinite(incomingAudioPlayer.duration)
+      ? incomingAudioPlayer.duration
+      : 0;
 
-        clearCrossfadeInterval();
+    const fragmentData = getFragmentDataForDuration(duration, "auto");
 
-        crossfadeInterval = setInterval(() => {
-          const elapsed = performance.now() - fadeStartTime;
-          const progress = Math.min(1, elapsed / fadeDurationMs);
+    const start = fragmentData.start;
+    const fragDuration = fragmentData.duration;
 
-          audioPlayer.volume = 1 - progress;
-          nextAudioPlayer.volume = progress;
+    incomingAudioPlayer.currentTime = start;
 
-          if (progress >= 1) {
-            clearCrossfadeInterval();
-          
-            const finalSrc = nextAudioPlayer.src;
-            const finalIndex = nextTrackIndex;
-            const finalFragmentStart = nextFragmentStart;
-            const finalFragmentDuration = nextFragmentDuration;
-            const finalCurrentTime = nextAudioPlayer.currentTime;
-          
-            audioPlayer.pause();
-            audioPlayer.currentTime = 0;
-            audioPlayer.volume = 1;
-          
-            nextAudioPlayer.pause();
-          
-            audioPlayer.src = finalSrc;
-            loadedTrackIndex = finalIndex;
-            fragmentStart = finalFragmentStart;
-            fragmentDuration = finalFragmentDuration;
-            activeIndex = finalIndex;
-          
-            audioPlayer.currentTime = finalCurrentTime;
-            audioPlayer.volume = 1;
-          
-            nextAudioPlayer.currentTime = 0;
-            nextAudioPlayer.src = "";
-            nextAudioPlayer.volume = 1;
-          
-            nextTrackIndex = null;
-            nextFragmentStart = 0;
-            nextFragmentDuration = 0;
-          
-            isCrossfading = false;
-            isPlaying = true;
-          
-            renderTimeline();
-            renderDetail(items[activeIndex]);
-            updatePlayerUI();
-          
-            audioPlayer.play()
-              .then(() => {
-                isPlaying = true;
-                updatePlayerUI();
-                scheduleFragmentEnd();
-              })
-              .catch(() => {
-                isPlaying = false;
-                updatePlayerUI();
-              });
-          }
-        }, 50);
-      })
-      .catch(() => {
-        isCrossfading = false;
-        isPlaying = false;
-        updatePlayerUI();
-      });
+    incomingAudioPlayer.play().then(() => {
+      const startTime = performance.now();
+      const fadeDuration = CROSSFADE_SECONDS * 1000;
+
+      crossfadeInterval = setInterval(() => {
+        const elapsed = performance.now() - startTime;
+        const progress = Math.min(1, elapsed / fadeDuration);
+
+        currentAudioPlayer.volume = 1 - progress;
+        incomingAudioPlayer.volume = progress;
+
+        if (progress >= 1) {
+          clearCrossfadeInterval();
+
+          // 🔁 SWAP REAL
+          const oldPlayer = currentAudioPlayer;
+          currentAudioPlayer = incomingAudioPlayer;
+          incomingAudioPlayer = oldPlayer;
+
+          // actualizar estado
+          activeIndex = candidateIndex;
+          loadedTrackIndex = candidateIndex;
+          fragmentStart = start;
+          fragmentDuration = fragDuration;
+
+          // limpiar el viejo
+          incomingAudioPlayer.pause();
+          incomingAudioPlayer.currentTime = 0;
+          incomingAudioPlayer.src = "";
+          incomingAudioPlayer.volume = 1;
+
+          isCrossfading = false;
+          isPlaying = true;
+
+          renderTimeline();
+          renderDetail(items[activeIndex]);
+          updatePlayerUI();
+
+          scheduleFragmentEnd();
+        }
+      }, 50);
+    });
+
+    incomingAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
   };
 
-  if (Number.isFinite(nextAudioPlayer.duration) && nextAudioPlayer.duration > 0) {
-    const fragmentData = getFragmentDataForDuration(nextAudioPlayer.duration, "auto");
-    nextFragmentStart = fragmentData.start;
-    nextFragmentDuration = fragmentData.duration;
-    startFade();
-  } else {
-    const onReady = () => {
-      startFade();
-      nextAudioPlayer.removeEventListener("loadedmetadata", onReady);
-    };
-
-    nextAudioPlayer.addEventListener("loadedmetadata", onReady);
-  }
+  incomingAudioPlayer.addEventListener("loadedmetadata", onMetadata);
 }
 
 function updatePlayerUI() {
@@ -569,7 +545,7 @@ function togglePlayPause() {
     const onMetadata = () => {
       setFragmentForCurrentTrack("manual");
 
-      audioPlayer.play()
+      currentaudioPlayer.play()
         .then(() => {
           isPlaying = true;
           updatePlayerUI();
@@ -580,20 +556,20 @@ function togglePlayPause() {
           updatePlayerUI();
         });
 
-      audioPlayer.removeEventListener("loadedmetadata", onMetadata);
+      currentaudioPlayer.removeEventListener("loadedmetadata", onMetadata);
     };
 
-    audioPlayer.addEventListener("loadedmetadata", onMetadata);
+    currentaudioPlayer.addEventListener("loadedmetadata", onMetadata);
     return;
   }
 
-  if (audioPlayer.paused) {
+  if (currentaudioPlayer.paused) {
     const startPlayback = () => {
       if (!fragmentDuration || fragmentDuration <= 0) {
         setFragmentForCurrentTrack("manual");
       }
 
-      audioPlayer.play()
+      currentaudioPlayer.play()
         .then(() => {
           isPlaying = true;
           updatePlayerUI();
@@ -605,23 +581,23 @@ function togglePlayPause() {
         });
     };
 
-    if (!Number.isFinite(audioPlayer.duration) || audioPlayer.duration <= 0) {
+    if (!Number.isFinite(currentaudioPlayer.duration) || currentaudioPlayer.duration <= 0) {
       const onMetadata = () => {
         startPlayback();
-        audioPlayer.removeEventListener("loadedmetadata", onMetadata);
+        currentaudioPlayer.removeEventListener("loadedmetadata", onMetadata);
       };
 
-      audioPlayer.addEventListener("loadedmetadata", onMetadata);
+      currentaudioPlayer.addEventListener("loadedmetadata", onMetadata);
     } else {
       startPlayback();
     }
   } else {
-    audioPlayer.pause();
+    currentaudioPlayer.pause();
     clearAllPlaybackTimers();
-    nextAudioPlayer.pause();
-    nextAudioPlayer.currentTime = 0;
-    nextAudioPlayer.src = "";
-    nextAudioPlayer.volume = 1;
+    incomingAudioPlayer.pause();
+    incomingAudioPlayer.currentTime = 0;
+    incomingAudioPlayer.src = "";
+    incomingAudioPlayer.volume = 1;
     isCrossfading = false;
     isPlaying = false;
     updatePlayerUI();
@@ -656,7 +632,7 @@ function bindPlayerControls() {
   
       if (duration > 0) {
         const newTime = fragmentStart + Math.max(0, Math.min(duration, ratio * duration));
-        audioPlayer.currentTime = newTime;
+        currentaudioPlayer.currentTime = newTime;
         updatePlayerUI();
   
         if (isPlaying) {
@@ -674,7 +650,7 @@ function bindPlayerControls() {
 
   if (nextBtn) {
     nextBtn.onclick = () => {
-      playNextTrack(isPlaying || !audioPlayer.paused);
+      playNextTrack(isPlaying || !currentaudioPlayer.paused);
     };
   }
 
@@ -860,10 +836,10 @@ function renderTimeline() {
           const onMetadata = () => {
             setFragmentForCurrentTrack("manual");
             updatePlayerUI();
-            audioPlayer.removeEventListener("loadedmetadata", onMetadata);
+            currentaudioPlayer.removeEventListener("loadedmetadata", onMetadata);
           };
           
-          audioPlayer.addEventListener("loadedmetadata", onMetadata);
+          currentaudioPlayer.addEventListener("loadedmetadata", onMetadata);
         }
       }
     };
@@ -1022,21 +998,21 @@ function showError(message) {
   detailEl.innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
 }
 
-audioPlayer.addEventListener("timeupdate", () => {
+currentaudioPlayer.addEventListener("timeupdate", () => {
   updatePlayerUI();
 });
 
-audioPlayer.addEventListener("loadedmetadata", () => {
+currentaudioPlayer.addEventListener("loadedmetadata", () => {
   updatePlayerUI();
 });
 
-audioPlayer.addEventListener("play", () => {
+currentaudioPlayer.addEventListener("play", () => {
   isPlaying = true;
-  audioPlayer.volume = 1;
+  currentaudioPlayer.volume = 1;
   updatePlayerUI();
 });
 
-audioPlayer.addEventListener("pause", () => {
+currentaudioPlayer.addEventListener("pause", () => {
   clearAllPlaybackTimers();
 
   if (!isCrossfading) {
