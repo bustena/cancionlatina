@@ -434,15 +434,21 @@ function startCrossfadeToNextTrack() {
             currentAudioPlayer = incomingAudioPlayer;
             incomingAudioPlayer = null;
 
-            // 🔹 actualizar estado
             activeIndex = candidateIndex;
             loadedTrackIndex = candidateIndex;
             fragmentStart = start;
             fragmentDuration = fragDuration;
-
+            
             attachCurrentPlayerListeners();
-
+            
             isCrossfading = false;
+            
+            // refrescar interfaz completa
+            renderTimeline();
+            renderDetail(items[activeIndex]);
+            
+            // mantener estado visual correcto
+            isPlaying = true;
             updatePlayerUI();
             scheduleFragmentEnd();
           }
