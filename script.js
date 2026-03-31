@@ -571,16 +571,33 @@ function togglePlayPause() {
   }
 
   if (audioPlayer.paused) {
-    audioPlayer.play()
-      .then(() => {
-        isPlaying = true;
-        updatePlayerUI();
-        scheduleFragmentEnd();
-      })
-      .catch(() => {
-        isPlaying = false;
-        updatePlayerUI();
-      });
+    const startPlayback = () => {
+      if (!fragmentDuration || fragmentDuration <= 0) {
+        setFragmentForCurrentTrack("manual");
+      }
+
+      audioPlayer.play()
+        .then(() => {
+          isPlaying = true;
+          updatePlayerUI();
+          scheduleFragmentEnd();
+        })
+        .catch(() => {
+          isPlaying = false;
+          updatePlayerUI();
+        });
+    };
+
+    if (!Number.isFinite(audioPlayer.duration) || audioPlayer.duration <= 0) {
+      const onMetadata = () => {
+        startPlayback();
+        audioPlayer.removeEventListener("loadedmetadata", onMetadata);
+      };
+
+      audioPlayer.addEventListener("loadedmetadata", onMetadata);
+    } else {
+      startPlayback();
+    }
   } else {
     audioPlayer.pause();
     clearAllPlaybackTimers();
@@ -822,7 +839,14 @@ function renderTimeline() {
     
         if (items[activeIndex] && items[activeIndex].audio) {
           loadTrack(activeIndex);
-          updatePlayerUI();
+          
+          const onMetadata = () => {
+            setFragmentForCurrentTrack("manual");
+            updatePlayerUI();
+            audioPlayer.removeEventListener("loadedmetadata", onMetadata);
+          };
+          
+          audioPlayer.addEventListener("loadedmetadata", onMetadata);
         }
       }
     };
