@@ -187,36 +187,18 @@ function getFragmentDataForDuration(duration, mode = "manual") {
 }
 
 function scheduleFragmentEnd() {
-  clearFragmentTimer();
-  clearCrossfadeTimer();
+  const timeToEnd = (fragmentStart + fragmentDuration) - currentAudioPlayer.currentTime;
 
-  if (!isPlaying || isCrossfading) return;
+  // 🔹 PRELOAD justo antes del crossfade
+  const preloadTime = fragmentDuration - CROSSFADE_DURATION - 1;
 
-  const fragmentEndTime = fragmentStart + fragmentDuration;
-  const remainingMs = Math.max(0, (fragmentEndTime - currentAudioPlayer.currentTime) * 1000);
-
-  if (remainingMs <= 0) {
-    playNextTrack(true, "auto");
-    return;
+  if (preloadTime > 0) {
+    setTimeout(preloadNextTrack, preloadTime * 1000);
   }
 
-  if (fragmentDuration <= CROSSFADE_SECONDS) {
-    fragmentTimer = setTimeout(() => {
-      playNextTrack(true, "auto");
-    }, remainingMs);
-    return;
-  }
-
-  const crossfadeStartMs = Math.max(0, remainingMs - CROSSFADE_SECONDS * 1000);
-
-  if (crossfadeStartMs === 0) {
+  fragmentEndTimeout = setTimeout(() => {
     startCrossfadeToNextTrack();
-    return;
-  }
-
-  crossfadeTimer = setTimeout(() => {
-    startCrossfadeToNextTrack();
-  }, crossfadeStartMs);
+  }, timeToEnd * 1000);
 }
 
 function loadTrack(index) {
@@ -248,9 +230,9 @@ function goToTrack(newIndex, autoplay = false, mode = "manual") {
   incomingAudioPlayer.src = "";
   incomingAudioPlayer.volume = 1;
 
-  nextTrackIndex = null;
-  nextFragmentStart = 0;
-  nextFragmentDuration = 0;
+  let nextTrackIndex = null;
+  let nextFragmentStart = 0;
+  let nextFragmentDuration = 0;
 
   activeIndex = newIndex;
   currentPlaybackMode = mode;
@@ -343,6 +325,14 @@ function getNextTrackIndexFromIndex(baseIndex) {
   return items.indexOf(filteredItems[nextFilteredIndex]);
 }
 
+function preloadNextTrack() {
+  const nextIndex = getNextTrackIndex();
+  if (nextIndex === null) return;
+
+  const audio = new Audio(trackList[nextIndex].url);
+  audio.preload = "auto";
+}
+
 function playNextTrack(autoplay = true, mode = "auto") {
   const nextIndex = getNextTrackIndex();
   if (nextIndex === null) {
@@ -418,59 +408,58 @@ function startCrossfadeToNextTrack() {
 
     incomingAudioPlayer.currentTime = start;
 
-    incomingAudioPlayer.play().then(() => {
-      const startTime = performance.now();
-      const fadeDuration = CROSSFADE_SECONDS * 1000;
-
-      crossfadeInterval = setInterval(() => {
-        const elapsed = performance.now() - startTime;
-        const progress = Math.min(1, elapsed / fadeDuration);
-
-        currentAudioPlayer.volume = 1 - progress;
-        incomingAudioPlayer.volume = progress;
-
-        if (progress >= 1) {
-          clearCrossfadeInterval();
-
-          // 🔁 SWAP REAL
-          detachCurrentPlayerListeners();
-          
-          const oldPlayer = currentAudioPlayer;
-          currentAudioPlayer = incomingAudioPlayer;
-          incomingAudioPlayer = oldPlayer;
-          
-          attachCurrentPlayerListeners();
-          
-          // actualizar estado
-          activeIndex = candidateIndex;
-          loadedTrackIndex = candidateIndex;
-          fragmentStart = start;
-          fragmentDuration = fragDuration;
-
-          // limpiar el viejo
-          incomingAudioPlayer.pause();
-          incomingAudioPlayer.currentTime = 0;
-          incomingAudioPlayer.src = "";
-          incomingAudioPlayer.volume = 1;
-
-          isCrossfading = false;
-          isPlaying = true;
-
-          renderTimeline();
-          renderDetail(items[activeIndex]);
-          updatePlayerUI();
-
-          scheduleFragmentEnd();
-        }
-      }, 50);
-    });
+    incomingAudioPlayer.play()
+      .then(() => {
+        console.log("Crossfade started");
+    
+        const fadeSteps = 20;
+        const fadeInterval = (CROSSFADE_DURATION * 1000) / fadeSteps;
+        let currentStep = 0;
+    
+        crossfadeInterval = setInterval(() => {
+          currentStep++;
+          const progress = currentStep / fadeSteps;
+    
+          currentAudioPlayer.volume = Math.max(0, 1 - progress);
+          incomingAudioPlayer.volume = Math.min(1, progress);
+    
+          if (currentStep >= fadeSteps) {
+            clearInterval(crossfadeInterval);
+            finishCrossfade();
+          }
+        }, fadeInterval);
+      })
+      .catch((err) => {
+        console.error("Crossfade failed:", err);
+    
+        // fallback limpio
+        isCrossfading = false;
+        clearInterval(crossfadeInterval);
+    
+        // seguimos con el actual
+        scheduleNextTrack(); 
+      });
 
     incomingAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
   };
 
-  incomingAudioPlayer.addEventListener("loadedmetadata", onMetadata);
+  incomingAudioPlayer.addEventListener("canplay", () => {ener("loadedmetadata", onMetadata);
 }
 
+function finishCrossfade() {
+  currentAudioPlayer.pause();
+  currentAudioPlayer.volume = 1;
+
+  currentAudioPlayer = incomingAudioPlayer;
+  incomingAudioPlayer = null;
+
+  attachCurrentPlayerListeners();
+
+  isCrossfading = false;
+
+  scheduleNextTrack();
+}
+  
 function updatePlayerUI() {
   const playBtn = detailEl.querySelector(".play-btn");
   const shuffleBtn = detailEl.querySelector(".shuffle-btn");
@@ -1001,13 +990,30 @@ function attachCurrentPlayerListeners() {
   currentAudioPlayer.addEventListener("loadedmetadata", handleCurrentPlayerLoadedMetadata);
   currentAudioPlayer.addEventListener("play", handleCurrentPlayerPlay);
   currentAudioPlayer.addEventListener("pause", handleCurrentPlayerPause);
+  currentAudioPlayer.addEventListener("ended", handleEnded);
+  currentAudioPlayer.addEventListener("error", handleError);
 }
 
+function handleEnded() {
+  if (!isCrossfading) {
+    startCrossfadeToNextTrack();
+  }
+}
+
+function handleError() {
+  console.warn("Playback error, skipping track");
+  if (!isCrossfading) {
+    startCrossfadeToNextTrack();
+  }
+}
+  
 function detachCurrentPlayerListeners() {
   currentAudioPlayer.removeEventListener("timeupdate", handleCurrentPlayerTimeUpdate);
   currentAudioPlayer.removeEventListener("loadedmetadata", handleCurrentPlayerLoadedMetadata);
   currentAudioPlayer.removeEventListener("play", handleCurrentPlayerPlay);
   currentAudioPlayer.removeEventListener("pause", handleCurrentPlayerPause);
+  currentAudioPlayer.removeEventListener("ended", handleEnded);
+  currentAudioPlayer.removeEventListener("error", handleError);
 }
 
 function loadCSV() {
