@@ -21,6 +21,17 @@ let fragmentDuration = 0;
 let fragmentTimer = null;
 let currentPlaybackMode = "manual"; // "manual" | "auto"
 
+const CROSSFADE_SECONDS = 4;
+const nextAudioPlayer = new Audio();
+
+let crossfadeTimer = null;
+let crossfadeInterval = null;
+let isCrossfading = false;
+
+let nextTrackIndex = null;
+let nextFragmentStart = 0;
+let nextFragmentDuration = 0;
+
 function normalizeHeader(header) {
   return header
     .trim()
@@ -120,6 +131,26 @@ function clearFragmentTimer() {
   }
 }
 
+function clearCrossfadeTimer() {
+  if (crossfadeTimer) {
+    clearTimeout(crossfadeTimer);
+    crossfadeTimer = null;
+  }
+}
+
+function clearCrossfadeInterval() {
+  if (crossfadeInterval) {
+    clearInterval(crossfadeInterval);
+    crossfadeInterval = null;
+  }
+}
+
+function clearAllPlaybackTimers() {
+  clearFragmentTimer();
+  clearCrossfadeTimer();
+  clearCrossfadeInterval();
+}
+
 function getTrackDuration() {
   return Number.isFinite(audioPlayer.duration) ? audioPlayer.duration : 0;
 }
@@ -150,17 +181,47 @@ function setFragmentForCurrentTrack(mode = "manual") {
   updatePlayerUI();
 }
 
+function getFragmentDataForDuration(duration, mode = "manual") {
+  const start = chooseFragmentStart(duration, mode);
+  const durationValue = Math.min(MAX_FRAGMENT_SECONDS, Math.max(0, duration - start));
+
+  return {
+    start,
+    duration: durationValue
+  };
+}
+
 function scheduleFragmentEnd() {
   clearFragmentTimer();
+  clearCrossfadeTimer();
 
-  if (!isPlaying) return;
+  if (!isPlaying || isCrossfading) return;
 
-  const remaining = Math.max(0, (fragmentStart + fragmentDuration - audioPlayer.currentTime) * 1000);
+  const fragmentEndTime = fragmentStart + fragmentDuration;
+  const remainingMs = Math.max(0, (fragmentEndTime - audioPlayer.currentTime) * 1000);
 
-  fragmentTimer = setTimeout(() => {
-    isPlaying = false;
+  if (remainingMs <= 0) {
     playNextTrack(true, "auto");
-  }, remaining);
+    return;
+  }
+
+  if (fragmentDuration <= CROSSFADE_SECONDS) {
+    fragmentTimer = setTimeout(() => {
+      playNextTrack(true, "auto");
+    }, remainingMs);
+    return;
+  }
+
+  const crossfadeStartMs = Math.max(0, remainingMs - CROSSFADE_SECONDS * 1000);
+
+  if (crossfadeStartMs === 0) {
+    startCrossfadeToNextTrack();
+    return;
+  }
+
+  crossfadeTimer = setTimeout(() => {
+    startCrossfadeToNextTrack();
+  }, crossfadeStartMs);
 }
 
 function loadTrack(index) {
@@ -183,7 +244,17 @@ function goToTrack(newIndex, autoplay = false, mode = "manual") {
   if (newIndex < 0 || newIndex >= items.length) return;
   if (!items[newIndex] || !items[newIndex].audio) return;
 
-  clearFragmentTimer();
+  clearAllPlaybackTimers();
+  isCrossfading = false;
+
+  nextAudioPlayer.pause();
+  nextAudioPlayer.currentTime = 0;
+  nextAudioPlayer.src = "";
+  nextAudioPlayer.volume = 1;
+
+  nextTrackIndex = null;
+  nextFragmentStart = 0;
+  nextFragmentDuration = 0;
 
   activeIndex = newIndex;
   currentPlaybackMode = mode;
@@ -201,6 +272,7 @@ function goToTrack(newIndex, autoplay = false, mode = "manual") {
       audioPlayer.play()
         .then(() => {
           isPlaying = true;
+          audioPlayer.volume = 1;
           updatePlayerUI();
           scheduleFragmentEnd();
         })
@@ -220,31 +292,7 @@ function goToTrack(newIndex, autoplay = false, mode = "manual") {
 }
 
 function getNextTrackIndex() {
-  const filteredItems = getFilteredItems().filter(item => item.audio);
-  if (filteredItems.length <= 1) return null;
-
-  const currentItem = items[activeIndex];
-  const currentFilteredIndex = filteredItems.indexOf(currentItem);
-
-  if (currentFilteredIndex === -1) {
-    return items.indexOf(filteredItems[0]);
-  }
-
-  if (isShuffle) {
-    const candidates = filteredItems.filter(item => item !== currentItem);
-    if (!candidates.length) return null;
-
-    const randomItem = candidates[Math.floor(Math.random() * candidates.length)];
-    return items.indexOf(randomItem);
-  }
-
-  const nextFilteredIndex = currentFilteredIndex + 1;
-
-  if (nextFilteredIndex >= filteredItems.length) {
-    return null;
-  }
-
-  return items.indexOf(filteredItems[nextFilteredIndex]);
+  return getNextTrackIndexFromIndex(activeIndex);
 }
 
 function getPreviousTrackIndex() {
@@ -271,10 +319,38 @@ function getPreviousTrackIndex() {
   return items.indexOf(filteredItems[previousFilteredIndex]);
 }
 
+function getNextTrackIndexFromIndex(baseIndex) {
+  const filteredItems = getFilteredItems().filter(item => item.audio);
+  if (filteredItems.length <= 1) return null;
+
+  const baseItem = items[baseIndex];
+  const currentFilteredIndex = filteredItems.indexOf(baseItem);
+
+  if (currentFilteredIndex === -1) {
+    return items.indexOf(filteredItems[0]);
+  }
+
+  if (isShuffle) {
+    const candidates = filteredItems.filter(item => item !== baseItem);
+    if (!candidates.length) return null;
+
+    const randomItem = candidates[Math.floor(Math.random() * candidates.length)];
+    return items.indexOf(randomItem);
+  }
+
+  const nextFilteredIndex = currentFilteredIndex + 1;
+
+  if (nextFilteredIndex >= filteredItems.length) {
+    return null;
+  }
+
+  return items.indexOf(filteredItems[nextFilteredIndex]);
+}
+
 function playNextTrack(autoplay = true, mode = "auto") {
   const nextIndex = getNextTrackIndex();
   if (nextIndex === null) {
-    clearFragmentTimer();
+    clearAllPlaybackTimers();
     isPlaying = false;
     updatePlayerUI();
     return;
@@ -312,6 +388,120 @@ function playPreviousTrack(autoplay = true) {
   }
 
   goToTrack(previousIndex, autoplay, "manual");
+}
+
+function prepareNextTrackForCrossfade() {
+  const candidateIndex = getNextTrackIndexFromIndex(activeIndex);
+  if (candidateIndex === null) return false;
+
+  const item = items[candidateIndex];
+  if (!item || !item.audio) return false;
+
+  nextTrackIndex = candidateIndex;
+  nextAudioPlayer.src = item.audio;
+  nextAudioPlayer.volume = 0;
+
+  const onMetadata = () => {
+    const duration = Number.isFinite(nextAudioPlayer.duration) ? nextAudioPlayer.duration : 0;
+    const fragmentData = getFragmentDataForDuration(duration, "auto");
+
+    nextFragmentStart = fragmentData.start;
+    nextFragmentDuration = fragmentData.duration;
+
+    nextAudioPlayer.currentTime = nextFragmentStart;
+    nextAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
+  };
+
+  nextAudioPlayer.addEventListener("loadedmetadata", onMetadata);
+  return true;
+}
+
+function startCrossfadeToNextTrack() {
+  if (isCrossfading) return;
+
+  const prepared = prepareNextTrackForCrossfade();
+  if (!prepared) {
+    clearAllPlaybackTimers();
+    isPlaying = false;
+    updatePlayerUI();
+    return;
+  }
+
+  isCrossfading = true;
+
+  const startFade = () => {
+    nextAudioPlayer.currentTime = nextFragmentStart;
+    nextAudioPlayer.volume = 0;
+
+    nextAudioPlayer.play()
+      .then(() => {
+        const fadeStartTime = performance.now();
+        const fadeDurationMs = CROSSFADE_SECONDS * 1000;
+
+        clearCrossfadeInterval();
+
+        crossfadeInterval = setInterval(() => {
+          const elapsed = performance.now() - fadeStartTime;
+          const progress = Math.min(1, elapsed / fadeDurationMs);
+
+          audioPlayer.volume = 1 - progress;
+          nextAudioPlayer.volume = progress;
+
+          if (progress >= 1) {
+            clearCrossfadeInterval();
+
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            audioPlayer.volume = 1;
+
+            audioPlayer.src = nextAudioPlayer.src;
+            loadedTrackIndex = nextTrackIndex;
+            fragmentStart = nextFragmentStart;
+            fragmentDuration = nextFragmentDuration;
+            activeIndex = nextTrackIndex;
+
+            audioPlayer.currentTime = nextFragmentStart;
+            audioPlayer.volume = 1;
+
+            nextAudioPlayer.pause();
+            nextAudioPlayer.currentTime = 0;
+            nextAudioPlayer.src = "";
+            nextAudioPlayer.volume = 1;
+
+            nextTrackIndex = null;
+            nextFragmentStart = 0;
+            nextFragmentDuration = 0;
+
+            isCrossfading = false;
+            isPlaying = true;
+
+            renderTimeline();
+            renderDetail(items[activeIndex]);
+            updatePlayerUI();
+            scheduleFragmentEnd();
+          }
+        }, 50);
+      })
+      .catch(() => {
+        isCrossfading = false;
+        isPlaying = false;
+        updatePlayerUI();
+      });
+  };
+
+  if (Number.isFinite(nextAudioPlayer.duration) && nextAudioPlayer.duration > 0) {
+    const fragmentData = getFragmentDataForDuration(nextAudioPlayer.duration, "auto");
+    nextFragmentStart = fragmentData.start;
+    nextFragmentDuration = fragmentData.duration;
+    startFade();
+  } else {
+    const onReady = () => {
+      startFade();
+      nextAudioPlayer.removeEventListener("loadedmetadata", onReady);
+    };
+
+    nextAudioPlayer.addEventListener("loadedmetadata", onReady);
+  }
 }
 
 function updatePlayerUI() {
@@ -697,37 +887,37 @@ function renderDetail(item) {
           }
 
           <div class="player">
-<div class="controls">
-  <button type="button" class="control-btn prev-btn" aria-label="Anterior">
-    <svg viewBox="0 0 24 24" class="icon">
-      <path d="M6 5v14M18 6l-8 6 8 6z" fill="currentColor"/>
-    </svg>
-  </button>
-
-    <button type="button" class="control-btn play-btn" aria-label="Reproducir" title="Reproducir">
-      <svg viewBox="0 0 24 24" class="icon play-symbol icon-play" aria-hidden="true">
-        <path d="M8 5v14l11-7z" fill="currentColor"/>
-      </svg>
-    
-      <svg viewBox="0 0 24 24" class="icon play-symbol icon-pause" aria-hidden="true">
-        <path d="M6 5h4v14H6zm8 0h4v14h-4z" fill="currentColor"/>
-      </svg>
-    </button>
-    
-      <button type="button" class="control-btn next-btn" aria-label="Siguiente">
-        <svg viewBox="0 0 24 24" class="icon">
-          <path d="M18 5v14M6 6l8 6-8 6z" fill="currentColor"/>
-        </svg>
-      </button>
-    
-      <button type="button" class="control-btn shuffle-btn" aria-label="Modo aleatorio" aria-pressed="false">
-        <svg viewBox="0 0 24 24" class="icon">
-          <path d="M4 7h3l5 5-5 5H4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M14 7h6v6" fill="none" stroke="currentColor" stroke-width="2"/>
-          <path d="M20 7l-6 6" fill="none" stroke="currentColor" stroke-width="2"/>
-        </svg>
-      </button>
-    </div>
+          <div class="controls">
+            <button type="button" class="control-btn prev-btn" aria-label="Anterior">
+              <svg viewBox="0 0 24 24" class="icon">
+                <path d="M6 5v14M18 6l-8 6 8 6z" fill="currentColor"/>
+              </svg>
+            </button>
+          
+              <button type="button" class="control-btn play-btn" aria-label="Reproducir" title="Reproducir">
+                <svg viewBox="0 0 24 24" class="icon play-symbol icon-play" aria-hidden="true">
+                  <path d="M8 5v14l11-7z" fill="currentColor"/>
+                </svg>
+              
+                <svg viewBox="0 0 24 24" class="icon play-symbol icon-pause" aria-hidden="true">
+                  <path d="M6 5h4v14H6zm8 0h4v14h-4z" fill="currentColor"/>
+                </svg>
+              </button>
+              
+                <button type="button" class="control-btn next-btn" aria-label="Siguiente">
+                  <svg viewBox="0 0 24 24" class="icon">
+                    <path d="M18 5v14M6 6l8 6-8 6z" fill="currentColor"/>
+                  </svg>
+                </button>
+              
+                <button type="button" class="control-btn shuffle-btn" aria-label="Modo aleatorio" aria-pressed="false">
+                  <svg viewBox="0 0 24 24" class="icon">
+                    <path d="M4 7h3l5 5-5 5H4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M14 7h6v6" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="M20 7l-6 6" fill="none" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                </button>
+              </div>
 
             <div class="progress-wrap">
               <div class="progress-bar" role="progressbar" aria-label="Progreso de reproducción" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
