@@ -583,7 +583,12 @@ function togglePlayPause() {
       });
   } else {
     audioPlayer.pause();
-    clearFragmentTimer();
+    clearAllPlaybackTimers();
+    nextAudioPlayer.pause();
+    nextAudioPlayer.currentTime = 0;
+    nextAudioPlayer.src = "";
+    nextAudioPlayer.volume = 1;
+    isCrossfading = false;
     isPlaying = false;
     updatePlayerUI();
   }
@@ -986,11 +991,17 @@ audioPlayer.addEventListener("loadedmetadata", () => {
 
 audioPlayer.addEventListener("play", () => {
   isPlaying = true;
+  audioPlayer.volume = 1;
   updatePlayerUI();
 });
 
 audioPlayer.addEventListener("pause", () => {
-  isPlaying = false;
+  clearAllPlaybackTimers();
+
+  if (!isCrossfading) {
+    isPlaying = false;
+  }
+
   updatePlayerUI();
 });
 
