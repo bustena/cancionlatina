@@ -286,6 +286,7 @@ body {
 .home-media {
   background: var(--app-accent, #8b6a43);
   color: #ffffff;
+
   display: flex;
   align-items: center;
   justify-content: center;
