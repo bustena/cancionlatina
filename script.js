@@ -1141,7 +1141,7 @@ function renderHome() {
             </div>
           </div>
         
-          <p class="home-note">
+          <p class="home-note" id="homeNote">
             También puedes entrar desde la línea de tiempo de la izquierda.
           </p>
         </div>
@@ -1155,6 +1155,7 @@ function renderHome() {
     randomBtn.onclick = () => {
       startRandomTrack();
     };
+    updateHomeNoteText();
   }
 
   detailEl.querySelectorAll("[data-home-action]").forEach(button => {
@@ -1267,6 +1268,16 @@ function renderCurrentDetail() {
   renderDetail(items[activeIndex]);
 }
 
+function updateHomeNoteText() {
+  const el = document.getElementById("homeNote");
+  if (!el) return;
+
+  if (window.innerWidth <= 980) {
+    el.textContent = "También puedes entrar desde la línea de tiempo de arriba.";
+  } else {
+    el.textContent = "También puedes entrar desde la línea de tiempo de la izquierda.";
+  }
+}
 function showLoading() {
   detailEl.classList.remove("empty");
   detailEl.innerHTML = `<div class="loading">Cargando datos…</div>`;
@@ -1410,6 +1421,7 @@ function loadCSV() {
 }
 
 attachCurrentPlayerListeners();
+window.addEventListener("resize", updateHomeNoteText);
 loadHomeCSV().then(() => {
   loadCSV();
 });
