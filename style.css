@@ -563,31 +563,30 @@ body {
   text-align: center;
 }
 
-/* BOTÓN (estado cerrado) */
-.spotify-slot.is-collapsed {
-  background: transparent;
-  border: 0;
-}
-
+/* BOTÓN como etiqueta */
 .spotify-slot-trigger {
-  display: inline-block;
-  padding: 7px 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
   border-radius: 999px;
-  border: 1px solid #1db954;
-  background: #1db954;
-  color: #ffffff;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  color: #2f3440;
   font: inherit;
   font-size: 0.78rem;
   font-weight: 600;
   line-height: 1;
   cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
   transition: all 0.18s ease;
 }
 
 .spotify-slot-trigger:hover {
-  background: #17a74a;
-  border-color: #17a74a;
   transform: translateY(-1px);
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.18);
 }
 
 /* CONTENIDO */
