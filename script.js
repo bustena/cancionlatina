@@ -527,9 +527,8 @@ function startCrossfadeToNextTrack() {
   const item = items[candidateIndex];
   if (!item || !item.audio) return;
 
-  isCrossfading = true;
-
   incomingAudioPlayer = new Audio();
+  incomingAudioPlayer.preload = "auto";
   incomingAudioPlayer.src = item.audio;
   incomingAudioPlayer.volume = 0;
 
@@ -546,6 +545,8 @@ function startCrossfadeToNextTrack() {
 
     incomingAudioPlayer.play()
       .then(() => {
+        isCrossfading = true;
+
         const fadeSteps = 20;
         const fadeInterval = (CROSSFADE_SECONDS * 1000) / fadeSteps;
         let currentStep = 0;
@@ -560,7 +561,6 @@ function startCrossfadeToNextTrack() {
           if (currentStep >= fadeSteps) {
             clearCrossfadeInterval();
 
-            // 🔹 swap limpio
             detachCurrentPlayerListeners();
             currentAudioPlayer.pause();
             currentAudioPlayer.volume = 1;
@@ -572,16 +572,15 @@ function startCrossfadeToNextTrack() {
             loadedTrackIndex = candidateIndex;
             fragmentStart = start;
             fragmentDuration = fragDuration;
-            
+
             attachCurrentPlayerListeners();
-            
+
             isCrossfading = false;
-            
-            // refrescar interfaz completa
+
             renderTimeline();
             scrollActiveTimelineItemIntoView();
             renderDetail(items[activeIndex]);
-            // mantener estado visual correcto
+
             isPlaying = true;
             updatePlayerUI();
             scheduleFragmentEnd();
@@ -592,13 +591,34 @@ function startCrossfadeToNextTrack() {
         console.error("Crossfade failed:", err);
         isCrossfading = false;
         clearCrossfadeInterval();
+        if (incomingAudioPlayer) {
+          incomingAudioPlayer.pause();
+          incomingAudioPlayer.src = "";
+          incomingAudioPlayer = null;
+        }
         scheduleFragmentEnd();
       });
 
     incomingAudioPlayer.removeEventListener("canplay", onCanPlay);
+    incomingAudioPlayer.removeEventListener("error", onError);
+  };
+
+  const onError = () => {
+    console.error("Incoming track could not load");
+    isCrossfading = false;
+    if (incomingAudioPlayer) {
+      incomingAudioPlayer.pause();
+      incomingAudioPlayer.src = "";
+      incomingAudioPlayer = null;
+    }
+    scheduleFragmentEnd();
+    incomingAudioPlayer.removeEventListener("canplay", onCanPlay);
+    incomingAudioPlayer.removeEventListener("error", onError);
   };
 
   incomingAudioPlayer.addEventListener("canplay", onCanPlay);
+  incomingAudioPlayer.addEventListener("error", onError);
+  incomingAudioPlayer.load();
 }
   
 function updatePlayerUI() {
