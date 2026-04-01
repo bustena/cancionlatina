@@ -1352,7 +1352,16 @@ function loadHomeCSV() {
       complete: function (results) {
         if (results.data && results.data.length) {
           homeMeta = mapHomeRow(results.data[0]);
+
+          console.log("homeMeta:", homeMeta);
+          console.log("accent:", homeMeta?.destacado);
+
           applyHomeTheme();
+
+          console.log(
+            "css accent:",
+            getComputedStyle(document.documentElement).getPropertyValue("--app-accent")
+          );
         }
         resolve();
       },
