@@ -31,12 +31,6 @@ let incomingAudioPlayer = null;
 let crossfadeInterval = null;
 let isCrossfading = false;
 
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") {
-    reconcilePlaybackState();
-  }
-});
-
 function normalizeHeader(header) {
   return header
     .trim()
@@ -1457,6 +1451,12 @@ function reconcilePlaybackState() {
 
   updatePlayerUI();
 }
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    reconcilePlaybackState();
+  }
+});
 
 function loadHomeCSV() {
   return new Promise((resolve) => {
