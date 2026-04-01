@@ -84,8 +84,21 @@ function mapHomeRow(row) {
     titulo: normalized.titulo || "",
     subtitulo: normalized.subtitulo || "",
     icono: normalized.icono || "",
-    enlace: normalized.enlace || ""
+    enlace: normalized.enlace || "",
+    fondo: normalizeColor(normalized.fondo),
+    texto: normalizeColor(normalized.texto),
+    destacado: normalizeColor(normalized.destacado)
   };
+}
+
+function applyHomeTheme() {
+  const fondo = homeMeta?.fondo || "#efefef";
+  const texto = homeMeta?.texto || "#222222";
+  const destacado = homeMeta?.destacado || "#8b6a43";
+
+  document.documentElement.style.setProperty("--app-bg", fondo);
+  document.documentElement.style.setProperty("--app-text", texto);
+  document.documentElement.style.setProperty("--app-accent", destacado);
 }
 
 function getTopCountries(limit = 4) {
@@ -1328,6 +1341,7 @@ function loadHomeCSV() {
       complete: function (results) {
         if (results.data && results.data.length) {
           homeMeta = mapHomeRow(results.data[0]);
+          applyHomeTheme();
         }
         resolve();
       },
