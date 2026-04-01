@@ -833,21 +833,35 @@ function bindPlayerControls() {
       const ratio = (event.clientX - rect.left) / rect.width;
       const duration = fragmentDuration || Math.min(getTrackDuration(), MAX_FRAGMENT_SECONDS);
   
-      if (duration > 0) {
-        const newTime = fragmentStart + Math.max(0, Math.min(duration, ratio * duration));
-        currentAudioPlayer.currentTime = newTime;
-        updatePlayerUI();
-      
-        if (isPlaying) {
-          clearFragmentTimer();
-          clearPreloadTimer();
-      
-          const remaining = (fragmentStart + fragmentDuration) - newTime;
-      
-          // Si quedan muy pocos segundos, mejor dejar que termine natural
-          // y que actúe handleEnded(), evitando dobles saltos.
-          if (remaining > Math.max(CROSSFADE_SECONDS + 0.25, 1)) {
-            scheduleFragmentEnd();
+        if (duration > 0) {
+          const newTime = fragmentStart + Math.max(0, Math.min(duration, ratio * duration));
+          currentAudioPlayer.currentTime = newTime;
+          updatePlayerUI();
+        
+          if (isPlaying) {
+            clearFragmentTimer();
+            clearPreloadTimer();
+        
+            const fragmentEndTime = fragmentStart + fragmentDuration;
+            const remaining = fragmentEndTime - newTime;
+        
+            // Si estamos muy cerca del final, no programar crossfade
+            if (!shouldUseCrossfade() || remaining <= CROSSFADE_SECONDS + 0.25) {
+              fragmentTimer = setTimeout(() => {
+                const nextIndex = getNextTrackIndexFromIndex(activeIndex);
+        
+                if (nextIndex === null) {
+                  isPlaying = false;
+                  updatePlayerUI();
+                  return;
+                }
+        
+                goToTrack(nextIndex, true, "auto");
+              }, Math.max(0, remaining * 1000));
+        
+            } else {
+              scheduleFragmentEnd();
+            }
           }
         }
       }
