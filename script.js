@@ -170,6 +170,13 @@ function getTopGenres(limit = 4) {
     .map(entry => entry[0]);
 }
 
+function extractFlagEmoji(pais) {
+  if (!pais) return "";
+
+  const trimmed = pais.trim();
+  return trimmed.split(" ")[0];
+}
+
 function getRandomTrackIndex(sourceItems = items) {
   const playable = sourceItems
     .map(item => ({ item, index: items.indexOf(item) }))
@@ -1052,7 +1059,9 @@ function renderTimeline() {
     button.setAttribute("aria-label", `${item.ano} ${item.titulo} ${item.autor}`.trim());
 
     button.innerHTML = `
-      <span class="timeline-year">${escapeHtml(item.ano || "s. f.")}</span>
+      <span class="timeline-year">
+        ${item.ano} <span class="timeline-flag">${extractFlagEmoji(item.pais)}</span>
+      </span>
       <span class="timeline-title">${escapeHtml(item.titulo || "Sin título")}</span>
       <span class="timeline-author">${escapeHtml(item.autor || "")}</span>
     `;
