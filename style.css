@@ -558,6 +558,28 @@ body {
   width: 100%;
 }
 
+.spotify-block {
+  margin-top: 12px;
+}
+
+.spotify-tag {
+  background: #1db954;
+  color: #fff;
+  border-color: #1db954;
+  font-weight: 600;
+}
+
+.spotify-tag:hover {
+  background: #17a74a;
+  border-color: #17a74a;
+}
+
+.spotify-embed {
+  margin-top: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
 .content-column {
   padding: 30px 34px 32px;
   overflow-y: auto;
