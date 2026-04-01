@@ -70,6 +70,7 @@ function mapRow(row) {
     imagen: normalized.imagen || "",
     texto: normalized.texto || "",
     color: normalizeColor(normalized.color)
+    spotify: normalized.spotify || ""
   };
 }
 
@@ -283,6 +284,15 @@ function clearFragmentTimer() {
     clearTimeout(fragmentTimer);
     fragmentTimer = null;
   }
+}
+
+function getSpotifyEmbedUrl(url) {
+  if (!url) return "";
+
+  const match = url.match(/track\/([a-zA-Z0-9]+)/);
+  if (!match) return "";
+
+  return `https://open.spotify.com/embed/track/${match[1]}`;
 }
 
 function shouldUseCrossfade() {
@@ -1236,6 +1246,8 @@ function renderDetail(item) {
   const hasImage = Boolean(item.imagen);
   const countryTag = item.pais ? renderCountryTag(item.pais) : "";
   const genreTags = item.genero ? renderGenreTags(item.genero) : "";
+  const spotifyUrl = item.spotify ? item.spotify.trim() : "";
+  const spotifyEmbed = getSpotifyEmbedUrl(spotifyUrl);
 
   detailEl.classList.remove("empty");
   detailEl.innerHTML = `
@@ -1294,6 +1306,24 @@ function renderDetail(item) {
                 <span class="time-current">0:00</span>
               </div>
             </div>
+            ${spotifyUrl ? `
+            <div class="spotify-block">
+              <button class="tag spotify-tag" data-spotify-toggle>
+                Escuchar en Spotify
+              </button>
+              <div class="spotify-embed" style="display:none;">
+                <iframe
+                  src="${spotifyEmbed}"
+                  width="100%"
+                  height="80"
+                  frameborder="0"
+                  allow="encrypted-media"
+                  loading="lazy"
+                  style="border-radius:12px;">
+                </iframe>
+              </div>
+            </div>
+          ` : ""}
           </div>
         </div>
 
@@ -1313,6 +1343,21 @@ function renderDetail(item) {
 
 bindFilterTagEvents();
 bindPlayerControls();
+
+detailEl.querySelectorAll("[data-spotify-toggle]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const container = btn.nextElementSibling;
+    if (!container) return;
+
+    const isVisible = container.style.display === "block";
+    container.style.display = isVisible ? "none" : "block";
+
+    btn.textContent = isVisible
+      ? "Escuchar en Spotify"
+      : "Ocultar Spotify";
+  });
+});
+
 updatePlayerUI();
 }
 
