@@ -295,7 +295,7 @@ body {
 
 .home-content {
   background: #ffffff;
-  color: var(--app-text, var(--text));
+  color: var(--text);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -347,7 +347,7 @@ body {
   margin: 0;
   font-size: 1rem;
   font-weight: 700;
-  color: var(--app-text, var(--text));
+  color: var(--text);
 }
 
 .home-tags {
@@ -365,7 +365,7 @@ body {
   margin: 0.75rem 0 0;
   font-size: 0.98rem;
   line-height: 1.5;
-  color: var(--app-text, var(--muted));
+  color: var(--muted);
 }
 
 /* FICHA */
