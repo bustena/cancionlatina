@@ -258,6 +258,13 @@ function formatTime(seconds) {
   return `${mins}:${String(secs).padStart(2, "0")}`;
 }
 
+function clearPreloadTimer() {
+  if (preloadTimer) {
+    clearTimeout(preloadTimer);
+    preloadTimer = null;
+  }
+}
+
 function clearFragmentTimer() {
   if (fragmentTimer) {
     clearTimeout(fragmentTimer);
@@ -274,6 +281,7 @@ function clearCrossfadeInterval() {
 
 function clearAllPlaybackTimers() {
   clearFragmentTimer();
+  clearPreloadTimer();
   clearCrossfadeInterval();
 }
 
@@ -319,12 +327,13 @@ function getFragmentDataForDuration(duration, mode = "manual") {
 
 function scheduleFragmentEnd() {
   clearFragmentTimer();
+  clearPreloadTimer();
 
   const timeToEnd = (fragmentStart + fragmentDuration) - currentAudioPlayer.currentTime;
   const preloadTime = fragmentDuration - CROSSFADE_SECONDS - 1;
 
   if (preloadTime > 0) {
-    setTimeout(preloadNextTrack, preloadTime * 1000);
+    preloadTimer = setTimeout(preloadNextTrack, preloadTime * 1000);
   }
 
   fragmentTimer = setTimeout(() => {
@@ -574,16 +583,18 @@ function startCrossfadeToNextTrack() {
             fragmentDuration = fragDuration;
 
             attachCurrentPlayerListeners();
-
+            
             isCrossfading = false;
-
+            isPlaying = true;
+            
+            // programa primero el siguiente final de fragmento
+            scheduleFragmentEnd();
+            
+            // luego refresca interfaz
             renderTimeline();
             scrollActiveTimelineItemIntoView();
-            renderDetail(items[activeIndex]);
-
-            isPlaying = true;
+            renderCurrentDetail();
             updatePlayerUI();
-            scheduleFragmentEnd();
           }
         }, fadeInterval);
       })
@@ -1279,9 +1290,17 @@ function attachCurrentPlayerListeners() {
 }
 
 function handleEnded() {
-  if (!isCrossfading) {
-    startCrossfadeToNextTrack();
+  if (isCrossfading) return;
+
+  const nextIndex = getNextTrackIndexFromIndex(activeIndex);
+
+  if (nextIndex === null) {
+    isPlaying = false;
+    updatePlayerUI();
+    return;
   }
+
+  goToTrack(nextIndex, true, "auto");
 }
 
 function handleError() {
