@@ -69,7 +69,7 @@ function mapRow(row) {
     audio: normalized.audio || "",
     imagen: normalized.imagen || "",
     texto: normalized.texto || "",
-    color: normalizeColor(normalized.color)
+    color: normalizeColor(normalized.color),
     spotify: normalized.spotify || ""
   };
 }
