@@ -1307,24 +1307,14 @@ function renderDetail(item) {
                 <span class="time-current">0:00</span>
               </div>
             </div>
-            ${spotifyUrl ? `
-            <div class="spotify-block">
-              <button class="tag spotify-tag" data-spotify-toggle>
-                Escuchar en Spotify
-              </button>
-              <div class="spotify-embed" style="display:none;">
-                <iframe
-                  src="${spotifyEmbed}"
-                  width="100%"
-                  height="80"
-                  frameborder="0"
-                  allow="encrypted-media"
-                  loading="lazy"
-                  style="border-radius:12px;">
-                </iframe>
-              </div>
-            </div>
-          ` : ""}
+              ${spotifyUrl ? `
+                <div class="spotify-slot is-collapsed" data-spotify-slot data-spotify-embed="${escapeAttribute(spotifyEmbed)}">
+                  <button type="button" class="spotify-slot-trigger" data-spotify-toggle>
+                    Escuchar en Spotify
+                  </button>
+                  <div class="spotify-slot-content"></div>
+                </div>
+              ` : ""}
           </div>
         </div>
 
@@ -1345,17 +1335,37 @@ function renderDetail(item) {
 bindFilterTagEvents();
 bindPlayerControls();
 
-detailEl.querySelectorAll("[data-spotify-toggle]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const container = btn.nextElementSibling;
-    if (!container) return;
+detailEl.querySelectorAll("[data-spotify-slot]").forEach(slot => {
+  const trigger = slot.querySelector("[data-spotify-toggle]");
+  const content = slot.querySelector(".spotify-slot-content");
+  const embedUrl = slot.dataset.spotifyEmbed;
 
-    const isVisible = container.style.display === "block";
-    container.style.display = isVisible ? "none" : "block";
+  if (!trigger || !content || !embedUrl) return;
 
-    btn.textContent = isVisible
-      ? "Escuchar en Spotify"
-      : "Ocultar Spotify";
+  trigger.addEventListener("click", () => {
+    const isOpen = slot.classList.contains("is-open");
+
+    if (isOpen) {
+      slot.classList.remove("is-open");
+      slot.classList.add("is-collapsed");
+      content.innerHTML = "";
+      return;
+    }
+
+    slot.classList.remove("is-collapsed");
+    slot.classList.add("is-open");
+
+    content.innerHTML = `
+      <iframe
+        src="${embedUrl}"
+        width="100%"
+        height="80"
+        frameborder="0"
+        allow="encrypted-media"
+        loading="lazy"
+        style="border-radius:12px;">
+      </iframe>
+    `;
   });
 });
 
