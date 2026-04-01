@@ -348,14 +348,14 @@ function scheduleFragmentEnd() {
   const timeUntilCrossfade = fragmentEndTime - CROSSFADE_SECONDS - currentTime;
   const preloadTime = fragmentDuration - CROSSFADE_SECONDS - 1;
 
-  if (preloadTime > 0) {
+  if (preloadTime > 0 && timeUntilCrossfade > 0) {
     preloadTimer = setTimeout(() => {
       preloadNextTrack();
-    }, preloadTime * 1000);
+    }, Math.max(0, preloadTime * 1000));
   }
 
-  // Solo programamos crossfade si hay margen real para hacerlo antes del final
-  if (fragmentDuration > CROSSFADE_SECONDS && timeUntilCrossfade > 0) {
+  // Solo programar crossfade si todavía no estamos pegados al final
+  if (fragmentDuration > CROSSFADE_SECONDS && timeUntilCrossfade > 0.25) {
     fragmentTimer = setTimeout(() => {
       startCrossfadeToNextTrack();
     }, timeUntilCrossfade * 1000);
@@ -793,9 +793,18 @@ function bindPlayerControls() {
         const newTime = fragmentStart + Math.max(0, Math.min(duration, ratio * duration));
         currentAudioPlayer.currentTime = newTime;
         updatePlayerUI();
-  
+      
         if (isPlaying) {
-          scheduleFragmentEnd();
+          clearFragmentTimer();
+          clearPreloadTimer();
+      
+          const remaining = (fragmentStart + fragmentDuration) - newTime;
+      
+          // Si quedan muy pocos segundos, mejor dejar que termine natural
+          // y que actúe handleEnded(), evitando dobles saltos.
+          if (remaining > Math.max(CROSSFADE_SECONDS + 0.25, 1)) {
+            scheduleFragmentEnd();
+          }
         }
       }
     };
