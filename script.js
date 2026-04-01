@@ -1,8 +1,12 @@
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSJM_fPxtlc5UEyNf0DHLNg5B4tGIm8Qbba3k78kbQDRj9a9jGpSDRHwz_UOgAz4jbpcRJKHEUe1eNY/pub?gid=0&single=true&output=csv";
+const HOME_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSJM_fPxtlc5UEyNf0DHLNg5B4tGIm8Qbba3k78kbQDRj9a9jGpSDRHwz_UOgAz4jbpcRJKHEUe1eNY/pub?gid=1844389020&single=true&output=csv";
 
 const timelineEl = document.getElementById("timeline");
 const detailEl = document.getElementById("detail");
 const filterBarEl = document.getElementById("filterBar");
+
+let homeMeta = null;
+let isHomeView = true;
 
 let items = [];
 let activeIndex = 0;
@@ -67,6 +71,141 @@ function mapRow(row) {
     texto: normalized.texto || "",
     color: normalizeColor(normalized.color)
   };
+}
+
+function mapHomeRow(row) {
+  const normalized = {};
+
+  for (const key in row) {
+    normalized[normalizeHeader(key)] = String(row[key] || "").trim();
+  }
+
+  return {
+    titulo: normalized.titulo || "",
+    subtitulo: normalized.subtitulo || "",
+    icono: normalized.icono || "",
+    enlace: normalized.enlace || ""
+  };
+}
+
+function getTopCountries(limit = 4) {
+  const counts = new Map();
+
+  items.forEach(item => {
+    const country = String(item.pais || "").trim();
+    if (!country) return;
+
+    counts.set(country, (counts.get(country) || 0) + 1);
+  });
+
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(entry => entry[0]);
+}
+
+function getTopGenres(limit = 4) {
+  const counts = new Map();
+
+  items.forEach(item => {
+    parseGenres(item.genero).forEach(genre => {
+      const cleanGenre = String(genre || "").trim();
+      if (!cleanGenre) return;
+
+      counts.set(cleanGenre, (counts.get(cleanGenre) || 0) + 1);
+    });
+  });
+
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(entry => entry[0]);
+}
+
+function getTopCountries(limit = 4) {
+  const counts = new Map();
+
+  items.forEach(item => {
+    const country = String(item.pais || "").trim();
+    if (!country) return;
+
+    counts.set(country, (counts.get(country) || 0) + 1);
+  });
+
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(entry => entry[0]);
+}
+
+function getTopGenres(limit = 4) {
+  const counts = new Map();
+
+  items.forEach(item => {
+    parseGenres(item.genero).forEach(genre => {
+      const cleanGenre = String(genre || "").trim();
+      if (!cleanGenre) return;
+
+      counts.set(cleanGenre, (counts.get(cleanGenre) || 0) + 1);
+    });
+  });
+
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(entry => entry[0]);
+}
+
+function getRandomTrackIndex(sourceItems = items) {
+  const playable = sourceItems
+    .map(item => ({ item, index: items.indexOf(item) }))
+    .filter(entry => entry.item && entry.item.audio);
+
+  if (!playable.length) return null;
+
+  const randomEntry = playable[Math.floor(Math.random() * playable.length)];
+  return randomEntry.index;
+}
+
+function startRandomFromFilter(type, value) {
+  let filteredItems = [];
+
+  if (type === "pais") {
+    filteredItems = items.filter(item =>
+      normalizeFilterValue(item.pais) === normalizeFilterValue(value) && item.audio
+    );
+  }
+
+  if (type === "genero") {
+    filteredItems = items.filter(item =>
+      parseGenres(item.genero).some(genre =>
+        normalizeFilterValue(genre) === normalizeFilterValue(value)
+      ) && item.audio
+    );
+  }
+
+  if (!filteredItems.length) return;
+
+  activeFilter = {
+    type,
+    value: normalizeFilterValue(value),
+    label: String(value || "").trim()
+  };
+
+  const randomIndex = getRandomTrackIndex(filteredItems);
+  if (randomIndex === null) return;
+
+  isHomeView = false;
+  goToTrack(randomIndex, true, "auto");
+}
+
+function startRandomTrack() {
+  const randomIndex = getRandomTrackIndex(items);
+  if (randomIndex === null) return;
+
+  activeFilter = null;
+  isHomeView = false;
+  goToTrack(randomIndex, true, "auto");
 }
 
 function sortItems(data) {
@@ -793,23 +932,25 @@ function renderTimeline() {
 
     button.onclick = () => {
       const shouldAutoplay = isPlaying;
+      isHomeView = false;
     
       if (shouldAutoplay) {
         goToTrack(originalIndex, true, "manual");
       } else {
         activeIndex = originalIndex;
         renderTimeline();
+        scrollActiveTimelineItemIntoView();
         renderDetail(items[originalIndex]);
     
         if (items[activeIndex] && items[activeIndex].audio) {
           loadTrack(activeIndex);
-          
+    
           const onMetadata = () => {
             setFragmentForCurrentTrack("manual");
             updatePlayerUI();
             currentAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
           };
-          
+    
           currentAudioPlayer.addEventListener("loadedmetadata", onMetadata);
         }
       }
@@ -868,6 +1009,118 @@ function renderGenreTags(value) {
 
 function bindFilterTagEvents() {
   bindFilterTagEventsInDetail();
+}
+
+function renderHome() {
+  const meta = homeMeta || {
+    titulo: "Canción latina",
+    subtitulo: "Una cronología sonora para explorar obras, autores, países y géneros.",
+    icono: "",
+    enlace: ""
+  };
+
+  const topCountries = getTopCountries(4);
+  const topGenres = getTopGenres(4);
+
+  const countryButtons = topCountries.map(country => `
+    <button
+      type="button"
+      class="tag filter-tag home-tag home-country-tag"
+      data-home-action="pais"
+      data-home-value="${escapeAttribute(country)}"
+    >
+      ${escapeHtml(country)}
+    </button>
+  `).join("");
+
+  const genreButtons = topGenres.map(genre => `
+    <button
+      type="button"
+      class="tag filter-tag home-tag home-genre-tag"
+      data-home-action="genero"
+      data-home-value="${escapeAttribute(genre)}"
+    >
+      ${escapeHtml(genre)}
+    </button>
+  `).join("");
+
+  const iconHtml = meta.icono
+    ? (
+        meta.enlace
+          ? `<a href="${escapeAttribute(meta.enlace)}" target="_blank" rel="noopener noreferrer" class="home-logo-link">
+               <img src="${escapeAttribute(meta.icono)}" alt="${escapeHtml(meta.titulo || "Icono")}">
+             </a>`
+          : `<img src="${escapeAttribute(meta.icono)}" alt="${escapeHtml(meta.titulo || "Icono")}">`
+      )
+    : "";
+
+  detailEl.classList.remove("empty");
+  detailEl.innerHTML = `
+    <article class="card home-card">
+      <div class="card-inner">
+        <div class="media-column home-media">
+          <div class="home-branding">
+            ${iconHtml ? `<div class="home-logo">${iconHtml}</div>` : ""}
+            <h1 class="home-title">${escapeHtml(meta.titulo || "")}</h1>
+            <p class="home-subtitle">${escapeHtml(meta.subtitulo || "")}</p>
+          </div>
+        </div>
+
+        <div class="content-column home-content">
+          <div class="home-actions">
+            <button type="button" class="home-primary-btn" id="homeRandomButton">
+              Comenzar al azar
+            </button>
+
+            <button type="button" class="home-secondary-btn" id="homeFirstButton">
+              Empezar por la primera ficha
+            </button>
+          </div>
+
+          <div class="home-section">
+            <h3 class="home-section-title">Explorar por país</h3>
+            <div class="home-tags">
+              ${countryButtons}
+            </div>
+          </div>
+
+          <div class="home-section">
+            <h3 class="home-section-title">Explorar por género</h3>
+            <div class="home-tags">
+              ${genreButtons}
+            </div>
+          </div>
+
+          <p class="home-note">
+            También puedes entrar desde la línea de tiempo de la izquierda.
+          </p>
+        </div>
+      </div>
+    </article>
+  `;
+
+  const randomBtn = document.getElementById("homeRandomButton");
+  const firstBtn = document.getElementById("homeFirstButton");
+
+  if (randomBtn) {
+    randomBtn.onclick = () => {
+      startRandomTrack();
+    };
+  }
+
+  if (firstBtn) {
+    firstBtn.onclick = () => {
+      startFirstTrack();
+    };
+  }
+
+  detailEl.querySelectorAll("[data-home-action]").forEach(button => {
+    button.onclick = () => {
+      const type = button.dataset.homeAction;
+      const value = button.dataset.homeValue;
+      startRandomFromFilter(type, value);
+    };
+  });
 }
 
 function renderDetail(item) {
@@ -1036,6 +1289,25 @@ function detachCurrentPlayerListeners() {
   currentAudioPlayer.removeEventListener("error", handleError);
 }
 
+function loadHomeCSV() {
+  return new Promise((resolve) => {
+    Papa.parse(HOME_CSV_URL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function (results) {
+        if (results.data && results.data.length) {
+          homeMeta = mapHomeRow(results.data[0]);
+        }
+        resolve();
+      },
+      error: function () {
+        resolve();
+      }
+    });
+  });
+}
+
 function loadCSV() {
   showLoading();
 
@@ -1062,9 +1334,10 @@ function loadCSV() {
 
       activeFilter = null;
       activeIndex = 0;
+      isHomeView = true;
       renderTimeline();
       scrollActiveTimelineItemIntoView();
-      renderCurrentDetail();
+      renderHome();
     },
     error: function () {
       showError("No se ha podido leer el CSV de Google Sheets.");
@@ -1073,4 +1346,6 @@ function loadCSV() {
 }
 
 attachCurrentPlayerListeners();
-loadCSV();
+loadHomeCSV().then(() => {
+  loadCSV();
+});
