@@ -21,8 +21,8 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: var(--bg);
-  color: var(--text);
+  background: var(--app-bg, #efefef);
+  color: var(--app-text, #222222);
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -283,11 +283,12 @@ body {
 }
 
 .home-media {
-  background: linear-gradient(180deg, rgba(120, 80, 40, 0.95), rgba(120, 80, 40, 0.82));
+  background: linear-gradient(
+    180deg,
+    var(--app-accent, #8b6a43),
+    var(--app-accent, #8b6a43)
+  );
   color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .home-content {
