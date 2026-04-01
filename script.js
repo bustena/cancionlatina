@@ -285,6 +285,10 @@ function clearFragmentTimer() {
   }
 }
 
+function shouldUseCrossfade() {
+  return window.innerWidth > 980;
+}
+
 function clearCrossfadeInterval() {
   if (crossfadeInterval) {
     clearInterval(crossfadeInterval);
@@ -344,21 +348,47 @@ function scheduleFragmentEnd() {
 
   const fragmentEndTime = fragmentStart + fragmentDuration;
   const currentTime = currentAudioPlayer.currentTime;
+  const timeUntilEnd = fragmentEndTime - currentTime;
 
-  const timeUntilCrossfade = fragmentEndTime - CROSSFADE_SECONDS - currentTime;
-  const preloadTime = fragmentDuration - CROSSFADE_SECONDS - 1;
-
-  if (preloadTime > 0 && timeUntilCrossfade > 0) {
-    preloadTimer = setTimeout(() => {
-      preloadNextTrack();
-    }, Math.max(0, preloadTime * 1000));
+  if (timeUntilEnd <= 0) {
+    return;
   }
 
-  // Solo programar crossfade si todavía no estamos pegados al final
-  if (fragmentDuration > CROSSFADE_SECONDS && timeUntilCrossfade > 0.25) {
+  // En móvil no usamos crossfade: salto limpio al final
+  if (!shouldUseCrossfade()) {
+    fragmentTimer = setTimeout(() => {
+      const nextIndex = getNextTrackIndexFromIndex(activeIndex);
+
+      if (nextIndex === null) {
+        isPlaying = false;
+        updatePlayerUI();
+        return;
+      }
+
+      goToTrack(nextIndex, true, "auto");
+    }, timeUntilEnd * 1000);
+
+    return;
+  }
+
+  // En escritorio sí: lanzar el crossfade antes del final
+  const timeUntilCrossfade = timeUntilEnd - CROSSFADE_SECONDS;
+  const preloadDelay = timeUntilCrossfade - 1;
+
+  if (preloadDelay > 0) {
+    preloadTimer = setTimeout(() => {
+      preloadNextTrack();
+    }, preloadDelay * 1000);
+  }
+
+  // Si hay margen, hacemos crossfade
+  if (timeUntilCrossfade > 0.1) {
     fragmentTimer = setTimeout(() => {
       startCrossfadeToNextTrack();
     }, timeUntilCrossfade * 1000);
+  } else {
+    // Si ya estamos demasiado cerca del final, mejor dejar que ended resuelva
+    fragmentTimer = null;
   }
 }
 
@@ -545,6 +575,20 @@ function playPreviousTrack(autoplay = true) {
 
 function startCrossfadeToNextTrack() {
   if (isCrossfading) return;
+
+    if (!shouldUseCrossfade()) {
+    const nextIndex = getNextTrackIndexFromIndex(activeIndex);
+  
+    if (nextIndex === null) {
+      clearAllPlaybackTimers();
+      isPlaying = false;
+      updatePlayerUI();
+      return;
+    }
+  
+    goToTrack(nextIndex, true, "auto");
+    return;
+  }
 
   const candidateIndex = getNextTrackIndexFromIndex(activeIndex);
   if (candidateIndex === null) {
@@ -1333,9 +1377,6 @@ function attachCurrentPlayerListeners() {
 function handleEnded() {
   if (isCrossfading) return;
 
-  // Si ya hay una pista entrante preparada, no forzar otro salto
-  if (incomingAudioPlayer) return;
-
   const nextIndex = getNextTrackIndexFromIndex(activeIndex);
 
   if (nextIndex === null) {
@@ -1344,7 +1385,13 @@ function handleEnded() {
     return;
   }
 
-  goToTrack(nextIndex, true, "auto");
+  // En móvil, o si no queremos crossfade, salto limpio
+  if (!shouldUseCrossfade()) {
+    goToTrack(nextIndex, true, "auto");
+    return;
+  }
+
+  startCrossfadeToNextTrack();
 }
 
 function handleError() {
