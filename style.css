@@ -197,7 +197,8 @@ body {
 
 .timeline-item {
   position: relative;
-  padding: 0 0 20px 32px;
+  padding: 0 0 12px 32px;
+  margin-bottom: 8px;
   border-radius: 10px;
   background: color-mix(in srgb, var(--item-color, #b8ab95) 18%, transparent);
   transition: background-color 0.18s ease, color 0.18s ease;
