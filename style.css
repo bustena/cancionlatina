@@ -258,6 +258,12 @@ body {
   letter-spacing: -0.01em;
 }
 
+.timeline-flag {
+  margin-left: 6px;
+  font-size: 0.9em;
+  opacity: 0.9;
+}
+
 .timeline-title {
   display: block;
   font-size: 0.95rem;
