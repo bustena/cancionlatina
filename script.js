@@ -1056,7 +1056,7 @@ function renderHome() {
 
   detailEl.classList.remove("empty");
   detailEl.innerHTML = `
-    <article class="card home-card">
+    <article class="card home-card" style="--accent: #8b6a43;">
       <div class="card-inner">
         <div class="media-column home-media">
           <div class="home-branding">
@@ -1067,30 +1067,28 @@ function renderHome() {
         </div>
 
         <div class="content-column home-content">
-          <div class="home-actions">
-            <button type="button" class="home-primary-btn" id="homeRandomButton">
-              Comenzar al azar
-            </button>
-
-            <button type="button" class="home-secondary-btn" id="homeFirstButton">
-              Empezar por la primera ficha
-            </button>
-          </div>
-
           <div class="home-section">
             <h3 class="home-section-title">Explorar por país</h3>
             <div class="home-tags">
               ${countryButtons}
             </div>
           </div>
-
+        
           <div class="home-section">
             <h3 class="home-section-title">Explorar por género</h3>
             <div class="home-tags">
               ${genreButtons}
             </div>
           </div>
-
+        
+          <div class="home-section">
+            <div class="home-tags">
+              <button type="button" class="tag filter-tag home-tag" id="homeRandomButton">
+                Comenzar al azar
+              </button>
+            </div>
+          </div>
+        
           <p class="home-note">
             También puedes entrar desde la línea de tiempo de la izquierda.
           </p>
@@ -1100,17 +1098,10 @@ function renderHome() {
   `;
 
   const randomBtn = document.getElementById("homeRandomButton");
-  const firstBtn = document.getElementById("homeFirstButton");
 
   if (randomBtn) {
     randomBtn.onclick = () => {
       startRandomTrack();
-    };
-  }
-
-  if (firstBtn) {
-    firstBtn.onclick = () => {
-      startFirstTrack();
     };
   }
 
