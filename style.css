@@ -283,7 +283,7 @@ body {
   min-height: 100%;
 }
 
-.home-media {
+.media-column.home-media {
   background: var(--app-accent, #8b6a43);
   color: #ffffff;
 
@@ -291,10 +291,6 @@ body {
   align-items: center;
   justify-content: center;
   height: 100%;
-}
-
-.home-media {
-  background: red !important;
 }
 
 .home-content {
