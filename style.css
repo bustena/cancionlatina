@@ -293,6 +293,10 @@ body {
   height: 100%;
 }
 
+.home-media {
+  background: red !important;
+}
+
 .home-content {
   background: #ffffff;
   color: var(--app-text, var(--text));
