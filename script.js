@@ -31,6 +31,12 @@ let incomingAudioPlayer = null;
 let crossfadeInterval = null;
 let isCrossfading = false;
 
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    reconcilePlaybackState();
+  }
+});
+
 function normalizeHeader(header) {
   return header
     .trim()
@@ -1422,6 +1428,34 @@ function detachCurrentPlayerListeners() {
   currentAudioPlayer.removeEventListener("pause", handleCurrentPlayerPause);
   currentAudioPlayer.removeEventListener("ended", handleEnded);
   currentAudioPlayer.removeEventListener("error", handleError);
+}
+
+function reconcilePlaybackState() {
+  if (!currentAudioPlayer) return;
+
+  const fragmentEndTime = fragmentStart + fragmentDuration;
+  const currentTime = currentAudioPlayer.currentTime;
+
+  // Si ya hemos pasado el final del fragmento → forzar avance
+  if (currentTime >= fragmentEndTime - 0.1) {
+    const nextIndex = getNextTrackIndexFromIndex(activeIndex);
+
+    if (nextIndex === null) {
+      isPlaying = false;
+      updatePlayerUI();
+      return;
+    }
+
+    goToTrack(nextIndex, true, "auto");
+    return;
+  }
+
+  // Si no, reprogramar timers y refrescar UI
+  if (isPlaying) {
+    scheduleFragmentEnd();
+  }
+
+  updatePlayerUI();
 }
 
 function loadHomeCSV() {
