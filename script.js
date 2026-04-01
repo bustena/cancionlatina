@@ -832,42 +832,39 @@ function bindPlayerControls() {
       const rect = progressBar.getBoundingClientRect();
       const ratio = (event.clientX - rect.left) / rect.width;
       const duration = fragmentDuration || Math.min(getTrackDuration(), MAX_FRAGMENT_SECONDS);
-  
-        if (duration > 0) {
-          const newTime = fragmentStart + Math.max(0, Math.min(duration, ratio * duration));
-          currentAudioPlayer.currentTime = newTime;
-          updatePlayerUI();
-        
-          if (isPlaying) {
-            clearFragmentTimer();
-            clearPreloadTimer();
-        
-            const fragmentEndTime = fragmentStart + fragmentDuration;
-            const remaining = fragmentEndTime - newTime;
-        
-            // Si estamos muy cerca del final, no programar crossfade
-            if (!shouldUseCrossfade() || remaining <= CROSSFADE_SECONDS + 0.25) {
-              fragmentTimer = setTimeout(() => {
-                const nextIndex = getNextTrackIndexFromIndex(activeIndex);
-        
-                if (nextIndex === null) {
-                  isPlaying = false;
-                  updatePlayerUI();
-                  return;
-                }
-        
-                goToTrack(nextIndex, true, "auto");
-              }, Math.max(0, remaining * 1000));
-        
-            } else {
-              scheduleFragmentEnd();
-            }
+
+      if (duration > 0) {
+        const newTime = fragmentStart + Math.max(0, Math.min(duration, ratio * duration));
+        currentAudioPlayer.currentTime = newTime;
+        updatePlayerUI();
+
+        if (isPlaying) {
+          clearFragmentTimer();
+          clearPreloadTimer();
+
+          const fragmentEndTime = fragmentStart + fragmentDuration;
+          const remaining = fragmentEndTime - newTime;
+
+          if (!shouldUseCrossfade() || remaining <= CROSSFADE_SECONDS + 0.25) {
+            fragmentTimer = setTimeout(() => {
+              const nextIndex = getNextTrackIndexFromIndex(activeIndex);
+
+              if (nextIndex === null) {
+                isPlaying = false;
+                updatePlayerUI();
+                return;
+              }
+
+              goToTrack(nextIndex, true, "auto");
+            }, Math.max(0, remaining * 1000));
+          } else {
+            scheduleFragmentEnd();
           }
         }
       }
     };
   }
-  
+
   if (prevBtn) {
     prevBtn.onclick = () => {
       playPreviousTrack(isPlaying);
