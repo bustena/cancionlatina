@@ -15,8 +15,7 @@ let activeFilter = null;
 let isShuffle = false;
 let isPlaying = false;
 let loadedTrackIndex = null;
-
-const MAX_FRAGMENT_SECONDS = 120;
+let maxFragmentSeconds = 120;
 const CROSSFADE_SECONDS = 4;
 
 let fragmentStart = 0;
@@ -88,7 +87,8 @@ function mapHomeRow(row) {
     enlace: normalized.enlace || "",
     fondo: normalizeColor(normalized.fondo),
     texto: normalizeColor(normalized.texto),
-    destacado: normalizeColor(normalized.destacado)
+    destacado: normalizeColor(normalized.destacado),
+    duracion: parseInt(normalized["duracion"] || "120", 10) || 120
   };
 }
 
@@ -328,11 +328,11 @@ function getFragmentCurrentTime() {
 }
 
 function getMaxFragmentStart(duration) {
-  return Math.max(0, duration - MAX_FRAGMENT_SECONDS);
+  return Math.max(0, duration - maxFragmentSeconds);
 }
 
 function chooseFragmentStart(duration, mode = "manual") {
-  if (duration <= MAX_FRAGMENT_SECONDS) return 0;
+  if (duration <= maxFragmentSeconds) return 0;
   if (mode === "manual") return 0;
 
   const maxStart = getMaxFragmentStart(duration);
@@ -343,7 +343,7 @@ function setFragmentForCurrentTrack(mode = "manual") {
   const duration = getTrackDuration();
 
   fragmentStart = chooseFragmentStart(duration, mode);
-  fragmentDuration = Math.min(MAX_FRAGMENT_SECONDS, Math.max(0, duration - fragmentStart));
+  fragmentDuration = Math.min(maxFragmentSeconds, Math.max(0, duration - fragmentStart));
 
   currentAudioPlayer.currentTime = fragmentStart;
   updatePlayerUI();
@@ -351,7 +351,7 @@ function setFragmentForCurrentTrack(mode = "manual") {
 
 function getFragmentDataForDuration(duration, mode = "manual") {
   const start = chooseFragmentStart(duration, mode);
-  const durationValue = Math.min(MAX_FRAGMENT_SECONDS, Math.max(0, duration - start));
+  const durationValue = Math.min(maxFragmentSeconds, Math.max(0, duration - start));
 
   return {
     start,
@@ -734,7 +734,7 @@ function updatePlayerUI() {
   }
 
   const currentTime = getFragmentCurrentTime();
-  const duration = fragmentDuration || Math.min(getTrackDuration(), MAX_FRAGMENT_SECONDS);
+  const duration = fragmentDuration || Math.min(getTrackDuration(), maxFragmentSeconds);
   const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   if (progressFill) {
@@ -849,7 +849,7 @@ function bindPlayerControls() {
     progressBar.onclick = (event) => {
       const rect = progressBar.getBoundingClientRect();
       const ratio = (event.clientX - rect.left) / rect.width;
-      const duration = fragmentDuration || Math.min(getTrackDuration(), MAX_FRAGMENT_SECONDS);
+      const duration = fragmentDuration || Math.min(getTrackDuration(), maxFragmentSeconds);
 
       if (duration > 0) {
         const newTime = fragmentStart + Math.max(0, Math.min(duration, ratio * duration));
@@ -1529,6 +1529,7 @@ function loadHomeCSV() {
       complete: function (results) {
         if (results.data && results.data.length) {
           homeMeta = mapHomeRow(results.data[0]);
+          maxFragmentSeconds = homeMeta.duracion || 120;
 
           console.log("homeMeta:", homeMeta);
           console.log("accent:", homeMeta?.destacado);
