@@ -723,6 +723,7 @@ function updatePlayerUI() {
   if (shuffleBtn) {
     shuffleBtn.classList.toggle("active", isShuffle);
     shuffleBtn.setAttribute("aria-pressed", isShuffle ? "true" : "false");
+    shuffleBtn.setAttribute("title", isShuffle ? "Desactivar modo aleatorio" : "Modo aleatorio");
   }
 
   const currentTime = getFragmentCurrentTime();
