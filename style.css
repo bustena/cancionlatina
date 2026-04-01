@@ -558,26 +558,59 @@ body {
   width: 100%;
 }
 
-.spotify-block {
+.spotify-slot {
   margin-top: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  transition: all 0.2s ease;
 }
 
-.spotify-tag {
+.spotify-slot.is-collapsed {
   background: #1db954;
-  color: #fff;
-  border-color: #1db954;
+  border: 1px solid #1db954;
+}
+
+.spotify-slot.is-collapsed:hover {
+  background: #17a74a;
+  border-color: #17a74a;
+}
+
+.spotify-slot-trigger {
+  width: 100%;
+  min-height: 38px;
+  padding: 7px 12px;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.78rem;
   font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+}
+
+.spotify-slot-content {
+  display: none;
+}
+
+.spotify-slot.is-open {
+  border-radius: 12px;
+  background: transparent;
+  border: 0;
+}
+
+.spotify-slot.is-open .spotify-slot-trigger {
+  display: none;
+}
+
+.spotify-slot.is-open .spotify-slot-content {
+  display: block;
 }
 
 .spotify-tag:hover {
   background: #17a74a;
   border-color: #17a74a;
-}
-
-.spotify-embed {
-  margin-top: 10px;
-  border-radius: 12px;
-  overflow: hidden;
 }
 
 .content-column {
