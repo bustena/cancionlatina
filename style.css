@@ -277,6 +277,182 @@ body {
   color: #ffffff;
 }
 
+/* HOME */
+.home-card .card-inner {
+  min-height: 100%;
+}
+
+.home-media {
+  background: linear-gradient(180deg, rgba(120, 80, 40, 0.95), rgba(120, 80, 40, 0.82));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-content {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.75rem;
+}
+
+.home-branding {
+  width: 100%;
+  max-width: 420px;
+  text-align: left;
+}
+
+.home-logo {
+  margin-bottom: 1rem;
+}
+
+.home-logo img {
+  max-width: 72px;
+  max-height: 72px;
+  width: auto;
+  height: auto;
+  display: block;
+  opacity: 0.9;
+}
+
+.home-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 2.4rem;
+  line-height: 1.05;
+  font-weight: 700;
+}
+
+.home-subtitle {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  opacity: 0.96;
+}
+
+.home-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.home-section-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.home-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.home-tag {
+  font-size: 1rem;
+  padding: 0.7rem 1rem;
+}
+
+.home-note {
+  margin: 0.75rem 0 0;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: #555;
+}
+
+.home-card .card-inner {
+  min-height: 100%;
+}
+
+.home-media {
+  background: linear-gradient(180deg, rgba(120, 80, 40, 0.95), rgba(120, 80, 40, 0.82));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-content {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.75rem;
+}
+
+.home-branding {
+  width: 100%;
+  max-width: 420px;
+  text-align: left;
+}
+
+.home-logo {
+  margin-bottom: 1rem;
+}
+
+.home-logo img {
+  max-width: 72px;
+  max-height: 72px;
+  width: auto;
+  height: auto;
+  display: block;
+  opacity: 0.9;
+}
+
+.home-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 2.4rem;
+  line-height: 1.05;
+  font-weight: 700;
+}
+
+.home-subtitle {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  opacity: 0.96;
+}
+
+.home-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.home-section-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.home-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.home-tag {
+  font-size: 1rem;
+  padding: 0.7rem 1rem;
+}
+
+.home-note {
+  margin: 0.75rem 0 0;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: #555;
+}
+
+.home-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.home-subtitle {
+  font-size: 1.15rem;
+}
+
 /* FICHA */
 .card {
   width: 100%;
