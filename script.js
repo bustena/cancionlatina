@@ -1217,10 +1217,10 @@ function renderHome() {
             </div>
           </div>
         
-          <div class="home-section">
+          <div class="home-section home-random">
             <div class="home-tags">
-              <button type="button" class="tag filter-tag home-tag" id="homeRandomButton">
-                Comenzar al azar
+              <button class="tag home-tag" data-random-start>
+                Descubrir al azar
               </button>
             </div>
           </div>
@@ -1242,13 +1242,15 @@ function renderHome() {
     updateHomeNoteText();
   }
 
-  detailEl.querySelectorAll("[data-home-action]").forEach(button => {
-    button.onclick = () => {
-      const type = button.dataset.homeAction;
-      const value = button.dataset.homeValue;
-      startRandomFromFilter(type, value);
+  detailEl.querySelectorAll("[data-random-start]").forEach(btn => {
+    btn.onclick = () => {
+      isShuffle = true;
+  
+      const randomIndex = Math.floor(Math.random() * items.length);
+  
+      goToTrack(randomIndex, true, "auto");
     };
-  });
+});
 }
 
 function renderDetail(item) {
