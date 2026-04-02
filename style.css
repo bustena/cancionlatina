@@ -726,6 +726,26 @@ body {
   color: #7a1f1f;
 }
 
+.home-random {
+  align-self: center;
+}
+
+.home-random .home-tag {
+  font-size: 1.05rem;
+  padding: 0.85rem 1.3rem;
+
+  background: color-mix(in srgb, var(--app-accent) 85%, white);
+  border-color: var(--app-accent);
+  color: #ffffff;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.home-random .home-tag:hover {
+  transform: translateY(-2px);
+  background: var(--app-accent);
+}
+
 @media (max-width: 980px) {
   html,
   body {
