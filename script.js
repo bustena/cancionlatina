@@ -139,18 +139,6 @@ function getTopGenres(limit = 4) {
     .map(entry => entry[0]);
 }
 
-  return Array.from(counts.entries())
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .slice(0, limit)
-    .map(entry => entry[0]);
-}
-
-  return Array.from(counts.entries())
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .slice(0, limit)
-    .map(entry => entry[0]);
-}
-
 function extractFlagEmoji(pais) {
   if (!pais) return "";
 
