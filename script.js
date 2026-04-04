@@ -105,7 +105,7 @@ function applyHomeTheme() {
   document.documentElement.style.setProperty("--app-accent", destacado);
 }
 
-function getTopCountries(limit = 4) {
+function getTopCountries(limit = 6) {
   const counts = new Map();
 
   items.forEach(item => {
@@ -121,7 +121,7 @@ function getTopCountries(limit = 4) {
     .map(entry => entry[0]);
 }
 
-function getTopGenres(limit = 4) {
+function getTopGenres(limit = 6) {
   const counts = new Map();
 
   items.forEach(item => {
