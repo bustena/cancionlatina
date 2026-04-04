@@ -1191,8 +1191,8 @@ function renderHome() {
     enlace: ""
   };
 
-  const topCountries = getTopCountries(4);
-  const topGenres = getTopGenres(4);
+  const topCountries = getTopCountries(6);
+  const topGenres = getTopGenres(6);
 
   const countryButtons = topCountries.map(country => `
     <button
