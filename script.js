@@ -12,6 +12,9 @@ let items = [];
 let activeIndex = 0;
 let activeFilter = null;
 
+let shuffleQueue = [];
+let shuffleQueueKey = "";
+
 let isShuffle = false;
 let isPlaying = false;
 let loadedTrackIndex = null;
@@ -205,24 +208,28 @@ function startRandomFromFilter(type, value) {
     );
   }
 
-  if (!filteredItems.length) return;
+  const playableIndices = getPlayableFilteredIndices();
+  if (!playableIndices.length) return;
 
-  activeFilter = {
-    type,
-    value: normalizeFilterValue(value),
-    label: String(value || "").trim()
-  };
+  isShuffle = true;
+  resetShuffleQueue();
 
-  const randomIndex = getRandomTrackIndex(filteredItems);
-  if (randomIndex === null) return;
+  const randomIndex = playableIndices[Math.floor(Math.random() * playableIndices.length)];
+  rebuildShuffleQueue(randomIndex);
 
   isHomeView = false;
   goToTrack(randomIndex, true, "auto");
 }
 
 function startRandomTrack() {
-  const randomIndex = getRandomTrackIndex(items);
-  if (randomIndex === null) return;
+  const playableIndices = getPlayableFilteredIndices();
+  if (!playableIndices.length) return;
+
+  isShuffle = true;
+  resetShuffleQueue();
+
+  const randomIndex = playableIndices[Math.floor(Math.random() * playableIndices.length)];
+  rebuildShuffleQueue(randomIndex);
 
   activeFilter = null;
   isHomeView = false;
@@ -522,21 +529,17 @@ function getNextTrackIndexFromIndex(baseIndex) {
   }
 
   if (isShuffle) {
-    const candidates = filteredItems.filter(item => item !== baseItem);
-    if (!candidates.length) return null;
-
-    const randomItem = candidates[Math.floor(Math.random() * candidates.length)];
-    return items.indexOf(randomItem);
+    return getNextShuffleIndex(baseIndex);
   }
-
-    const nextFilteredIndex = currentFilteredIndex + 1;
-    
-    if (nextFilteredIndex >= filteredItems.length) {
-      return items.indexOf(filteredItems[0]);
-    }
-    
-    return items.indexOf(filteredItems[nextFilteredIndex]);
-}
+  
+      const nextFilteredIndex = currentFilteredIndex + 1;
+      
+      if (nextFilteredIndex >= filteredItems.length) {
+        return items.indexOf(filteredItems[0]);
+      }
+      
+      return items.indexOf(filteredItems[nextFilteredIndex]);
+  }
 
 function preloadNextTrack() {
   const nextIndex = getNextTrackIndex();
@@ -841,6 +844,12 @@ function bindPlayerControls() {
   if (shuffleBtn) {
     shuffleBtn.onclick = () => {
       isShuffle = !isShuffle;
+      resetShuffleQueue();
+  
+      if (isShuffle) {
+        rebuildShuffleQueue(activeIndex);
+      }
+  
       updatePlayerUI();
     };
   }
@@ -925,6 +934,73 @@ function getFilteredItems() {
   return items;
 }
 
+function getPlayableFilteredIndices() {
+  return getFilteredItems()
+    .filter(item => item.audio)
+    .map(item => items.indexOf(item))
+    .filter(index => index !== -1);
+}
+
+function getShuffleQueueKey() {
+  return getPlayableFilteredIndices().join("|");
+}
+
+function shuffleArray(array) {
+  const result = [...array];
+
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+
+  return result;
+}
+
+function rebuildShuffleQueue(currentIndex = activeIndex) {
+  const playableIndices = getPlayableFilteredIndices();
+  const key = playableIndices.join("|");
+
+  shuffleQueueKey = key;
+
+  if (!playableIndices.length) {
+    shuffleQueue = [];
+    return;
+  }
+
+  const remaining = playableIndices.filter(index => index !== currentIndex);
+  shuffleQueue = shuffleArray(remaining);
+}
+
+function ensureShuffleQueue(currentIndex = activeIndex) {
+  const key = getShuffleQueueKey();
+
+  if (shuffleQueueKey !== key || !shuffleQueue.length) {
+    rebuildShuffleQueue(currentIndex);
+  }
+}
+
+function getNextShuffleIndex(baseIndex) {
+  const playableIndices = getPlayableFilteredIndices();
+  if (!playableIndices.length) return null;
+
+  ensureShuffleQueue(baseIndex);
+
+  if (!shuffleQueue.length) {
+    rebuildShuffleQueue(baseIndex);
+  }
+
+  if (!shuffleQueue.length) {
+    return null;
+  }
+
+  return shuffleQueue.shift();
+}
+
+function resetShuffleQueue() {
+  shuffleQueue = [];
+  shuffleQueueKey = "";
+}
+
 function getCurrentFilteredIndex() {
   const filteredItems = getFilteredItems();
   const currentItem = items[activeIndex];
@@ -941,6 +1017,7 @@ function isFilterActive(type, label) {
 
 function setFilter(type, label) {
   const value = normalizeFilterValue(label);
+  resetShuffleQueue();
   if (!value) return;
 
   const previousIndex = activeIndex;
@@ -1022,11 +1099,12 @@ function renderFilterBar() {
   const clearButton = document.getElementById("clearFilterButton");
   if (clearButton) {
     clearButton.onclick = () => {
-    activeFilter = null;
-    renderFilterBar();
-    renderTimeline();
-    scrollActiveTimelineItemIntoView();
-    renderCurrentDetail();
+      activeFilter = null;
+      resetShuffleQueue();
+      renderFilterBar();
+      renderTimeline();
+      scrollActiveTimelineItemIntoView();
+      renderCurrentDetail();
     };
   }
 }
