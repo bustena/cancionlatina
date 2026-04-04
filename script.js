@@ -105,7 +105,7 @@ function applyHomeTheme() {
   document.documentElement.style.setProperty("--app-accent", destacado);
 }
 
-function getTopCountries(limit = 4) {
+function getTopCountries(limit = 6) {
   const counts = new Map();
 
   items.forEach(item => {
@@ -121,7 +121,7 @@ function getTopCountries(limit = 4) {
     .map(entry => entry[0]);
 }
 
-function getTopGenres(limit = 4) {
+function getTopGenres(limit = 6) {
   const counts = new Map();
 
   items.forEach(item => {
@@ -139,33 +139,11 @@ function getTopGenres(limit = 4) {
     .map(entry => entry[0]);
 }
 
-function getTopCountries(limit = 4) {
-  const counts = new Map();
-
-  items.forEach(item => {
-    const country = String(item.pais || "").trim();
-    if (!country) return;
-
-    counts.set(country, (counts.get(country) || 0) + 1);
-  });
-
   return Array.from(counts.entries())
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
     .slice(0, limit)
     .map(entry => entry[0]);
 }
-
-function getTopGenres(limit = 4) {
-  const counts = new Map();
-
-  items.forEach(item => {
-    parseGenres(item.genero).forEach(genre => {
-      const cleanGenre = String(genre || "").trim();
-      if (!cleanGenre) return;
-
-      counts.set(cleanGenre, (counts.get(cleanGenre) || 0) + 1);
-    });
-  });
 
   return Array.from(counts.entries())
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
@@ -192,21 +170,13 @@ function getRandomTrackIndex(sourceItems = items) {
 }
 
 function startRandomFromFilter(type, value) {
-  let filteredItems = [];
+  const normalizedValue = normalizeFilterValue(value);
 
-  if (type === "pais") {
-    filteredItems = items.filter(item =>
-      normalizeFilterValue(item.pais) === normalizeFilterValue(value) && item.audio
-    );
-  }
-
-  if (type === "genero") {
-    filteredItems = items.filter(item =>
-      parseGenres(item.genero).some(genre =>
-        normalizeFilterValue(genre) === normalizeFilterValue(value)
-      ) && item.audio
-    );
-  }
+  activeFilter = {
+    type,
+    value: normalizedValue,
+    label: String(value || "").trim()
+  };
 
   const playableIndices = getPlayableFilteredIndices();
   if (!playableIndices.length) return;
@@ -1138,7 +1108,7 @@ function renderTimeline() {
 
     button.innerHTML = `
       <span class="timeline-year">
-        ${item.ano} <span class="timeline-flag">${extractFlagEmoji(item.pais)}</span>
+        ${escapeHtml(item.ano || "s. f.")} <span class="timeline-flag">${extractFlagEmoji(item.pais)}</span>
       </span>
       <span class="timeline-title">${escapeHtml(item.titulo || "Sin título")}</span>
       <span class="timeline-author">${escapeHtml(item.autor || "")}</span>
@@ -1311,24 +1281,21 @@ function renderHome() {
     </article>
   `;
 
-  const randomBtn = document.getElementById("homeRandomButton");
-
-  if (randomBtn) {
-    randomBtn.onclick = () => {
-      startRandomTrack();
-    };
-    updateHomeNoteText();
-  }
-
   detailEl.querySelectorAll("[data-random-start]").forEach(btn => {
     btn.onclick = () => {
-      isShuffle = true;
-  
-      const randomIndex = Math.floor(Math.random() * items.length);
-  
-      goToTrack(randomIndex, true, "auto");
+      startRandomTrack();
     };
-});
+  });
+
+  detailEl.querySelectorAll("[data-home-action]").forEach(button => {
+  button.onclick = () => {
+    const type = button.dataset.homeAction;
+    const value = button.dataset.homeValue;
+    startRandomFromFilter(type, value);
+    };
+  });
+  
+updateHomeNoteText();
 }
 
 function renderDetail(item) {
