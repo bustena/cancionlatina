@@ -1216,15 +1216,7 @@ function renderHome() {
     </button>
   `).join("");
 
-  const iconHtml = meta.icono
-    ? (
-        meta.enlace
-          ? `<a href="${escapeAttribute(meta.enlace)}" target="_blank" rel="noopener noreferrer" class="home-logo-link">
-               <img src="${escapeAttribute(meta.icono)}" alt="${escapeHtml(meta.titulo || "Icono")}">
-             </a>`
-          : `<img src="${escapeAttribute(meta.icono)}" alt="${escapeHtml(meta.titulo || "Icono")}">`
-      )
-    : "";
+  const iconHtml = "";
 
   detailEl.classList.remove("empty");
   detailEl.innerHTML = `
