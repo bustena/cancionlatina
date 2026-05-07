@@ -1282,6 +1282,12 @@ function renderHome() {
     startRandomFromFilter(type, value);
     };
   });
+
+    detailEl.querySelectorAll(".home-logo-link").forEach(link => {
+    link.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+  });
   
 updateHomeNoteText();
 }
