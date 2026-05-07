@@ -119,6 +119,24 @@ body {
   text-align: center;
 }
 
+.home-logo-link {
+  display: inline-block;
+  position: relative;
+  z-index: 10;
+  line-height: 0;
+}
+
+.home-logo-link img,
+.home-logo img {
+  width: 56px;
+  height: 56px;
+  max-width: 56px;
+  max-height: 56px;
+  aspect-ratio: auto;
+  object-fit: contain;
+  border-radius: 0;
+}
+
 /* TIMELINE */
 .timeline {
   position: relative;
