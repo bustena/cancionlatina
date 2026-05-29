@@ -1384,6 +1384,7 @@ function renderDetail(item) {
 
           <div class="meta-bottom">
             ${countryTag}
+            ${rhythmTag}
             ${genreTags}
           </div>
         </div>
