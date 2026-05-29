@@ -137,6 +137,28 @@ body {
   border-radius: 0;
 }
 
+.app-title-button {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.app-title-button:hover {
+  opacity: 0.72;
+}
+
+.app-title-button:focus-visible {
+  outline: 2px solid rgba(15, 23, 42, 0.35);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
 /* TIMELINE */
 .timeline {
   position: relative;
