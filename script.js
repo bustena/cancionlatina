@@ -212,6 +212,28 @@ function startRandomTrack() {
   goToTrack(randomIndex, true, "auto");
 }
 
+function goHome() {
+  activeFilter = null;
+  resetShuffleQueue();
+
+  clearAllPlaybackTimers();
+
+  currentAudioPlayer.pause();
+  currentAudioPlayer.currentTime = 0;
+
+  if (incomingAudioPlayer) {
+    incomingAudioPlayer.pause();
+    incomingAudioPlayer.src = "";
+    incomingAudioPlayer = null;
+  }
+
+  isPlaying = false;
+  isHomeView = true;
+
+  renderTimeline();
+  renderHome();
+}
+
 function sortItems(data) {
   return data.sort((a, b) => {
     const yearA = parseInt((a.ano || "").match(/\d{3,4}/)?.[0] || "9999", 10);
@@ -1679,7 +1701,15 @@ function loadCSV() {
 }
 
 attachCurrentPlayerListeners();
+
+const homeButton = document.getElementById("homeButton");
+
+if (homeButton) {
+  homeButton.addEventListener("click", goHome);
+}
+
 window.addEventListener("resize", updateHomeNoteText);
+
 loadHomeCSV().then(() => {
   loadCSV();
 });
