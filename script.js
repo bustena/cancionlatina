@@ -1243,7 +1243,7 @@ function renderHome() {
     </button>
   `).join("");
 
-    const rhythmButtons = topRhythms.map(rhythm => `
+  const rhythmButtons = topRhythms.map(rhythm => `
     <button
       type="button"
       class="tag filter-tag home-tag home-rhythm-tag"
@@ -1279,27 +1279,28 @@ function renderHome() {
           </div>
         </div>
 
-        <div class="home-section">
-          <h3 class="home-section-title">Explorar por país</h3>
-          <div class="home-tags">
-            ${countryButtons}
+        <div class="content-column home-content">
+          <div class="home-section">
+            <h3 class="home-section-title">Explorar por país</h3>
+            <div class="home-tags">
+              ${countryButtons}
+            </div>
           </div>
-        </div>
-        
-        <div class="home-section">
-          <h3 class="home-section-title">Explorar por ritmo</h3>
-          <div class="home-tags">
-            ${rhythmButtons}
+
+          <div class="home-section">
+            <h3 class="home-section-title">Explorar por ritmo</h3>
+            <div class="home-tags">
+              ${rhythmButtons}
+            </div>
           </div>
-        </div>
-        
-        <div class="home-section">
-          <h3 class="home-section-title">Explorar por género</h3>
-          <div class="home-tags">
-            ${genreButtons}
+
+          <div class="home-section">
+            <h3 class="home-section-title">Explorar por género</h3>
+            <div class="home-tags">
+              ${genreButtons}
+            </div>
           </div>
-        </div>
-        
+
           <div class="home-section home-random">
             <div class="home-tags">
               <button class="tag home-tag" data-random-start>
@@ -1307,7 +1308,7 @@ function renderHome() {
               </button>
             </div>
           </div>
-        
+
           <p class="home-note" id="homeNote">
             También puedes entrar desde la línea de tiempo de la izquierda.
           </p>
@@ -1323,20 +1324,20 @@ function renderHome() {
   });
 
   detailEl.querySelectorAll("[data-home-action]").forEach(button => {
-  button.onclick = () => {
-    const type = button.dataset.homeAction;
-    const value = button.dataset.homeValue;
-    startRandomFromFilter(type, value);
+    button.onclick = () => {
+      const type = button.dataset.homeAction;
+      const value = button.dataset.homeValue;
+      startRandomFromFilter(type, value);
     };
   });
 
-    detailEl.querySelectorAll(".home-logo-link").forEach(link => {
+  detailEl.querySelectorAll(".home-logo-link").forEach(link => {
     link.addEventListener("click", (event) => {
       event.stopPropagation();
     });
   });
-  
-updateHomeNoteText();
+
+  updateHomeNoteText();
 }
 
 function renderDetail(item) {
