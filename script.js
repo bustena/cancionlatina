@@ -123,6 +123,22 @@ function getTopCountries(limit = 6) {
     .map(entry => entry[0]);
 }
 
+function getTopRhythms(limit = 6) {
+  const counts = new Map();
+
+  items.forEach(item => {
+    const rhythm = String(item.ritmo || "").trim();
+    if (!rhythm) return;
+
+    counts.set(rhythm, (counts.get(rhythm) || 0) + 1);
+  });
+
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(entry => entry[0]);
+}
+
 function getTopGenres(limit = 6) {
   const counts = new Map();
 
@@ -1213,6 +1229,7 @@ function renderHome() {
   };
 
   const topCountries = getTopCountries(6);
+  const topRhythms = getTopRhythms(6);
   const topGenres = getTopGenres(6);
 
   const countryButtons = topCountries.map(country => `
@@ -1223,6 +1240,17 @@ function renderHome() {
       data-home-value="${escapeAttribute(country)}"
     >
       ${escapeHtml(country)}
+    </button>
+  `).join("");
+
+    const rhythmButtons = topRhythms.map(rhythm => `
+    <button
+      type="button"
+      class="tag filter-tag home-tag home-rhythm-tag"
+      data-home-action="ritmo"
+      data-home-value="${escapeAttribute(rhythm)}"
+    >
+      ${escapeHtml(rhythm)}
     </button>
   `).join("");
 
@@ -1251,20 +1279,26 @@ function renderHome() {
           </div>
         </div>
 
-        <div class="content-column home-content">
-          <div class="home-section">
-            <h3 class="home-section-title">Explorar por país</h3>
-            <div class="home-tags">
-              ${countryButtons}
-            </div>
+        <div class="home-section">
+          <h3 class="home-section-title">Explorar por país</h3>
+          <div class="home-tags">
+            ${countryButtons}
           </div>
+        </div>
         
-          <div class="home-section">
-            <h3 class="home-section-title">Explorar por género</h3>
-            <div class="home-tags">
-              ${genreButtons}
-            </div>
+        <div class="home-section">
+          <h3 class="home-section-title">Explorar por ritmo</h3>
+          <div class="home-tags">
+            ${rhythmButtons}
           </div>
+        </div>
+        
+        <div class="home-section">
+          <h3 class="home-section-title">Explorar por género</h3>
+          <div class="home-tags">
+            ${genreButtons}
+          </div>
+        </div>
         
           <div class="home-section home-random">
             <div class="home-tags">
