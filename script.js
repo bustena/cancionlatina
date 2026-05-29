@@ -67,6 +67,7 @@ function mapRow(row) {
     titulo: normalized.titulo || "",
     ano: normalized.ano || "",
     pais: normalized.pais || "",
+    ritmo: normalized.ritmo || "",
     genero: normalized.genero || "",
     audio: normalized.audio || "",
     imagen: normalized.imagen || "",
@@ -1160,6 +1161,21 @@ function renderCountryTag(country) {
   `;
 }
 
+function renderRhythmTag(rhythm) {
+  const activeClass = isFilterActive("ritmo", rhythm) ? " active" : "";
+  return `
+    <button
+      type="button"
+      class="tag filter-tag rhythm-tag${activeClass}"
+      data-filter-type="ritmo"
+      data-filter-value="${escapeAttribute(rhythm)}"
+      aria-pressed="${isFilterActive("ritmo", rhythm) ? "true" : "false"}"
+    >
+      ${escapeHtml(rhythm)}
+    </button>
+  `;
+}
+
 function renderGenreTags(value) {
   return parseGenres(value)
     .map(genre => {
@@ -1288,6 +1304,7 @@ function renderDetail(item) {
   const color = item.color || "#c9b79c";
   const hasImage = Boolean(item.imagen);
   const countryTag = item.pais ? renderCountryTag(item.pais) : "";
+  const rhythmTag = item.ritmo ? renderRhythmTag(item.ritmo) : "";
   const genreTags = item.genero ? renderGenreTags(item.genero) : "";
   const spotifyUrl = item.spotify ? item.spotify.trim() : "";
   const spotifyEmbed = getSpotifyEmbedUrl(spotifyUrl);
