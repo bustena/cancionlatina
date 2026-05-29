@@ -43,6 +43,7 @@ function normalizeHeader(header) {
 
 function normalizeHeaderLabel(header) {
   if (header === "pais") return "País";
+  if (header === "ritmo") return "Ritmo";
   if (header === "genero") return "Género";
   return header;
 }
@@ -880,15 +881,19 @@ function parseGenres(value) {
 function getFilteredItems() {
   if (!activeFilter) return items;
 
-  if (activeFilter.type === "pais") {
-    return items.filter(item => normalizeFilterValue(item.pais) === activeFilter.value);
-  }
-
-  if (activeFilter.type === "genero") {
-    return items.filter(item =>
-      parseGenres(item.genero).some(genre => normalizeFilterValue(genre) === activeFilter.value)
-    );
-  }
+    if (activeFilter.type === "pais") {
+      return items.filter(item => normalizeFilterValue(item.pais) === activeFilter.value);
+    }
+    
+    if (activeFilter.type === "ritmo") {
+      return items.filter(item => normalizeFilterValue(item.ritmo) === activeFilter.value);
+    }
+    
+    if (activeFilter.type === "genero") {
+      return items.filter(item =>
+        parseGenres(item.genero).some(genre => normalizeFilterValue(genre) === activeFilter.value)
+      );
+    }
 
   return items;
 }
