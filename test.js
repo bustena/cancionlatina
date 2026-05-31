@@ -90,10 +90,7 @@ function renderHomePanel() {
   const leftHeader = document.querySelector(".left-header");
   if (!leftHeader) return;
 
-  const leftColumn = document.querySelector(".left-column");
-  if (leftColumn) {
-    leftColumn.style.background = "";
-  }
+  setLeftPanelBackground("");
 
   leftHeader.innerHTML = `
     <h1 class="app-title">Ponte a prueba</h1>
