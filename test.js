@@ -183,8 +183,13 @@ function renderHome() {
 
   detailEl.querySelectorAll("[data-mode]").forEach(button => {
     button.onclick = () => {
-      selectedMode = button.dataset.mode;
-      renderHome();
+    selectedMode = button.dataset.mode;
+    
+    if (selectedMode === "obra") {
+      selectedDifficulty = "dificil";
+    }
+    
+    renderHome();
     };
   });
 
@@ -368,6 +373,8 @@ function renderQuestion(item, options) {
 
   const accentColor = item.color || "#c9b79c";
   const darkAccentColor = darkenColor(accentColor, 0.70);
+  const isWorkMode = selectedMode === "obra";
+  const imageClass = isWorkMode ? "is-blurred" : "";
 
   detailEl.innerHTML = `
       <article
@@ -389,7 +396,7 @@ function renderQuestion(item, options) {
         >
           ${
             item.imagen
-              ? `<img src="${item.imagen}" alt="">`
+              ? `<img src="${item.imagen}" alt="" class="${imageClass}">`
               : `<div class="no-image">Sin imagen</div>`
           }
         </div>
@@ -400,17 +407,19 @@ function renderQuestion(item, options) {
             ${getQuestionText(selectedMode)}
           </p>
 
-          <h2 class="author">
-            ${item.autor}
-          </h2>
-
-          <p class="work-title">
-            ${item.titulo}
-          </p>
-
-          <p class="question-year">
-            ${item.ano || ""}
-          </p>
+          ${!isWorkMode ? `
+            <h2 class="author">
+              ${item.autor}
+            </h2>
+          
+            <p class="work-title">
+              ${item.titulo}
+            </p>
+          
+            <p class="question-year">
+              ${item.ano || ""}
+            </p>
+          ` : ""}
 
           <div class="options-grid">
             ${options.map(option => `
