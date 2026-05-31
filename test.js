@@ -179,11 +179,16 @@ function renderCountryQuestion(item, options) {
             ${item.titulo}
           </p>
 
-          <div class="meta-list">
-            <span class="tag">${item.ano}</span>
-            <span class="tag">${item.ritmo || "—"}</span>
-            <span class="tag">${item.genero || "—"}</span>
-            <span class="tag">???</span>
+          <div class="question-meta">
+            <p>
+              <strong>Año:</strong>
+              ${item.ano || "—"}
+            </p>
+          
+            <p>
+              <strong>País:</strong>
+              <span class="hidden-answer">???</span>
+            </p>
           </div>
 
           <div class="options-grid">
