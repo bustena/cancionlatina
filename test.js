@@ -87,53 +87,54 @@ function mapRow(row) {
 }
 
 function renderHome() {
-  const title = homeMeta?.titulo || "TEST";
-  const subtitle = homeMeta?.subtitulo || "";
+  const meta = homeMeta || {
+    titulo: "TEST",
+    subtitulo: "Pon a prueba tu oído con la canción latinoamericana.",
+    icono: "",
+    enlace: ""
+  };
+
+  detailEl.classList.remove("empty");
 
   detailEl.innerHTML = `
-    <article class="card">
-      <div class="content-column home-content">
-
-        <h1>
-          ${title}
-        </h1>
-
-        ${subtitle ? `
-          <p class="home-description">
-            ${subtitle}
-          </p>
-        ` : ""}
-
-        <p>
-          ${items.length} audiciones cargadas
-        </p>
-
-        <div class="home-section">
-          <h3 class="home-section-title">Modalidad</h3>
-
-          <div class="mode-grid">
-            <button class="tag ${selectedMode === "pais" ? "active" : ""}" data-mode="pais">País</button>
-            <button class="tag ${selectedMode === "ritmo" ? "active" : ""}" data-mode="ritmo">Ritmo</button>
-            <button class="tag ${selectedMode === "ano" ? "active" : ""}" data-mode="ano">Año</button>
-            <button class="tag ${selectedMode === "obra" ? "active" : ""}" data-mode="obra">Obra</button>
+    <article class="card home-card" style="--accent: var(--app-accent, #8b6a43);">
+      <div class="card-inner">
+        <div class="media-column home-media">
+          <div class="home-branding">
+            <h1 class="home-title">${meta.titulo || "TEST"}</h1>
+            <p class="home-subtitle">${meta.subtitulo || ""}</p>
           </div>
         </div>
 
-        <div class="home-section">
-          <h3 class="home-section-title">Dificultad</h3>
+        <div class="content-column home-content">
+          <div class="home-section">
+            <h3 class="home-section-title">Modalidad</h3>
 
-          <div class="difficulty-grid">
-            <button class="tag ${selectedDifficulty === "facil" ? "active" : ""}" data-difficulty="facil">Fácil</button>
-            <button class="tag ${selectedDifficulty === "dificil" ? "active" : ""}" data-difficulty="dificil">Difícil</button>
+            <div class="mode-grid">
+              <button class="tag ${selectedMode === "pais" ? "active" : ""}" data-mode="pais">País</button>
+              <button class="tag ${selectedMode === "ritmo" ? "active" : ""}" data-mode="ritmo">Ritmo</button>
+              <button class="tag ${selectedMode === "ano" ? "active" : ""}" data-mode="ano">Año</button>
+              <button class="tag ${selectedMode === "obra" ? "active" : ""}" data-mode="obra">Obra</button>
+            </div>
+          </div>
+
+          <div class="home-section">
+            <h3 class="home-section-title">Dificultad</h3>
+
+            <div class="difficulty-grid">
+              <button class="tag ${selectedDifficulty === "facil" ? "active" : ""}" data-difficulty="facil">Fácil</button>
+              <button class="tag ${selectedDifficulty === "dificil" ? "active" : ""}" data-difficulty="dificil">Difícil</button>
+            </div>
+          </div>
+
+          <div class="home-section home-random">
+            <div class="home-tags">
+              <button class="tag home-tag primary-start" id="startGameButton">
+                Empezar
+              </button>
+            </div>
           </div>
         </div>
-
-        <div class="home-section">
-          <button class="primary-button" id="startGameButton">
-            Empezar
-          </button>
-        </div>
-
       </div>
     </article>
   `;
