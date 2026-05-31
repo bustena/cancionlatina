@@ -71,6 +71,17 @@ body {
   z-index: 2;
 }
 
+.home-panel-text {
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.home-panel-text p {
+  margin: 0 0 14px;
+}
+
 .app-title {
   margin: 0;
   font-size: 1.35rem;
