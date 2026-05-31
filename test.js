@@ -88,6 +88,10 @@ function mapRow(row) {
 
 function renderHomePanel() {
   const leftHeader = document.querySelector(".left-header");
+  
+  if (leftHeader) {
+    leftHeader.style.color = "";
+  }
   if (!leftHeader) return;
 
   setLeftPanelBackground("");
@@ -188,6 +192,10 @@ function renderHome() {
 
 function renderGamePanel(item = null) {
   const leftHeader = document.querySelector(".left-header");
+  
+  if (leftHeader) {
+    leftHeader.style.color = "";
+  }
 
   if (!leftHeader) return;
 
@@ -445,6 +453,12 @@ function renderEndScreen() {
   const leftColumn = document.querySelector(".left-column");
   if (leftColumn) {
     setLeftPanelBackground(homeMeta?.destacado || "");
+    
+    const leftHeader = document.querySelector(".left-header");
+    
+    if (leftHeader) {
+      leftHeader.style.color = "#ffffff";
+    }
   }
 
   detailEl.innerHTML = `
