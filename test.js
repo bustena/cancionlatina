@@ -3,6 +3,8 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSJM_fPxtlc5UEy
 const detailEl = document.getElementById("detail");
 
 let items = [];
+let selectedMode = "pais";
+let selectedDifficulty = "facil";
 
 function normalizeHeader(header) {
   return header
@@ -36,7 +38,7 @@ function mapRow(row) {
 function renderHome() {
   detailEl.innerHTML = `
     <article class="card">
-      <div class="content-column">
+      <div class="content-column home-content">
 
         <h1>TEST</h1>
 
@@ -44,16 +46,57 @@ function renderHome() {
           ${items.length} audiciones cargadas
         </p>
 
-        <h3>Modalidad</h3>
+        <div class="home-section">
+          <h3 class="home-section-title">Modalidad</h3>
 
-        <p>País</p>
-        <p>Ritmo</p>
-        <p>Año</p>
-        <p>Autor / Título</p>
+          <div class="mode-grid">
+            <button class="tag ${selectedMode === "pais" ? "active" : ""}" data-mode="pais">País</button>
+            <button class="tag ${selectedMode === "ritmo" ? "active" : ""}" data-mode="ritmo">Ritmo</button>
+            <button class="tag ${selectedMode === "ano" ? "active" : ""}" data-mode="ano">Año</button>
+            <button class="tag ${selectedMode === "autorTitulo" ? "active" : ""}" data-mode="autorTitulo">Autor / Título</button>
+          </div>
+        </div>
+
+        <div class="home-section">
+          <h3 class="home-section-title">Dificultad</h3>
+
+          <div class="difficulty-grid">
+            <button class="tag ${selectedDifficulty === "facil" ? "active" : ""}" data-difficulty="facil">Fácil</button>
+            <button class="tag ${selectedDifficulty === "dificil" ? "active" : ""}" data-difficulty="dificil">Difícil</button>
+          </div>
+        </div>
+
+        <div class="home-section">
+          <button class="primary-button" id="startGameButton">
+            Empezar
+          </button>
+        </div>
 
       </div>
     </article>
   `;
+
+  detailEl.querySelectorAll("[data-mode]").forEach(button => {
+    button.onclick = () => {
+      selectedMode = button.dataset.mode;
+      renderHome();
+    };
+  });
+
+  detailEl.querySelectorAll("[data-difficulty]").forEach(button => {
+    button.onclick = () => {
+      selectedDifficulty = button.dataset.difficulty;
+      renderHome();
+    };
+  });
+
+  const startButton = document.getElementById("startGameButton");
+
+  if (startButton) {
+    startButton.onclick = () => {
+      alert(`Modo: ${selectedMode}\nDificultad: ${selectedDifficulty}`);
+    };
+  }
 }
 
 function loadCSV() {
