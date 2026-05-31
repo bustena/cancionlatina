@@ -355,6 +355,25 @@ body {
   color: #2f3440;
 }
 
+.question-meta {
+  margin: 18px 0 26px;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.question-meta p {
+  margin: 0 0 6px;
+}
+
+.hidden-answer {
+  display: inline-block;
+  min-width: 56px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.12);
+  color: transparent;
+}
+
 .player { margin-top: 16px; }
 .audio-wrap audio { width: 100%; }
 
