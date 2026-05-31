@@ -288,10 +288,6 @@ function renderCountryQuestion(item, options) {
 
           <div class="feedback" id="feedback"></div>
 
-          <p class="score-line">
-            Puntos: <strong id="scoreValue">${score}</strong>
-          </p>
-
           <button
             class="next-button"
             id="nextButton"
