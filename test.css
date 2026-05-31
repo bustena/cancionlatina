@@ -368,6 +368,20 @@ body {
   color: #2f3440;
 }
 
+.primary-start {
+  font-size: 1.05rem;
+  padding: 0.85rem 1.3rem;
+  background: color-mix(in srgb, var(--app-accent, #8b6a43) 85%, white);
+  border-color: var(--app-accent, #8b6a43);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.primary-start:hover {
+  background: var(--app-accent, #8b6a43);
+  color: #ffffff;
+}
+
 .player { margin-top: 16px; }
 .audio-wrap audio { width: 100%; }
 
