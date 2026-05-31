@@ -87,11 +87,22 @@ function mapRow(row) {
 }
 
 function renderHome() {
+  const title = homeMeta?.titulo || "TEST";
+  const subtitle = homeMeta?.subtitulo || "";
+
   detailEl.innerHTML = `
-      <article class="card">
+    <article class="card">
       <div class="content-column home-content">
 
-        <h1>TEST</h1>
+        <h1>
+          ${title}
+        </h1>
+
+        ${subtitle ? `
+          <p class="home-description">
+            ${subtitle}
+          </p>
+        ` : ""}
 
         <p>
           ${items.length} audiciones cargadas
