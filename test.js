@@ -7,6 +7,7 @@ let selectedMode = "pais";
 let selectedDifficulty = "facil";
 const QUESTIONS_PER_ROUND = 3;
 
+let homeMeta = null;
 let currentQuestion = null;
 let score = 0;
 let questionNumber = 0;
