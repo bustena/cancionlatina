@@ -420,12 +420,10 @@ body {
   letter-spacing: 0.04em;
   color: #2f3440;
   margin-top: 0;
-  margin-bottom: 14px;
 }
 
 .work-title {
   margin: 0 0 16px;
-  margin-bottom: 28px;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 1.2rem;
   line-height: 1.25;
@@ -523,8 +521,8 @@ body {
 }
 
 .feedback {
-  min-height: 1.6rem;
-  margin: 14px 0;
+  min-height: 1.5rem;
+  margin: 24px 0 24px;
   text-align: center;
   font-size: 1.25rem;
   font-weight: 800;
