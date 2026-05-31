@@ -205,10 +205,7 @@ function renderGamePanel(item = null) {
   leftHeader.innerHTML = `
     <h1 class="app-title">Ronda en curso</h1>
 
-    <div
-      class="game-panel game-panel-compact"
-      style="background:${panelBg};"
-    >
+    <div class="game-panel game-panel-compact">
 
       <div class="game-mode">
         ${getModeLabel(selectedMode)} ·
