@@ -40,7 +40,10 @@ function mapRow(row) {
 
 function renderHome() {
   detailEl.innerHTML = `
-    <article class="card">
+    <article
+      class="card"
+      style="--question-accent: ${item.color || "#c9b79c"};"
+    >
       <div class="content-column home-content">
 
         <h1>TEST</h1>
@@ -151,7 +154,10 @@ function renderCountryQuestion(item, options) {
     <article class="card">
       <div class="card-inner">
 
-        <div class="media-column">
+        <div
+          class="media-column"
+          style="background:${item.color || "#c9b79c"};"
+        >
           ${
             item.imagen
               ? `<img src="${item.imagen}" alt="">`
