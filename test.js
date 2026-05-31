@@ -290,10 +290,17 @@ function startCountryQuestion() {
 }
 
 function renderCountryQuestion(item, options) {
+
+  const accentColor = item.color || "#c9b79c";
+  const darkAccentColor = darkenColor(accentColor, 0.70);
+
   detailEl.innerHTML = `
       <article
         class="card"
-        style="--question-accent: ${item.color || "#c9b79c"};"
+        style="
+          --question-accent: ${accentColor};
+          --question-accent-dark: ${darkAccentColor};
+        "
       >
       <div class="card-inner">
 
@@ -439,6 +446,19 @@ function renderEndScreen() {
       renderHome();
     };
   }
+}
+
+function darkenColor(hex, factor = 0.75) {
+  const color = hex.replace("#", "");
+
+  const r = Math.round(parseInt(color.substring(0, 2), 16) * factor);
+  const g = Math.round(parseInt(color.substring(2, 4), 16) * factor);
+  const b = Math.round(parseInt(color.substring(4, 6), 16) * factor);
+
+  return "#" +
+    r.toString(16).padStart(2, "0") +
+    g.toString(16).padStart(2, "0") +
+    b.toString(16).padStart(2, "0");
 }
 
 function playSound(sound) {
