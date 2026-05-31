@@ -33,6 +33,16 @@ body {
   color: var(--muted);
 }
 
+.home-random {
+  display: flex;
+  justify-content: center;
+}
+
+.home-tags {
+  display: flex;
+  justify-content: center;
+}
+
 .shell {
   position: relative;
   width: 100vw;
@@ -371,14 +381,13 @@ body {
 .primary-start {
   font-size: 1.05rem;
   padding: 0.85rem 1.3rem;
-  background: color-mix(in srgb, var(--app-accent, #8b6a43) 85%, white);
+  background: var(--app-accent, #8b6a43);
   border-color: var(--app-accent, #8b6a43);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .primary-start:hover {
-  background: var(--app-accent, #8b6a43);
+  opacity: 0.9;
   color: #ffffff;
 }
 
