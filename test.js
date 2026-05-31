@@ -184,43 +184,51 @@ function renderHome() {
   }
 }
 
-function renderGamePanel() {
+function renderGamePanel(item = null) {
   const leftHeader = document.querySelector(".left-header");
 
   if (!leftHeader) return;
 
+  const accent = item?.color || homeMeta?.destacado || "#8b6a43";
+  const panelBg = lightenColor(accent, 0.88);
+
   leftHeader.innerHTML = `
     <h1 class="app-title">Ronda en curso</h1>
 
-    <div class="game-panel">
-      <div class="panel-card">
-        <span class="panel-label">Modo</span>
-        <span class="panel-value">${getModeLabel(selectedMode)}</span>
+    <div
+      class="game-panel game-panel-compact"
+      style="background:${panelBg};"
+    >
+
+      <div class="game-mode">
+        ${getModeLabel(selectedMode)} ·
+        ${selectedDifficulty === "facil" ? "Fácil" : "Difícil"}
       </div>
 
-      <div class="panel-card">
-        <span class="panel-label">Dificultad</span>
-        <span class="panel-value">${selectedDifficulty === "facil" ? "Fácil" : "Difícil"}</span>
+      <div class="game-question">
+        ${questionNumber} / ${QUESTIONS_PER_ROUND}
       </div>
 
-      <div class="panel-card">
-        <span class="panel-label">Pregunta</span>
-        <span class="panel-value">${questionNumber} / ${QUESTIONS_PER_ROUND}</span>
+      <div class="game-question-label">
+        Pregunta
       </div>
 
-      <div class="panel-card">
-        <span class="panel-label">Puntuación</span>
-        <span class="panel-value">${score}</span>
+      <div class="game-score">
+        ${score}
       </div>
 
-      <div class="panel-card">
-        <span class="panel-label">Fallos</span>
-        <span class="panel-value">${wrongCount}</span>
+      <div class="game-score-label">
+        Puntos
+      </div>
+
+      <div class="game-fails">
+        Fallos: ${wrongCount}
       </div>
 
       <button class="primary-button" id="homeButton">
         Inicio
       </button>
+
     </div>
   `;
 
@@ -281,7 +289,7 @@ function startCountryQuestion() {
   }
 
   questionNumber = roundIndex + 1;
-  renderGamePanel();
+  renderGamePanel(item);
 
   const item = roundItems[roundIndex];
   roundIndex += 1;
@@ -478,6 +486,23 @@ function darkenColor(hex, factor = 0.75) {
     r.toString(16).padStart(2, "0") +
     g.toString(16).padStart(2, "0") +
     b.toString(16).padStart(2, "0");
+}
+
+function lightenColor(hex, factor = 0.88) {
+  const color = hex.replace("#", "");
+
+  const r = parseInt(color.substring(0, 2), 16);
+  const g = parseInt(color.substring(2, 4), 16);
+  const b = parseInt(color.substring(4, 6), 16);
+
+  const nr = Math.round(r + (255 - r) * factor);
+  const ng = Math.round(g + (255 - g) * factor);
+  const nb = Math.round(b + (255 - b) * factor);
+
+  return "#" +
+    nr.toString(16).padStart(2, "0") +
+    ng.toString(16).padStart(2, "0") +
+    nb.toString(16).padStart(2, "0");
 }
 
 function playSound(sound) {
