@@ -288,13 +288,15 @@ function renderCountryQuestion(item, options) {
 
           <div class="feedback" id="feedback"></div>
 
-          <button
-            class="next-button"
-            id="nextButton"
-            disabled
-          >
-            Siguiente
-          </button>
+          <div class="next-row">
+            <button
+              class="next-button"
+              id="nextButton"
+              disabled
+            >
+              Siguiente
+            </button>
+          </div>
 
         </div>
 
