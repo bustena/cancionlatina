@@ -358,15 +358,6 @@ body {
 .player { margin-top: 16px; }
 .audio-wrap audio { width: 100%; }
 
-.feedback {
-  min-height: 1.5rem;
-  margin: 16px 0;
-  font-weight: 700;
-  color: var(--muted);
-}
-.feedback.success { color: var(--success); }
-.feedback.error { color: var(--error); }
-
 .game-panel {
   display: flex;
   flex-direction: column;
