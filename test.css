@@ -315,7 +315,7 @@ body {
 
 .question-kicker {
   margin: 0 0 32px;
-  color: var(--question-accent, #8b6a43);
+  color: var(--question-accent-dark);
   font-weight: 800;
   font-size: 1.35rem;
   text-transform: none;
