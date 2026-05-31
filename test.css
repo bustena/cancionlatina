@@ -314,10 +314,10 @@ body {
 .next-button:disabled { opacity: 0.45; cursor: default; }
 
 .question-kicker {
-  margin: 0 0 28px;
-  color: var(--app-accent, #8b6a43);
+  margin: 0 0 32px;
+  color: var(--question-accent, #8b6a43);
   font-weight: 800;
-  font-size: 1.15rem;
+  font-size: 1.35rem;
   text-transform: none;
   letter-spacing: 0;
   text-align: center;
