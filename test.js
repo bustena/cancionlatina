@@ -289,9 +289,11 @@ function startCountryQuestion() {
   }
 
   questionNumber = roundIndex + 1;
-  renderGamePanel(item);
-
+  
   const item = roundItems[roundIndex];
+  roundIndex += 1;
+  
+  renderGamePanel(item);
   roundIndex += 1;
 
   const correctAnswer = item.pais;
