@@ -1,4 +1,5 @@
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSJM_fPxtlc5UEyNf0DHLNg5B4tGIm8Qbba3k78kbQDRj9a9jGpSDRHwz_UOgAz4jbpcRJKHEUe1eNY/pub?gid=0&single=true&output=csv";
+const HOME_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSJM_fPxtlc5UEyNf0DHLNg5B4tGIm8Qbba3k78kbQDRj9a9jGpSDRHwz_UOgAz4jbpcRJKHEUe1eNY/pub?gid=1844389020&single=true&output=csv";
 
 const detailEl = document.getElementById("detail");
 
@@ -18,6 +19,43 @@ let roundIndex = 0;
 
 const gainSound = new Audio("assets/gain.mp3");
 const lossSound = new Audio("assets/loss.mp3");
+
+function normalizeColor(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "#c9b79c";
+  if (/^#[0-9a-fA-F]{6}$/.test(raw)) return raw;
+  if (/^[0-9a-fA-F]{6}$/.test(raw)) return `#${raw}`;
+  return "#c9b79c";
+}
+
+function mapHomeRow(row) {
+  const normalized = {};
+
+  for (const key in row) {
+    normalized[normalizeHeader(key)] = String(row[key] || "").trim();
+  }
+
+  return {
+    titulo: normalized.titulo || "",
+    subtitulo: normalized.subtitulo || "",
+    icono: normalized.icono || "",
+    enlace: normalized.enlace || "",
+    fondo: normalizeColor(normalized.fondo),
+    texto: normalizeColor(normalized.texto),
+    destacado: normalizeColor(normalized.destacado),
+    duracion: parseInt(normalized.duracion || "60", 10) || 60
+  };
+}
+
+function applyHomeTheme() {
+  const fondo = homeMeta?.fondo || "#FFFAFA";
+  const texto = homeMeta?.texto || "#151821";
+  const destacado = homeMeta?.destacado || "#7a6a2e";
+
+  document.documentElement.style.setProperty("--app-bg", fondo);
+  document.documentElement.style.setProperty("--app-text", texto);
+  document.documentElement.style.setProperty("--app-accent", destacado);
+}
 
 function normalizeHeader(header) {
   return header
@@ -418,4 +456,29 @@ function loadCSV() {
   });
 }
 
-loadCSV();
+function loadHomeCSV() {
+  return new Promise((resolve) => {
+    Papa.parse(HOME_CSV_URL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+
+      complete(results) {
+        if (results.data && results.data.length) {
+          homeMeta = mapHomeRow(results.data[0]);
+          applyHomeTheme();
+        }
+
+        resolve();
+      },
+
+      error() {
+        resolve();
+      }
+    });
+  });
+}
+
+loadHomeCSV().then(() => {
+  loadCSV();
+});
