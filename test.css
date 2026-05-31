@@ -387,7 +387,9 @@ body {
 }
 
 .primary-start:hover {
-  opacity: 0.9;
+  transform: translateY(-1px);
+  background: var(--app-accent, #8b6a43);
+  border-color: var(--app-accent, #8b6a43);
   color: #ffffff;
 }
 
