@@ -28,6 +28,20 @@ function normalizeColor(value) {
   return "#c9b79c";
 }
 
+function hexToRgba(hex, alpha) {
+  const clean = String(hex || "").replace("#", "").trim();
+
+  if (!/^[0-9a-fA-F]{6}$/.test(clean)) {
+    return `rgba(201, 183, 156, ${alpha})`;
+  }
+
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 function mapHomeRow(row) {
   const normalized = {};
 
@@ -342,7 +356,11 @@ function renderCountryQuestion(item, options) {
 
         <div
           class="media-column"
-          style="background:${accentColor};"
+          style="background: linear-gradient(
+            180deg,
+            ${hexToRgba(accentColor, 0.75)},
+            ${hexToRgba(accentColor, 0.45)}
+          );"
         >
           ${
             item.imagen
