@@ -299,14 +299,14 @@ body {
 }
 
 .option-button.correct {
-  background: var(--success);
-  border-color: var(--success);
+  background: var(--question-accent-dark);
+  border-color: var(--question-accent-dark);
   color: #ffffff;
 }
 
 .option-button.wrong {
-  background: var(--error);
-  border-color: var(--error);
+  background: #4b5563;
+  border-color: #4b5563;
   color: #ffffff;
 }
 
@@ -444,7 +444,7 @@ body {
 }
 
 .feedback.is-success {
-  color: var(--success);
+  color: var(--question-accent-dark);
 }
 
 .feedback.is-error {
