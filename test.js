@@ -3,7 +3,7 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSJM_fPxtlc5UEy
 const detailEl = document.getElementById("detail");
 
 let items = [];
-let selectedMode = "pais";
+let selectedMode = "obra";
 let selectedDifficulty = "facil";
 
 function normalizeHeader(header) {
@@ -53,7 +53,7 @@ function renderHome() {
             <button class="tag ${selectedMode === "pais" ? "active" : ""}" data-mode="pais">País</button>
             <button class="tag ${selectedMode === "ritmo" ? "active" : ""}" data-mode="ritmo">Ritmo</button>
             <button class="tag ${selectedMode === "ano" ? "active" : ""}" data-mode="ano">Año</button>
-            <button class="tag ${selectedMode === "autorTitulo" ? "active" : ""}" data-mode="autorTitulo">Autor / Título</button>
+            <button class="tag ${selectedMode === "obra" ? "active" : ""}" data-mode="obra">Obra</button>
           </div>
         </div>
 
