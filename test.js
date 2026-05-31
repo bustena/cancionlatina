@@ -86,7 +86,29 @@ function mapRow(row) {
   };
 }
 
+function renderHomePanel() {
+  const leftHeader = document.querySelector(".left-header");
+  if (!leftHeader) return;
+
+  leftHeader.innerHTML = `
+    <h1 class="app-title">Ponte a prueba</h1>
+
+    <div class="home-panel-text">
+      <p>
+        Elige una modalidad y una dificultad. En cada ronda tendrás que identificar la respuesta correcta entre cuatro opciones.
+      </p>
+
+      <p>
+        Los aciertos suman puntos; los fallos restan. No avanzarás hasta acertar.
+      </p>
+    </div>
+  `;
+}
+
 function renderHome() {
+
+  renderHomePanel();
+    
   const meta = homeMeta || {
     titulo: "TEST",
     subtitulo: "Pon a prueba tu oído con la canción latinoamericana.",
@@ -168,7 +190,7 @@ function renderGamePanel() {
   if (!leftHeader) return;
 
   leftHeader.innerHTML = `
-    <h1 class="app-title">TEST</h1>
+    <h1 class="app-title">Ronda en curso</h1>
 
     <div class="game-panel">
       <div class="panel-card">
@@ -189,11 +211,6 @@ function renderGamePanel() {
       <div class="panel-card">
         <span class="panel-label">Puntuación</span>
         <span class="panel-value">${score}</span>
-      </div>
-
-      <div class="panel-card">
-        <span class="panel-label">Aciertos</span>
-        <span class="panel-value">${correctCount}</span>
       </div>
 
       <div class="panel-card">
