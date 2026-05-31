@@ -241,7 +241,7 @@ function attachQuestionEvents() {
 
         currentQuestion.answered = true;
 
-        feedback.textContent = "¡Correcto!";
+        feedback.textContent = "✓ Correcto";
         feedback.className = "feedback is-success";
 
         nextButton.disabled = false;
@@ -254,7 +254,7 @@ function attachQuestionEvents() {
         document.getElementById("scoreValue").textContent = score;
         playSound(lossSound);
 
-        feedback.textContent = "Inténtalo de nuevo";
+        feedback.textContent = "✗ Inténtalo de nuevo";
         feedback.className = "feedback is-error";
       }
     };
