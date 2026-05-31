@@ -414,24 +414,26 @@ function renderEndScreen() {
   renderGamePanel();
 
   detailEl.innerHTML = `
-    <article class="card">
-      <div class="content-column home-content">
+    <article class="card end-card">
+      <div class="end-panel">
 
-        <h1>Ronda terminada</h1>
-
-        <p class="feedback is-success">
-          Puntuación final: ${score}
+        <p class="end-kicker">
+          Ronda terminada
         </p>
 
-        <p>
-          Aciertos: <strong>${correctCount}</strong>
+        <h1 class="end-score">
+          ${score}
+        </h1>
+
+        <p class="end-label">
+          puntos
         </p>
 
-        <p>
-          Fallos: <strong>${wrongCount}</strong>
+        <p class="end-summary">
+          Has completado ${QUESTIONS_PER_ROUND} preguntas.
         </p>
 
-        <button class="primary-button" id="restartButton">
+        <button class="primary-button end-button" id="restartButton">
           Jugar otra vez
         </button>
 
