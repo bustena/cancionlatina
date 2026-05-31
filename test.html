@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TEST · Canción latinoamericana</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=PT+Sans+Narrow:wght@700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="test.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/fjm_icon.png">
+</head>
+<body>
+  <div class="shell">
+    <aside class="left-column">
+      <div class="left-header">
+        <h1 class="app-title">
+          <button type="button" class="app-title-button" id="homeButton">TEST</button>
+        </h1>
+        <p class="app-subtitle">Canción latinoamericana</p>
+      </div>
+
+      <div class="left-scroll">
+        <div class="game-panel" id="gamePanel"></div>
+      </div>
+    </aside>
+
+    <main class="right-column">
+      <div class="right-fixed">
+        <div id="screen" class="empty"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="test.js"></script>
+</body>
+</html>
