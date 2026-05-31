@@ -3,8 +3,11 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSJM_fPxtlc5UEy
 const detailEl = document.getElementById("detail");
 
 let items = [];
-let selectedMode = "obra";
+let selectedMode = "pais";
 let selectedDifficulty = "facil";
+
+let currentQuestion = null;
+let score = 0;
 
 function normalizeHeader(header) {
   return header
@@ -94,9 +97,163 @@ function renderHome() {
 
   if (startButton) {
     startButton.onclick = () => {
-      alert(`Modo: ${selectedMode}\nDificultad: ${selectedDifficulty}`);
+      startCountryQuestion();
     };
   }
+}
+
+function shuffle(array) {
+  const copy = [...array];
+
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+
+  return copy;
+}
+
+function getUniqueCountries() {
+  return [...new Set(
+    items
+      .map(item => item.pais)
+      .filter(Boolean)
+  )];
+}
+
+function startCountryQuestion() {
+  const candidates = items.filter(item => item.pais);
+
+  const item = candidates[Math.floor(Math.random() * candidates.length)];
+
+  const correctAnswer = item.pais;
+
+  const wrongAnswers = shuffle(
+    getUniqueCountries().filter(country => country !== correctAnswer)
+  ).slice(0, 3);
+
+  const options = shuffle([
+    correctAnswer,
+    ...wrongAnswers
+  ]);
+
+  currentQuestion = {
+    item,
+    correctAnswer,
+    answered: false
+  };
+
+  renderCountryQuestion(item, options);
+}
+
+function renderCountryQuestion(item, options) {
+  detailEl.innerHTML = `
+    <article class="card">
+      <div class="card-inner">
+
+        <div class="media-column">
+          ${
+            item.imagen
+              ? `<img src="${item.imagen}" alt="">`
+              : `<div class="no-image">Sin imagen</div>`
+          }
+        </div>
+
+        <div class="content-column">
+
+          <p class="question-kicker">
+            ¿De qué país es esta audición?
+          </p>
+
+          <h2 class="author">
+            ${item.autor}
+          </h2>
+
+          <p class="work-title">
+            ${item.titulo}
+          </p>
+
+          <div class="meta-list">
+            <span class="tag">${item.ano}</span>
+            <span class="tag">${item.ritmo || "—"}</span>
+            <span class="tag">${item.genero || "—"}</span>
+            <span class="tag">???</span>
+          </div>
+
+          <div class="options-grid">
+            ${options.map(option => `
+              <button
+                class="option-button"
+                data-option="${option}"
+              >
+                ${option}
+              </button>
+            `).join("")}
+          </div>
+
+          <div class="feedback" id="feedback"></div>
+
+          <p>
+            Puntos: <strong>${score}</strong>
+          </p>
+
+          <button
+            class="next-button"
+            id="nextButton"
+            disabled
+          >
+            Siguiente
+          </button>
+
+        </div>
+
+      </div>
+    </article>
+  `;
+
+  attachQuestionEvents();
+}
+
+function attachQuestionEvents() {
+  const feedback = document.getElementById("feedback");
+  const nextButton = document.getElementById("nextButton");
+
+  detailEl.querySelectorAll("[data-option]").forEach(button => {
+
+    button.onclick = () => {
+
+      if (currentQuestion.answered) return;
+
+      const value = button.dataset.option;
+
+      if (value === currentQuestion.correctAnswer) {
+
+        button.classList.add("correct");
+
+        score += 10;
+
+        currentQuestion.answered = true;
+
+        feedback.textContent = "¡Correcto!";
+        feedback.className = "feedback success";
+
+        nextButton.disabled = false;
+
+      } else {
+
+        button.classList.add("wrong");
+
+        score -= 2;
+
+        feedback.textContent = "Inténtalo de nuevo";
+        feedback.className = "feedback error";
+      }
+    };
+  });
+
+  nextButton.onclick = () => {
+    startCountryQuestion();
+  };
 }
 
 function loadCSV() {
