@@ -304,7 +304,6 @@ function startCountryQuestion() {
   roundIndex += 1;
   
   renderGamePanel(item);
-  roundIndex += 1;
 
   const correctAnswer = item.pais;
 
