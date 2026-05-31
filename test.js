@@ -447,8 +447,49 @@ function attachQuestionEvents() {
   };
 }
 
+function renderEndPanel() {
+  const leftHeader = document.querySelector(".left-header");
+  if (!leftHeader) return;
+
+  setLeftPanelBackground(homeMeta?.destacado || "#7a6a2e");
+  leftHeader.style.color = "#ffffff";
+
+  leftHeader.innerHTML = `
+    <h1 class="app-title">Resultado</h1>
+
+    <div class="game-panel game-panel-compact end-left-panel">
+      <div class="game-line">
+        <span class="game-label">Puntuación</span>
+        <span class="game-value">${score}</span>
+      </div>
+
+      <div class="game-line">
+        <span class="game-label">Preguntas</span>
+        <span class="game-value">${QUESTIONS_PER_ROUND}</span>
+      </div>
+
+      <div class="game-line">
+        <span class="game-label">Fallos</span>
+        <span class="game-value">${wrongCount}</span>
+      </div>
+
+      <button class="control-btn-left" id="homeButton">
+        Inicio
+      </button>
+    </div>
+  `;
+
+  const homeButton = document.getElementById("homeButton");
+
+  if (homeButton) {
+    homeButton.onclick = () => {
+      renderHome();
+    };
+  }
+}
+
 function renderEndScreen() {
-  renderGamePanel();
+  renderEndPanel();
 
   const leftColumn = document.querySelector(".left-column");
   if (leftColumn) {
