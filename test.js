@@ -241,20 +241,8 @@ function renderGamePanel(item = null) {
         <span class="game-label">Fallos</span>
         <span class="game-value">${wrongCount}</span>
       </div>
-  
-      <button class="control-btn-left" id="homeButton">
-        Inicio
-      </button>
     </div>
   `;
-
-  const homeButton = document.getElementById("homeButton");
-
-  if (homeButton) {
-    homeButton.onclick = () => {
-      renderHome();
-    };
-  }
 }
 
 function setLeftPanelBackground(color = "") {
@@ -489,20 +477,10 @@ function renderEndPanel() {
         <span class="game-label">Fallos</span>
         <span class="game-value">${wrongCount}</span>
       </div>
-
-      <button class="control-btn-left" id="homeButton">
-        Inicio
-      </button>
     </div>
   `;
 
   const homeButton = document.getElementById("homeButton");
-
-  if (homeButton) {
-    homeButton.onclick = () => {
-      renderHome();
-    };
-  }
 }
 
 function renderEndScreen() {
