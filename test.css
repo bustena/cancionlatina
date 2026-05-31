@@ -329,7 +329,7 @@ body {
   width: 5px;
   height: 1.05em;
   border-radius: 999px;
-  background: var(--accent, #c9b79c);
+  background: var(--question-accent, #c9b79c);
 }
 
 .hidden-value {
