@@ -334,6 +334,7 @@ body {
 .mode-grid,
 .difficulty-grid,
 .options-grid {
+  margin-top: 38px;
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
@@ -400,15 +401,13 @@ body {
 .next-button:disabled { opacity: 0.45; cursor: default; }
 
 .question-kicker {
-  margin: 0 0 32px;
+  margin: 0 0 42px;
   color: var(--question-accent-dark);
   font-weight: 800;
   font-size: 1.35rem;
   text-transform: none;
   letter-spacing: 0;
   text-align: center;
-  padding-bottom: 14px;
-  border-bottom: 2px solid rgba(0,0,0,0.08);
 }
 
 .author {
@@ -420,10 +419,13 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: #2f3440;
+  margin-top: 0;
+  margin-bottom: 14px;
 }
 
 .work-title {
   margin: 0 0 16px;
+  margin-bottom: 28px;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 1.2rem;
   line-height: 1.25;
