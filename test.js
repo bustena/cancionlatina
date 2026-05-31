@@ -90,6 +90,11 @@ function renderHomePanel() {
   const leftHeader = document.querySelector(".left-header");
   if (!leftHeader) return;
 
+  const leftColumn = document.querySelector(".left-column");
+  if (leftColumn) {
+    leftColumn.style.background = "";
+  }
+
   leftHeader.innerHTML = `
     <h1 class="app-title">Ponte a prueba</h1>
 
@@ -190,7 +195,12 @@ function renderGamePanel(item = null) {
   if (!leftHeader) return;
 
   const accent = item?.color || homeMeta?.destacado || "#8b6a43";
-  const panelBg = lightenColor(accent, 0.88);
+  const panelBg = lightenColor(accent, 0.86);
+  
+  const leftColumn = document.querySelector(".left-column");
+  if (leftColumn) {
+    leftColumn.style.background = panelBg;
+  }
 
   leftHeader.innerHTML = `
     <h1 class="app-title">Ronda en curso</h1>
@@ -439,6 +449,11 @@ function attachQuestionEvents() {
 
 function renderEndScreen() {
   renderGamePanel();
+
+  const leftColumn = document.querySelector(".left-column");
+  if (leftColumn) {
+    leftColumn.style.background = homeMeta?.destacado || "";
+  }
 
   detailEl.innerHTML = `
     <article class="card end-card">
