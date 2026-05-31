@@ -12,6 +12,9 @@ let score = 0;
 let questionNumber = 0;
 let correctCount = 0;
 let wrongCount = 0;
+let roundItems = [];
+let roundIndex = 0;
+
 const gainSound = new Audio("assets/gain.mp3");
 const lossSound = new Audio("assets/loss.mp3");
 
@@ -103,12 +106,7 @@ function renderHome() {
 
   if (startButton) {
     startButton.onclick = () => {
-      score = 0;
-      questionNumber = 0;
-      correctCount = 0;
-      wrongCount = 0;
-      
-      startCountryQuestion();
+      startRound();
     };
   }
 }
@@ -194,13 +192,31 @@ function getUniqueCountries() {
   )];
 }
 
-function startCountryQuestion() {
-  questionNumber += 1;
-  renderGamePanel();
-  
+function startRound() {
+  score = 0;
+  questionNumber = 0;
+  correctCount = 0;
+  wrongCount = 0;
+
   const candidates = items.filter(item => item.pais);
 
-  const item = candidates[Math.floor(Math.random() * candidates.length)];
+  roundItems = shuffle(candidates).slice(0, QUESTIONS_PER_ROUND);
+  roundIndex = 0;
+
+  startCountryQuestion();
+}
+
+function startCountryQuestion() {
+  if (roundIndex >= roundItems.length) {
+    renderEndScreen();
+    return;
+  }
+
+  questionNumber = roundIndex + 1;
+  renderGamePanel();
+
+  const item = roundItems[roundIndex];
+  roundIndex += 1;
 
   const correctAnswer = item.pais;
 
@@ -336,6 +352,44 @@ function attachQuestionEvents() {
   nextButton.onclick = () => {
     startCountryQuestion();
   };
+}
+
+function renderEndScreen() {
+  renderGamePanel();
+
+  detailEl.innerHTML = `
+    <article class="card">
+      <div class="content-column home-content">
+
+        <h1>Ronda terminada</h1>
+
+        <p class="feedback is-success">
+          Puntuación final: ${score}
+        </p>
+
+        <p>
+          Aciertos: <strong>${correctCount}</strong>
+        </p>
+
+        <p>
+          Fallos: <strong>${wrongCount}</strong>
+        </p>
+
+        <button class="primary-button" id="restartButton">
+          Jugar otra vez
+        </button>
+
+      </div>
+    </article>
+  `;
+
+  const restartButton = document.getElementById("restartButton");
+
+  if (restartButton) {
+    restartButton.onclick = () => {
+      renderHome();
+    };
+  }
 }
 
 function playSound(sound) {
