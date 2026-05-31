@@ -393,12 +393,6 @@ body {
   font-weight: 700;
 }
 
-.score-line {
-  margin: 12px 0 14px;
-  font-size: 0.95rem;
-  color: var(--muted);
-}
-
 .feedback {
   min-height: 1.6rem;
   margin: 14px 0;
