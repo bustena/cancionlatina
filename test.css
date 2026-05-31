@@ -407,11 +407,11 @@ body {
   color: var(--muted);
 }
 
-.feedback.success {
+.feedback.is-success {
   color: var(--success);
 }
 
-.feedback.error {
+.feedback.is-error {
   color: var(--error);
 }
 
