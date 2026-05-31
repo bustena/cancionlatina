@@ -5,9 +5,13 @@ const detailEl = document.getElementById("detail");
 let items = [];
 let selectedMode = "pais";
 let selectedDifficulty = "facil";
+const QUESTIONS_PER_ROUND = 8;
 
 let currentQuestion = null;
 let score = 0;
+let questionNumber = 0;
+let correctCount = 0;
+let wrongCount = 0;
 const gainSound = new Audio("assets/gain.mp3");
 const lossSound = new Audio("assets/loss.mp3");
 
@@ -99,7 +103,66 @@ function renderHome() {
 
   if (startButton) {
     startButton.onclick = () => {
+      score = 0;
+      questionNumber = 0;
+      correctCount = 0;
+      wrongCount = 0;
+      
       startCountryQuestion();
+    };
+  }
+}
+
+function renderGamePanel() {
+  const leftHeader = document.querySelector(".left-header");
+
+  if (!leftHeader) return;
+
+  leftHeader.innerHTML = `
+    <h1 class="app-title">TEST</h1>
+
+    <div class="game-panel">
+      <div class="panel-card">
+        <span class="panel-label">Modo</span>
+        <span class="panel-value">${getModeLabel(selectedMode)}</span>
+      </div>
+
+      <div class="panel-card">
+        <span class="panel-label">Dificultad</span>
+        <span class="panel-value">${selectedDifficulty === "facil" ? "Fácil" : "Difícil"}</span>
+      </div>
+
+      <div class="panel-card">
+        <span class="panel-label">Pregunta</span>
+        <span class="panel-value">${questionNumber} / ${QUESTIONS_PER_ROUND}</span>
+      </div>
+
+      <div class="panel-card">
+        <span class="panel-label">Puntuación</span>
+        <span class="panel-value">${score}</span>
+      </div>
+
+      <div class="panel-card">
+        <span class="panel-label">Aciertos</span>
+        <span class="panel-value">${correctCount}</span>
+      </div>
+
+      <div class="panel-card">
+        <span class="panel-label">Fallos</span>
+        <span class="panel-value">${wrongCount}</span>
+      </div>
+
+      <button class="primary-button" id="homeButton">
+        Inicio
+      </button>
+    </div>
+  `;
+
+  const homeButton = document.getElementById("homeButton");
+
+  if (homeButton) {
+    homeButton.onclick = () => {
+      renderHome();
     };
   }
 }
@@ -115,6 +178,14 @@ function shuffle(array) {
   return copy;
 }
 
+function getModeLabel(mode) {
+  if (mode === "pais") return "País";
+  if (mode === "ritmo") return "Ritmo";
+  if (mode === "ano") return "Año";
+  if (mode === "obra") return "Obra";
+  return mode;
+}
+
 function getUniqueCountries() {
   return [...new Set(
     items
@@ -124,6 +195,9 @@ function getUniqueCountries() {
 }
 
 function startCountryQuestion() {
+  questionNumber += 1;
+  renderGamePanel();
+  
   const candidates = items.filter(item => item.pais);
 
   const item = candidates[Math.floor(Math.random() * candidates.length)];
@@ -224,38 +298,37 @@ function attachQuestionEvents() {
   const nextButton = document.getElementById("nextButton");
 
   detailEl.querySelectorAll("[data-option]").forEach(button => {
-
     button.onclick = () => {
-
       if (currentQuestion.answered) return;
 
       const value = button.dataset.option;
 
       if (value === currentQuestion.correctAnswer) {
-
         button.classList.add("correct");
 
         score += 10;
-        document.getElementById("scoreValue").textContent = score;
-        playSound(gainSound);
+        correctCount += 1;
 
         currentQuestion.answered = true;
 
         feedback.textContent = "✓ Correcto";
         feedback.className = "feedback is-success";
 
+        playSound(gainSound);
+        renderGamePanel();
+
         nextButton.disabled = false;
-
       } else {
-
         button.classList.add("wrong");
 
         score -= 2;
-        document.getElementById("scoreValue").textContent = score;
-        playSound(lossSound);
+        wrongCount += 1;
 
         feedback.textContent = "✗ Inténtalo de nuevo";
         feedback.className = "feedback is-error";
+
+        playSound(lossSound);
+        renderGamePanel();
       }
     };
   });
