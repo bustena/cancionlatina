@@ -342,7 +342,7 @@ function renderCountryQuestion(item, options) {
 
         <div
           class="media-column"
-          style="background:${item.color || "#c9b79c"};"
+          style="background:${accentColor};"
         >
           ${
             item.imagen
