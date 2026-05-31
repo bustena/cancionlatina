@@ -242,7 +242,7 @@ function attachQuestionEvents() {
         currentQuestion.answered = true;
 
         feedback.textContent = "¡Correcto!";
-        feedback.className = "feedback success";
+        feedback.className = "feedback is-success";
 
         nextButton.disabled = false;
 
@@ -255,7 +255,7 @@ function attachQuestionEvents() {
         playSound(lossSound);
 
         feedback.textContent = "Inténtalo de nuevo";
-        feedback.className = "feedback error";
+        feedback.className = "feedback is-error";
       }
     };
   });
