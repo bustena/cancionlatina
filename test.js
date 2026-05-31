@@ -8,6 +8,8 @@ let selectedDifficulty = "facil";
 
 let currentQuestion = null;
 let score = 0;
+const gainSound = new Audio("assets/gain.mp3");
+const lossSound = new Audio("assets/loss.mp3");
 
 function normalizeHeader(header) {
   return header
@@ -179,17 +181,9 @@ function renderCountryQuestion(item, options) {
             ${item.titulo}
           </p>
 
-          <div class="question-meta">
-            <p>
-              <strong>Año:</strong>
-              ${item.ano || "—"}
-            </p>
-          
-            <p>
-              <strong>País:</strong>
-              <span class="hidden-answer">???</span>
-            </p>
-          </div>
+          <p class="question-year">
+            ${item.ano || ""}
+          </p>
 
           <div class="options-grid">
             ${options.map(option => `
@@ -204,8 +198,8 @@ function renderCountryQuestion(item, options) {
 
           <div class="feedback" id="feedback"></div>
 
-          <p>
-            Puntos: <strong>${score}</strong>
+          <p class="score-line">
+            Puntos: <strong id="scoreValue">${score}</strong>
           </p>
 
           <button
@@ -242,6 +236,8 @@ function attachQuestionEvents() {
         button.classList.add("correct");
 
         score += 10;
+        document.getElementById("scoreValue").textContent = score;
+        playSound(gainSound);
 
         currentQuestion.answered = true;
 
@@ -255,6 +251,8 @@ function attachQuestionEvents() {
         button.classList.add("wrong");
 
         score -= 2;
+        document.getElementById("scoreValue").textContent = score;
+        playSound(lossSound);
 
         feedback.textContent = "Inténtalo de nuevo";
         feedback.className = "feedback error";
@@ -265,6 +263,11 @@ function attachQuestionEvents() {
   nextButton.onclick = () => {
     startCountryQuestion();
   };
+}
+
+function playSound(sound) {
+  sound.currentTime = 0;
+  sound.play().catch(() => {});
 }
 
 function loadCSV() {
