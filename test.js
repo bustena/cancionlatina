@@ -280,37 +280,74 @@ function getUniqueCountries() {
   )];
 }
 
+function getAnswerValue(item, mode = selectedMode) {
+  if (mode === "pais") return item.pais;
+  if (mode === "ritmo") return item.ritmo;
+  if (mode === "ano") return item.ano;
+  if (mode === "obra") return `${item.autor} — ${item.titulo}`;
+  return "";
+}
+
+function getQuestionText(mode = selectedMode) {
+  if (mode === "pais") return "¿De qué país es esta audición?";
+  if (mode === "ritmo") return "¿Qué ritmo tiene esta audición?";
+  if (mode === "ano") return "¿De qué año es esta audición?";
+  if (mode === "obra") return "¿Qué obra estás escuchando?";
+  return "¿Cuál es la respuesta correcta?";
+}
+
+function getValidItemsForMode(mode = selectedMode) {
+  return items.filter(item => {
+    const answer = getAnswerValue(item, mode);
+    return Boolean(answer);
+  });
+}
+
+function getUniqueAnswersForMode(mode = selectedMode) {
+  return [...new Set(
+    getValidItemsForMode(mode)
+      .map(item => getAnswerValue(item, mode))
+      .filter(Boolean)
+  )];
+}
+
 function startRound() {
   score = 0;
   questionNumber = 0;
   correctCount = 0;
   wrongCount = 0;
 
-  const candidates = items.filter(item => item.pais);
+  const candidates = getValidItemsForMode(selectedMode);
+  const uniqueAnswers = getUniqueAnswersForMode(selectedMode);
+
+  if (candidates.length < QUESTIONS_PER_ROUND || uniqueAnswers.length < 4) {
+    alert("No hay suficientes datos para iniciar esta modalidad.");
+    return;
+  }
 
   roundItems = shuffle(candidates).slice(0, QUESTIONS_PER_ROUND);
   roundIndex = 0;
 
-  startCountryQuestion();
+  startQuestion();
 }
 
-function startCountryQuestion() {
+function startQuestion() {
   if (roundIndex >= roundItems.length) {
     renderEndScreen();
     return;
   }
 
   questionNumber = roundIndex + 1;
-  
+
   const item = roundItems[roundIndex];
   roundIndex += 1;
-  
+
   renderGamePanel(item);
 
-  const correctAnswer = item.pais;
+  const correctAnswer = getAnswerValue(item, selectedMode);
 
   const wrongAnswers = shuffle(
-    getUniqueCountries().filter(country => country !== correctAnswer)
+    getUniqueAnswersForMode(selectedMode).filter(answer => answer !== correctAnswer)
   ).slice(0, 3);
 
   const options = shuffle([
@@ -324,10 +361,10 @@ function startCountryQuestion() {
     answered: false
   };
 
-  renderCountryQuestion(item, options);
+  renderQuestion(item, options);
 }
 
-function renderCountryQuestion(item, options) {
+function renderQuestion(item, options) {
 
   const accentColor = item.color || "#c9b79c";
   const darkAccentColor = darkenColor(accentColor, 0.70);
@@ -360,7 +397,7 @@ function renderCountryQuestion(item, options) {
         <div class="content-column">
 
           <p class="question-kicker">
-            ¿De qué país es esta audición?
+            ${getQuestionText(selectedMode)}
           </p>
 
           <h2 class="author">
@@ -448,7 +485,7 @@ function attachQuestionEvents() {
   });
 
   nextButton.onclick = () => {
-    startCountryQuestion();
+    startQuestion();
   };
 }
 
