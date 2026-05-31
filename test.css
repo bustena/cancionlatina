@@ -400,11 +400,12 @@ body {
 }
 
 .feedback {
-  min-height: 1.2rem;
-  margin: 10px 0;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--muted);
+  min-height: 1.6rem;
+  margin: 14px 0;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
 .feedback.is-success {
