@@ -197,45 +197,35 @@ function renderGamePanel(item = null) {
   const accent = item?.color || homeMeta?.destacado || "#8b6a43";
   const panelBg = lightenColor(accent, 0.86);
   
-  const leftColumn = document.querySelector(".left-column");
-  if (leftColumn) {
-    leftColumn.style.background = panelBg;
-  }
+  setLeftPanelBackground(panelBg);
 
   leftHeader.innerHTML = `
     <h1 class="app-title">Ronda en curso</h1>
-
+  
     <div class="game-panel game-panel-compact">
-
-      <div class="game-mode">
-        ${getModeLabel(selectedMode)} ·
-        ${selectedDifficulty === "facil" ? "Fácil" : "Difícil"}
+      <div class="game-line">
+        <span class="game-label">Modo</span>
+        <span class="game-value">${getModeLabel(selectedMode)} / ${selectedDifficulty === "facil" ? "Fácil" : "Difícil"}</span>
       </div>
-
-      <div class="game-question">
-        ${questionNumber} / ${QUESTIONS_PER_ROUND}
+  
+      <div class="game-line">
+        <span class="game-label">Pregunta</span>
+        <span class="game-value">${questionNumber} / ${QUESTIONS_PER_ROUND}</span>
       </div>
-
-      <div class="game-question-label">
-        Pregunta
+  
+      <div class="game-line">
+        <span class="game-label">Puntos</span>
+        <span class="game-value">${score}</span>
       </div>
-
-      <div class="game-score">
-        ${score}
+  
+      <div class="game-line">
+        <span class="game-label">Fallos</span>
+        <span class="game-value">${wrongCount}</span>
       </div>
-
-      <div class="game-score-label">
-        Puntos
-      </div>
-
-      <div class="game-fails">
-        Fallos: ${wrongCount}
-      </div>
-
-      <button class="primary-button" id="homeButton">
+  
+      <button class="control-btn-left" id="homeButton">
         Inicio
       </button>
-
     </div>
   `;
 
@@ -246,6 +236,14 @@ function renderGamePanel(item = null) {
       renderHome();
     };
   }
+}
+
+function setLeftPanelBackground(color = "") {
+  const leftColumn = document.querySelector(".left-column");
+  const leftHeader = document.querySelector(".left-header");
+
+  if (leftColumn) leftColumn.style.background = color;
+  if (leftHeader) leftHeader.style.background = color;
 }
 
 function shuffle(array) {
@@ -449,7 +447,7 @@ function renderEndScreen() {
 
   const leftColumn = document.querySelector(".left-column");
   if (leftColumn) {
-    leftColumn.style.background = homeMeta?.destacado || "";
+    setLeftPanelBackground(homeMeta?.destacado || "");
   }
 
   detailEl.innerHTML = `
