@@ -537,6 +537,26 @@ body {
   color: var(--error);
 }
 
+.end-left-panel .game-line {
+  border-bottom-color: rgba(255, 255, 255, 0.22);
+}
+
+.end-left-panel .game-label,
+.end-left-panel .game-value {
+  color: #ffffff;
+}
+
+.end-left-panel .control-btn-left {
+  background: rgba(255, 255, 255, 0.92);
+  color: #2f3440;
+  border-color: rgba(255, 255, 255, 0.92);
+}
+
+.end-left-panel .control-btn-left:hover {
+  background: #ffffff;
+  color: #2f3440;
+}
+
 .end-card {
   display: flex;
   align-items: center;
