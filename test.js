@@ -40,10 +40,7 @@ function mapRow(row) {
 
 function renderHome() {
   detailEl.innerHTML = `
-    <article
-      class="card"
-      style="--question-accent: ${item.color || "#c9b79c"};"
-    >
+      <article class="card">
       <div class="content-column home-content">
 
         <h1>TEST</h1>
@@ -151,7 +148,10 @@ function startCountryQuestion() {
 
 function renderCountryQuestion(item, options) {
   detailEl.innerHTML = `
-    <article class="card">
+      <article
+        class="card"
+        style="--question-accent: ${item.color || "#c9b79c"};"
+      >
       <div class="card-inner">
 
         <div
