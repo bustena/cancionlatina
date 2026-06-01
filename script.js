@@ -1449,6 +1449,9 @@ function renderDetail(item) {
             ${rhythmTag}
             ${genreTags}
           </div>
+          <button type="button" class="home-return-button" id="detailHomeButton">
+            ← Inicio
+          </button>
         </div>
       </div>
     </article>
@@ -1456,6 +1459,12 @@ function renderDetail(item) {
 
 bindFilterTagEvents();
 bindPlayerControls();
+
+const detailHomeButton = document.getElementById("detailHomeButton");
+
+if (detailHomeButton) {
+  detailHomeButton.onclick = goHome;
+}
 
 detailEl.querySelectorAll("[data-spotify-slot]").forEach(slot => {
   const trigger = slot.querySelector("[data-spotify-toggle]");
