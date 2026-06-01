@@ -360,6 +360,12 @@ body {
   transition: all 0.18s ease;
 }
 
+.tag:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .next-row {
   display: flex;
   justify-content: center;
@@ -664,4 +670,13 @@ body {
   .card { height: auto; }
   .card-inner { grid-template-columns: 1fr; height: auto; }
   .media-column, .content-column { overflow: visible; }
+  .home-title {
+    font-size: 2rem;
+    line-height: 1.05;
+  }
+  
+  .home-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.35;
+  }
 }
