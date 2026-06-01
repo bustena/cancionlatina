@@ -414,16 +414,22 @@ function renderQuestion(item, options) {
               : `<div class="no-image">Sin imagen</div>`
           }
 
-          <div class="test-player">
-            <button type="button" class="test-play-button" id="audioPlayButton">
-              ▶
-            </button>
-
-            <div class="test-progress">
-              <div class="test-progress-fill" id="audioProgressFill"></div>
+          <div class="player test-player">
+            <div class="controls test-controls">
+              <button type="button" class="control-btn play-btn test-play-button" id="audioPlayButton" aria-label="Reproducir">
+                ▶
+              </button>
             </div>
-
-            <span class="test-time" id="audioTime">0:00</span>
+          
+            <div class="progress-wrap">
+              <div class="progress-bar test-progress">
+                <div class="progress-fill test-progress-fill" id="audioProgressFill"></div>
+              </div>
+          
+              <div class="time-row">
+                <span class="time-current test-time" id="audioTime">0:00</span>
+              </div>
+            </div>
           </div>
         </div>
 
