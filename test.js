@@ -6,7 +6,7 @@ const detailEl = document.getElementById("detail");
 let items = [];
 let selectedMode = "pais";
 let selectedDifficulty = "facil";
-const QUESTIONS_PER_ROUND = 3;
+const QUESTIONS_PER_ROUND = 8;
 
 let homeMeta = null;
 let currentQuestion = null;
