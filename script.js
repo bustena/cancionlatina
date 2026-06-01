@@ -1053,11 +1053,12 @@ function setFilter(type, label) {
     renderTimeline();
     scrollActiveTimelineItemIntoView();
     renderCurrentDetail();
-  } else {
-    activeIndex = items.indexOf(filteredItems[0]);
-    renderTimeline();
-    scrollActiveTimelineItemIntoView();
-    renderCurrentDetail();
+    } else {
+      activeIndex = items.indexOf(filteredItems[0]);
+      renderTimeline();
+      scrollActiveTimelineItemIntoView();
+      renderCurrentDetail();
+  }
 }
 
 function bindFilterTagEventsInDetail() {
