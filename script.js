@@ -1219,6 +1219,31 @@ function renderRhythmTag(rhythm) {
   `;
 }
 
+function renderActiveRhythmLegend() {
+  if (!activeFilter || activeFilter.type !== "ritmo") return "";
+
+  const rhythm = String(activeFilter.label || activeFilter.value || "").trim().toUpperCase();
+
+  const legends = {
+    HAB: "HAB · Familia habanera (habanera / tango / danzón / ...)",
+    TER: "TER · Familia ternaria (vals criollo / joropo / ...)",
+    SON: "SON · Clave cubana (son / mambo / salsa / ...)",
+    BRA: "BRA · Familia afrobrasileña (samba / bossa nova / ...)",
+    CAR: "CAR · Familia afrocaribeña binaria (cumbia / merengue / ...)",
+    URB: "URB · Familia urbana (dembow / reguetón / ...)"
+  };
+
+  const text = legends[rhythm];
+
+  if (!text) return "";
+
+  return `
+    <div class="active-rhythm-legend">
+      ${escapeHtml(text)}
+    </div>
+  `;
+}
+
 function renderGenreTags(value) {
   return parseGenres(value)
     .map(genre => {
@@ -1449,6 +1474,9 @@ function renderDetail(item) {
             ${rhythmTag}
             ${genreTags}
           </div>
+
+          ${renderActiveRhythmLegend()}
+          
           <button type="button" class="home-return-button" id="detailHomeButton">
             ← Inicio
           </button>
