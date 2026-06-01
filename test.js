@@ -702,7 +702,7 @@ function updateAudioUI() {
   const percent = duration > 0 ? Math.min(100, (elapsed / duration) * 100) : 0;
 
   if (playButton) {
-    playButton.textContent = currentAudioPlayer.paused ? "▶" : "Ⅱ";
+    playButton.classList.toggle("is-playing", !currentAudioPlayer.paused);
   }
 
   if (progressFill) {
