@@ -385,13 +385,13 @@ function renderQuestion(item, options) {
   const imageClass = isHardMode ? "is-blurred" : "";
 
   detailEl.innerHTML = `
-      <article
-        class="card"
-        style="
-          --question-accent: ${accentColor};
-          --question-accent-dark: ${darkAccentColor};
-        "
-      >
+    <article
+      class="card"
+      style="
+        --question-accent: ${accentColor};
+        --question-accent-dark: ${darkAccentColor};
+      "
+    >
       <div class="card-inner">
 
         <div
@@ -402,33 +402,23 @@ function renderQuestion(item, options) {
             ${hexToRgba(accentColor, 0.45)}
           );"
         >
-            ${
-              item.imagen
-                ? `<img src="${item.imagen}" alt="" class="${imageClass}">`
-                : `<div class="no-image">Sin imagen</div>`
-            }
-  
-            <div class="test-player">
-              <button type="button" class="test-play-button" id="audioPlayButton">
-                ▶
-              </button>
-  
-              <div class="test-progress">
-                <div class="test-progress-fill" id="audioProgressFill"></div>
-              </div>
-  
-              <span class="test-time" id="audioTime">0:00</span>
+          ${
+            item.imagen
+              ? `<img src="${item.imagen}" alt="" class="${imageClass}">`
+              : `<div class="no-image">Sin imagen</div>`
+          }
+
+          <div class="test-player">
+            <button type="button" class="test-play-button" id="audioPlayButton">
+              ▶
+            </button>
+
+            <div class="test-progress">
+              <div class="test-progress-fill" id="audioProgressFill"></div>
             </div>
+
+            <span class="test-time" id="audioTime">0:00</span>
           </div>
-          <button type="button" class="test-play-button" id="audioPlayButton">
-            ▶
-          </button>
-        
-          <div class="test-progress">
-            <div class="test-progress-fill" id="audioProgressFill"></div>
-          </div>
-        
-          <span class="test-time" id="audioTime">0:00</span>
         </div>
 
         <div class="content-column">
@@ -441,11 +431,11 @@ function renderQuestion(item, options) {
             <h2 class="author">
               ${item.autor}
             </h2>
-          
+
             <p class="work-title">
               ${item.titulo}
             </p>
-          
+
             <p class="question-year">
               ${item.ano || ""}
             </p>
@@ -485,10 +475,10 @@ function renderQuestion(item, options) {
   if (audioButton) {
     audioButton.onclick = toggleAudioPlay;
   }
-  
+
   currentAudioPlayer.ontimeupdate = updateAudioUI;
   loadAndPlayAudio(item);
-  
+
   attachQuestionEvents();
 }
 
