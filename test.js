@@ -228,7 +228,7 @@ function renderGamePanel(item = null) {
     <div class="rhythm-legend">
       <div><strong>HAB</strong> · Habanera</div>
       <div><strong>TER</strong> · Ternaria</div>
-      <div><strong>SON</strong> · Clave cubana</div>
+      <div><strong>SON</strong> · Clave de son</div>
       <div><strong>BRA</strong> · Afrobrasileña</div>
       <div><strong>CAR</strong> · Afrocaribeña</div>
       <div><strong>URB</strong> · Urbana</div>
