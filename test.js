@@ -532,7 +532,7 @@ function attachQuestionEvents() {
         feedback.className = "feedback is-error";
 
         playSound(lossSound);
-        renderGamePanel();
+        renderGamePanel(currentQuestion.item);
       }
     };
   });
