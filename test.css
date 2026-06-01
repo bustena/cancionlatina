@@ -641,6 +641,15 @@ body {
   color: var(--error);
 }
 
+.rhythm-legend {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.25);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  opacity: 0.95;
+}
+
 .end-left-panel .game-line {
   border-bottom-color: rgba(255, 255, 255, 0.22);
 }
