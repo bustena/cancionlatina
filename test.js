@@ -373,6 +373,8 @@ function renderQuestion(item, options) {
 
   const accentColor = item.color || "#c9b79c";
   const darkAccentColor = darkenColor(accentColor, 0.70);
+  const isHardMode = selectedDifficulty === "dificil" || selectedMode === "obra";
+  const imageClass = isHardMode ? "is-blurred" : "";
   const isWorkMode = selectedMode === "obra";
   const imageClass = isWorkMode ? "is-blurred" : "";
 
@@ -407,7 +409,7 @@ function renderQuestion(item, options) {
             ${getQuestionText(selectedMode)}
           </p>
 
-          ${!isWorkMode ? `
+          ${!isHardMode ? `
             <h2 class="author">
               ${item.autor}
             </h2>
