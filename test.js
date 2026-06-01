@@ -171,7 +171,13 @@ function renderHome() {
             <h3 class="home-section-title">Dificultad</h3>
 
             <div class="difficulty-grid">
-              <button class="tag ${selectedDifficulty === "facil" ? "active" : ""}" data-difficulty="facil">Fácil</button>
+              <button
+                class="tag ${selectedDifficulty === "facil" ? "active" : ""}"
+                data-difficulty="facil"
+                ${selectedMode === "obra" ? "disabled" : ""}
+              >
+                Fácil
+              </button>
               <button class="tag ${selectedDifficulty === "dificil" ? "active" : ""}" data-difficulty="dificil">Difícil</button>
             </div>
           </div>
