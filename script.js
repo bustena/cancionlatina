@@ -1018,7 +1018,10 @@ function isFilterActive(type, label) {
 }
 
 function setFilter(type, label) {
+  if (isCrossfading) return;
+
   const value = normalizeFilterValue(label);
+  
   resetShuffleQueue();
   if (!value) return;
 
