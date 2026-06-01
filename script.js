@@ -1049,7 +1049,7 @@ function setFilter(type, label) {
     activeIndex = previousIndex;
     renderTimeline();
     scrollActiveTimelineItemIntoView();
-    bindFilterTagEventsInDetail();
+    renderCurrentDetail();
   } else {
       activeIndex = items.indexOf(filteredItems[0]);
       renderTimeline();
