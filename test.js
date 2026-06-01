@@ -224,6 +224,16 @@ function renderHome() {
 
 function renderGamePanel(item = null) {
   const leftHeader = document.querySelector(".left-header");
+  const rhythmLegend = selectedMode === "ritmo" ? `
+    <div class="rhythm-legend">
+      <div>HAB · Habanera</div>
+      <div>TER · Ternaria</div>
+      <div>SON · Clave cubana</div>
+      <div>BRA · Afrobrasileña</div>
+      <div>CAR · Afrocaribeña</div>
+      <div>URB · Urbana</div>
+    </div>
+  ` : "";
   
   if (leftHeader) {
     leftHeader.style.color = "";
@@ -259,6 +269,7 @@ function renderGamePanel(item = null) {
         <span class="game-label">Fallos</span>
         <span class="game-value">${wrongCount}</span>
       </div>
+      ${rhythmLegend}
     </div>
   `;
 }
