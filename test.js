@@ -442,9 +442,6 @@ function renderQuestion(item, options) {
               ${item.titulo}
             </p>
 
-            <p class="question-year">
-              ${item.ano || ""}
-            </p>
           ` : ""}
 
           <div class="options-grid">
