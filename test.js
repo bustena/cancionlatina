@@ -402,14 +402,24 @@ function renderQuestion(item, options) {
             ${hexToRgba(accentColor, 0.45)}
           );"
         >
-          ${
-            item.imagen
-              ? `<img src="${item.imagen}" alt="" class="${imageClass}">`
-              : `<div class="no-image">Sin imagen</div>`
-          }
-        </div>
-
-        <div class="test-player">
+            ${
+              item.imagen
+                ? `<img src="${item.imagen}" alt="" class="${imageClass}">`
+                : `<div class="no-image">Sin imagen</div>`
+            }
+  
+            <div class="test-player">
+              <button type="button" class="test-play-button" id="audioPlayButton">
+                ▶
+              </button>
+  
+              <div class="test-progress">
+                <div class="test-progress-fill" id="audioProgressFill"></div>
+              </div>
+  
+              <span class="test-time" id="audioTime">0:00</span>
+            </div>
+          </div>
           <button type="button" class="test-play-button" id="audioPlayButton">
             ▶
           </button>
