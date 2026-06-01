@@ -619,44 +619,35 @@ body {
 
 .test-player {
   margin-top: 18px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255,255,255,0.72);
-  border-radius: 999px;
-  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.68);
+  border-radius: 18px;
+  padding: 12px;
+}
+
+.test-controls {
+  justify-content: center;
+  margin-bottom: 10px;
 }
 
 .test-play-button {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   border-radius: 999px;
-  border: 0;
-  background: #ffffff;
-  color: #2f3440;
-  font-weight: 800;
-  cursor: pointer;
+  font-size: 0.95rem;
 }
 
 .test-progress {
-  flex: 1;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.12);
-  overflow: hidden;
+  height: 7px;
+  cursor: default;
 }
 
 .test-progress-fill {
-  height: 100%;
-  width: 0%;
-  background: #2f3440;
+  background: var(--question-accent-dark, #2f3440);
 }
 
 .test-time {
-  min-width: 38px;
-  font-size: 0.78rem;
-  font-weight: 700;
   color: #2f3440;
+  font-weight: 700;
 }
 
 @media (max-width: 980px) {
