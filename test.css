@@ -642,12 +642,20 @@ body {
 }
 
 .rhythm-legend {
-  margin-top: 24px;
-  padding-top: 16px;
+  margin-top: 28px;
+  padding-top: 18px;
   border-top: 1px solid rgba(255,255,255,0.25);
   font-size: 0.82rem;
-  line-height: 1.55;
+  line-height: 1.6;
   opacity: 0.95;
+}
+
+.rhythm-legend div {
+  margin-bottom: 6px;
+}
+
+.rhythm-legend strong {
+  font-weight: 800;
 }
 
 .end-left-panel .game-line {
