@@ -1225,12 +1225,12 @@ function renderActiveRhythmLegend() {
   const rhythm = String(activeFilter.label || activeFilter.value || "").trim().toUpperCase();
 
   const legends = {
-    HAB: "HAB · Familia habanera (habanera / tango / danzón / ...)",
-    TER: "TER · Familia ternaria (vals criollo / joropo / ...)",
-    SON: "SON · Clave cubana (son / mambo / salsa / ...)",
-    BRA: "BRA · Familia afrobrasileña (samba / bossa nova / ...)",
-    CAR: "CAR · Familia afrocaribeña binaria (cumbia / merengue / ...)",
-    URB: "URB · Familia urbana (dembow / reguetón / ...)"
+    HAB: "Familia habanera (habanera / tango / danzón / ...)",
+    TER: "Familia ternaria (vals criollo / joropo / ...)",
+    SON: "Clave cubana (son / mambo / salsa / ...)",
+    BRA: "Familia afrobrasileña (samba / bossa nova / ...)",
+    CAR: "Familia afrocaribeña binaria (cumbia / merengue / ...)",
+    URB: "Familia urbana (dembow / reguetón / ...)"
   };
 
   const text = legends[rhythm];
@@ -1239,7 +1239,7 @@ function renderActiveRhythmLegend() {
 
   return `
     <div class="active-rhythm-legend">
-      ${escapeHtml(text)}
+      <strong>${rhythm}</strong> · ${escapeHtml(text)}
     </div>
   `;
 }
