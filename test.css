@@ -643,6 +643,7 @@ body {
 
 .rhythm-legend {
   margin-top: 28px;
+  margin-left: 12px;
   padding-top: 18px;
   border-top: 1px solid rgba(255,255,255,0.25);
   font-size: 0.82rem;
