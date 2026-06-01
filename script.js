@@ -1054,11 +1054,10 @@ function setFilter(type, label) {
     scrollActiveTimelineItemIntoView();
     renderCurrentDetail();
   } else {
-      activeIndex = items.indexOf(filteredItems[0]);
-      renderTimeline();
-      scrollActiveTimelineItemIntoView();
-      renderCurrentDetail();
-  }
+    activeIndex = items.indexOf(filteredItems[0]);
+    renderTimeline();
+    scrollActiveTimelineItemIntoView();
+    renderCurrentDetail();
 }
 
 function bindFilterTagEventsInDetail() {
