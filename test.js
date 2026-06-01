@@ -226,12 +226,12 @@ function renderGamePanel(item = null) {
   const leftHeader = document.querySelector(".left-header");
   const rhythmLegend = selectedMode === "ritmo" ? `
     <div class="rhythm-legend">
-      <div>HAB · Habanera</div>
-      <div>TER · Ternaria</div>
-      <div>SON · Clave cubana</div>
-      <div>BRA · Afrobrasileña</div>
-      <div>CAR · Afrocaribeña</div>
-      <div>URB · Urbana</div>
+      <div><strong>HAB</strong> · Habanera</div>
+      <div><strong>TER</strong> · Ternaria</div>
+      <div><strong>SON</strong> · Clave cubana</div>
+      <div><strong>BRA</strong> · Afrobrasileña</div>
+      <div><strong>CAR</strong> · Afrocaribeña</div>
+      <div><strong>URB</strong> · Urbana</div>
     </div>
   ` : "";
   
