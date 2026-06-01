@@ -17,6 +17,13 @@ let wrongCount = 0;
 let roundItems = [];
 let roundIndex = 0;
 
+let currentAudioPlayer = new Audio();
+let fragmentStart = 0;
+let fragmentDuration = 0;
+let fragmentTimer = null;
+let isPlaying = false;
+let maxFragmentSeconds = 60;
+
 const gainSound = new Audio("assets/gain.mp3");
 const lossSound = new Audio("assets/loss.mp3");
 
@@ -337,6 +344,8 @@ function startRound() {
 }
 
 function startQuestion() {
+  stopAudio();
+  
   if (roundIndex >= roundItems.length) {
     renderEndScreen();
     return;
@@ -400,6 +409,18 @@ function renderQuestion(item, options) {
           }
         </div>
 
+        <div class="test-player">
+          <button type="button" class="test-play-button" id="audioPlayButton">
+            ▶
+          </button>
+        
+          <div class="test-progress">
+            <div class="test-progress-fill" id="audioProgressFill"></div>
+          </div>
+        
+          <span class="test-time" id="audioTime">0:00</span>
+        </div>
+
         <div class="content-column">
 
           <p class="question-kicker">
@@ -449,6 +470,15 @@ function renderQuestion(item, options) {
     </article>
   `;
 
+  const audioButton = document.getElementById("audioPlayButton");
+
+  if (audioButton) {
+    audioButton.onclick = toggleAudioPlay;
+  }
+  
+  currentAudioPlayer.ontimeupdate = updateAudioUI;
+  loadAndPlayAudio(item);
+  
   attachQuestionEvents();
 }
 
@@ -529,6 +559,7 @@ function renderEndPanel() {
 }
 
 function renderEndScreen() {
+  stopAudio();
   renderEndPanel();
 
   const leftColumn = document.querySelector(".left-column");
@@ -614,6 +645,129 @@ function playSound(sound) {
   sound.play().catch(() => {});
 }
 
+function clearFragmentTimer() {
+  if (fragmentTimer) {
+    clearTimeout(fragmentTimer);
+    fragmentTimer = null;
+  }
+}
+
+function stopAudio() {
+  clearFragmentTimer();
+  currentAudioPlayer.pause();
+  currentAudioPlayer.currentTime = 0;
+  currentAudioPlayer.src = "";
+  isPlaying = false;
+}
+
+function chooseFragmentStart(duration) {
+  if (!Number.isFinite(duration) || duration <= maxFragmentSeconds) return 0;
+
+  const maxStart = Math.max(0, duration - maxFragmentSeconds);
+  return Math.random() * maxStart;
+}
+
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+
+  const totalSeconds = Math.floor(seconds);
+  const mins = Math.floor(totalSeconds / 60);
+  const secs = totalSeconds % 60;
+
+  return `${mins}:${String(secs).padStart(2, "0")}`;
+}
+
+function updateAudioUI() {
+  const playButton = document.getElementById("audioPlayButton");
+  const progressFill = document.getElementById("audioProgressFill");
+  const timeEl = document.getElementById("audioTime");
+
+  const elapsed = Math.max(0, currentAudioPlayer.currentTime - fragmentStart);
+  const duration = fragmentDuration || maxFragmentSeconds;
+  const percent = duration > 0 ? Math.min(100, (elapsed / duration) * 100) : 0;
+
+  if (playButton) {
+    playButton.textContent = currentAudioPlayer.paused ? "▶" : "Ⅱ";
+  }
+
+  if (progressFill) {
+    progressFill.style.width = `${percent}%`;
+  }
+
+  if (timeEl) {
+    timeEl.textContent = formatTime(elapsed);
+  }
+}
+
+function scheduleFragmentStop() {
+  clearFragmentTimer();
+
+  const endTime = fragmentStart + fragmentDuration;
+  const remaining = endTime - currentAudioPlayer.currentTime;
+
+  if (remaining <= 0) return;
+
+  fragmentTimer = setTimeout(() => {
+    currentAudioPlayer.pause();
+    isPlaying = false;
+    updateAudioUI();
+  }, remaining * 1000);
+}
+
+function loadAndPlayAudio(item) {
+  stopAudio();
+
+  if (!item.audio) return;
+
+  currentAudioPlayer.src = item.audio;
+  currentAudioPlayer.preload = "auto";
+
+  const onMetadata = () => {
+    const duration = Number.isFinite(currentAudioPlayer.duration)
+      ? currentAudioPlayer.duration
+      : 0;
+
+    fragmentStart = chooseFragmentStart(duration);
+    fragmentDuration = Math.min(maxFragmentSeconds, Math.max(0, duration - fragmentStart));
+
+    currentAudioPlayer.currentTime = fragmentStart;
+
+    currentAudioPlayer.play()
+      .then(() => {
+        isPlaying = true;
+        updateAudioUI();
+        scheduleFragmentStop();
+      })
+      .catch(() => {
+        isPlaying = false;
+        updateAudioUI();
+      });
+
+    currentAudioPlayer.removeEventListener("loadedmetadata", onMetadata);
+  };
+
+  currentAudioPlayer.addEventListener("loadedmetadata", onMetadata);
+}
+
+function toggleAudioPlay() {
+  if (!currentAudioPlayer.src) return;
+
+  if (currentAudioPlayer.paused) {
+    currentAudioPlayer.play()
+      .then(() => {
+        isPlaying = true;
+        updateAudioUI();
+        scheduleFragmentStop();
+      })
+      .catch(() => {});
+  } else {
+    currentAudioPlayer.pause();
+    clearFragmentTimer();
+    isPlaying = false;
+    updateAudioUI();
+  }
+}
+
 function loadCSV() {
   detailEl.innerHTML = "<p>Cargando...</p>";
 
@@ -646,6 +800,7 @@ function loadHomeCSV() {
       complete(results) {
         if (results.data && results.data.length) {
           homeMeta = mapHomeRow(results.data[0]);
+          maxFragmentSeconds = homeMeta.duracion || 60;
           applyHomeTheme();
         }
 
