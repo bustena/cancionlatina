@@ -1628,7 +1628,7 @@ function reconcilePlaybackState() {
 }
 
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") {
+  if (document.visibilityState === "visible" && !isHomeView) {
     reconcilePlaybackState();
   }
 });
