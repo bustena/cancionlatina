@@ -519,7 +519,7 @@ function attachQuestionEvents() {
         feedback.className = "feedback is-success";
 
         playSound(gainSound);
-        renderGamePanel();
+        renderGamePanel(currentQuestion.item);
 
         nextButton.disabled = false;
       } else {
