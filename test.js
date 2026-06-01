@@ -415,19 +415,25 @@ function renderQuestion(item, options) {
           }
 
           <div class="player test-player">
-            <div class="controls test-controls">
-              <button type="button" class="control-btn play-btn test-play-button" id="audioPlayButton" aria-label="Reproducir">
-                ▶
+            <div class="controls">
+              <button type="button" class="control-btn play-btn" id="audioPlayButton" aria-label="Reproducir" title="Reproducir">
+                <svg viewBox="0 0 24 24" class="icon play-symbol icon-play" aria-hidden="true">
+                  <path d="M8 5v14l11-7z" fill="currentColor"/>
+                </svg>
+          
+                <svg viewBox="0 0 24 24" class="icon play-symbol icon-pause" aria-hidden="true">
+                  <path d="M6 5h4v14H6zm8 0h4v14h-4z" fill="currentColor"/>
+                </svg>
               </button>
             </div>
           
             <div class="progress-wrap">
-              <div class="progress-bar test-progress">
-                <div class="progress-fill test-progress-fill" id="audioProgressFill"></div>
+              <div class="progress-bar" role="progressbar" aria-label="Progreso de reproducción" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="progress-fill" id="audioProgressFill"></div>
               </div>
           
               <div class="time-row">
-                <span class="time-current test-time" id="audioTime">0:00</span>
+                <span class="time-current" id="audioTime">0:00</span>
               </div>
             </div>
           </div>
