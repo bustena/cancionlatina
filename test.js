@@ -421,7 +421,12 @@ function renderQuestion(item, options) {
         >
           ${
             isHardMode
-              ? `<div class="hard-mode-image" style="background:${hardModeColor};"></div>`
+              ? `<div
+                  class="hard-mode-image"
+                  id="hardModeImage"
+                  style="background:${hardModeColor};"
+                  data-image="${item.imagen || ""}"
+                ></div>`
               : item.imagen
                 ? `<img src="${item.imagen}" alt="">`
                 : `<div class="no-image">Sin imagen</div>`
@@ -530,6 +535,8 @@ function attachQuestionEvents() {
 
         feedback.textContent = "✓ Correcto";
         feedback.className = "feedback is-success";
+
+        revealHardModeImage();
 
         playSound(gainSound);
         renderGamePanel(currentQuestion.item);
@@ -689,6 +696,20 @@ function toGrayscale(hex, saturation = 0.35) {
     nr.toString(16).padStart(2, "0") +
     ng.toString(16).padStart(2, "0") +
     nb.toString(16).padStart(2, "0");
+}
+
+function revealHardModeImage() {
+  const placeholder = document.getElementById("hardModeImage");
+
+  if (!placeholder) return;
+
+  const imageUrl = placeholder.dataset.image;
+
+  if (!imageUrl) return;
+
+  placeholder.outerHTML = `
+    <img src="${imageUrl}" alt="">
+  `;
 }
 
 function playSound(sound) {
