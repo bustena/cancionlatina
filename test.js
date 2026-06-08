@@ -467,11 +467,12 @@ function renderQuestion(item, options) {
             <h2 class="author">
               ${item.autor}
             </h2>
-
+          
             <p class="work-title">
               ${item.titulo}
             </p>
-
+          ` : selectedMode !== "obra" ? `
+            <div class="reveal-info" id="revealInfo"></div>
           ` : ""}
 
           <div class="options-grid">
@@ -535,9 +536,10 @@ function attachQuestionEvents() {
 
         feedback.textContent = "✓ Correcto";
         feedback.className = "feedback is-success";
-
+        
         revealHardModeImage();
-
+        revealAnswerInfo();
+        
         playSound(gainSound);
         renderGamePanel(currentQuestion.item);
 
@@ -710,6 +712,24 @@ function revealHardModeImage() {
   placeholder.outerHTML = `
     <img src="${imageUrl}" alt="">
   `;
+}
+
+function revealAnswerInfo() {
+  const revealInfo = document.getElementById("revealInfo");
+
+  if (!revealInfo || !currentQuestion?.item) return;
+
+  revealInfo.innerHTML = `
+    <h2 class="author">
+      ${currentQuestion.item.autor}
+    </h2>
+
+    <p class="work-title">
+      ${currentQuestion.item.titulo}
+    </p>
+  `;
+
+  revealInfo.classList.add("is-visible");
 }
 
 function playSound(sound) {
