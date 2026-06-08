@@ -273,9 +273,10 @@ body {
   object-position: center;
 }
 
-.media-column img.is-blurred {
-  filter: blur(12px);
-  transform: scale(1.02);
+.hard-mode-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
 }
 
 .no-image {
