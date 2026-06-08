@@ -399,7 +399,7 @@ function renderQuestion(item, options) {
   const accentColor = item.color || "#c9b79c";
   const darkAccentColor = darkenColor(accentColor, 0.70);
   const isHardMode = selectedDifficulty === "dificil" || selectedMode === "obra";
-  const hardModeColor = toGrayscale(accentColor);
+  const hardModeColor = toGrayscale(accentColor, 0.45);
 
   detailEl.innerHTML = `
     <article
@@ -668,7 +668,7 @@ function lightenColor(hex, factor = 0.88) {
     nb.toString(16).padStart(2, "0");
 }
 
-function toGrayscale(hex) {
+function toGrayscale(hex, saturation = 0.35) {
   const clean = String(hex || "").replace("#", "").trim();
 
   if (!/^[0-9a-fA-F]{6}$/.test(clean)) {
@@ -680,9 +680,15 @@ function toGrayscale(hex) {
   const b = parseInt(clean.slice(4, 6), 16);
 
   const gray = Math.round((r + g + b) / 3);
-  const value = gray.toString(16).padStart(2, "0");
 
-  return `#${value}${value}${value}`;
+  const nr = Math.round(gray + (r - gray) * saturation);
+  const ng = Math.round(gray + (g - gray) * saturation);
+  const nb = Math.round(gray + (b - gray) * saturation);
+
+  return "#" +
+    nr.toString(16).padStart(2, "0") +
+    ng.toString(16).padStart(2, "0") +
+    nb.toString(16).padStart(2, "0");
 }
 
 function playSound(sound) {
