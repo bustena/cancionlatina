@@ -440,6 +440,17 @@ body {
   padding-left: 14px;
 }
 
+.reveal-info {
+  min-height: 90px;
+  margin-bottom: 28px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.reveal-info.is-visible {
+  opacity: 1;
+}
+
 .work-title::before {
   content: "";
   position: absolute;
