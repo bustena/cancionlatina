@@ -22,7 +22,7 @@ let fragmentStart = 0;
 let fragmentDuration = 0;
 let fragmentTimer = null;
 let isPlaying = false;
-let maxFragmentSeconds = 60;
+let maxFragmentSeconds = 50;
 
 const gainSound = new Audio("assets/gain.mp3");
 const lossSound = new Audio("assets/loss.mp3");
@@ -399,7 +399,7 @@ function renderQuestion(item, options) {
   const accentColor = item.color || "#c9b79c";
   const darkAccentColor = darkenColor(accentColor, 0.70);
   const isHardMode = selectedDifficulty === "dificil" || selectedMode === "obra";
-  const imageClass = isHardMode ? "is-blurred" : "";
+  const hardModeColor = toGrayscale(accentColor);
 
   detailEl.innerHTML = `
     <article
@@ -420,9 +420,11 @@ function renderQuestion(item, options) {
           );"
         >
           ${
-            item.imagen
-              ? `<img src="${item.imagen}" alt="" class="${imageClass}">`
-              : `<div class="no-image">Sin imagen</div>`
+            isHardMode
+              ? `<div class="hard-mode-image" style="background:${hardModeColor};"></div>`
+              : item.imagen
+                ? `<img src="${item.imagen}" alt="">`
+                : `<div class="no-image">Sin imagen</div>`
           }
 
           <div class="player test-player">
@@ -664,6 +666,23 @@ function lightenColor(hex, factor = 0.88) {
     nr.toString(16).padStart(2, "0") +
     ng.toString(16).padStart(2, "0") +
     nb.toString(16).padStart(2, "0");
+}
+
+function toGrayscale(hex) {
+  const clean = String(hex || "").replace("#", "").trim();
+
+  if (!/^[0-9a-fA-F]{6}$/.test(clean)) {
+    return "#b8b8b8";
+  }
+
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
+
+  const gray = Math.round((r + g + b) / 3);
+  const value = gray.toString(16).padStart(2, "0");
+
+  return `#${value}${value}${value}`;
 }
 
 function playSound(sound) {
