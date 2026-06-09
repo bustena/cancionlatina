@@ -459,14 +459,13 @@ function renderPlayerInputs() {
   if (!container) return;
 
   container.innerHTML = players.map((player, index) => `
-    <label class="player-name-field">
-      <span>Jugador ${index + 1}</span>
-      <input
-        type="text"
-        value="${player.name}"
-        data-player-name="${index}"
-      >
-    </label>
+    <input
+      class="player-name-input"
+      type="text"
+      value="${player.name}"
+      placeholder="Jugador ${index + 1}"
+      data-player-name="${index}"
+    >
   `).join("");
 
   container.querySelectorAll("[data-player-name]").forEach(input => {
