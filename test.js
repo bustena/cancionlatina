@@ -903,7 +903,12 @@ function renderEndPanel() {
 
 }
 
-function renderMultiplayerEndScreen() {
+function renderMultiplayerRankingScreen({
+  kicker,
+  title,
+  buttonsHtml,
+  onButtonsReady
+}) {
   stopAudio();
   renderEndPanel();
 
@@ -911,14 +916,14 @@ function renderMultiplayerEndScreen() {
 
   detailEl.innerHTML = `
     <article class="card end-card">
-      <div class="end-panel">
+      <div class="end-panel multiplayer-end-panel">
 
         <p class="end-kicker">
-          Ronda terminada
+          ${kicker}
         </p>
 
         <h1 class="end-title">
-          Clasificación
+          ${title}
         </h1>
 
         <div class="multiplayer-ranking">
@@ -931,35 +936,50 @@ function renderMultiplayerEndScreen() {
         </div>
 
         <div class="end-actions">
-          <button class="primary-button end-button" id="newRoundButton">
-            Nueva ronda
-          </button>
-
-          <button class="secondary-end-button" id="finishGameButton">
-            Terminar partida
-          </button>
+          ${buttonsHtml}
         </div>
 
       </div>
     </article>
   `;
 
-  const newRoundButton = document.getElementById("newRoundButton");
-  
-  if (newRoundButton) {
-    newRoundButton.onclick = () => {
-      roundNumber += 1;
-      renderMultiplayerRoundHome();
-    };
+  if (typeof onButtonsReady === "function") {
+    onButtonsReady();
   }
+}
 
-  const finishGameButton = document.getElementById("finishGameButton");
+function renderMultiplayerEndScreen() {
+  renderMultiplayerRankingScreen({
+    kicker: "Ronda terminada",
+    title: "Clasificación",
+    buttonsHtml: `
+      <button class="primary-button end-button" id="newRoundButton">
+        Nueva ronda
+      </button>
 
-  if (finishGameButton) {
-    finishGameButton.onclick = () => {
-      renderMultiplayerFinalScreen();
-    };
-  }
+      <button class="secondary-end-button" id="finishGameButton">
+        Terminar partida
+      </button>
+    `,
+    onButtonsReady: () => {
+      const newRoundButton = document.getElementById("newRoundButton");
+
+      if (newRoundButton) {
+        newRoundButton.onclick = () => {
+          roundNumber += 1;
+          renderMultiplayerRoundHome();
+        };
+      }
+
+      const finishGameButton = document.getElementById("finishGameButton");
+
+      if (finishGameButton) {
+        finishGameButton.onclick = () => {
+          renderMultiplayerFinalScreen();
+        };
+      }
+    }
+  });
 }
 
 function renderEndScreen() {
@@ -1009,51 +1029,28 @@ function renderEndScreen() {
 }
 
 function renderMultiplayerFinalScreen() {
-  stopAudio();
-  renderEndPanel();
+  renderMultiplayerRankingScreen({
+    kicker: "Juego terminado",
+    title: "Clasificación final",
+    buttonsHtml: `
+      <button class="primary-button end-button" id="backHomeButton">
+        Volver al inicio
+      </button>
+    `,
+    onButtonsReady: () => {
+      const backHomeButton = document.getElementById("backHomeButton");
 
-  const ranking = [...players].sort((a, b) => b.score - a.score);
-
-  detailEl.innerHTML = `
-    <article class="card end-card">
-      <div class="end-panel">
-
-        <p class="end-kicker">
-          Juego terminado
-        </p>
-
-        <h1 class="end-title">
-          Marcador final
-        </h1>
-
-        <div class="multiplayer-ranking">
-          ${ranking.map((player, index) => `
-            <div class="ranking-line">
-              <span>${index + 1}. ${player.name}</span>
-              <strong>${player.score}</strong>
-            </div>
-          `).join("")}
-        </div>
-
-        <button class="primary-button end-button" id="backHomeButton">
-          Volver al inicio
-        </button>
-
-      </div>
-    </article>
-  `;
-
-  const backHomeButton = document.getElementById("backHomeButton");
-
-  if (backHomeButton) {
-    backHomeButton.onclick = () => {
-      isMultiplayer = false;
-      players = [];
-      currentPlayerIndex = 0;
-      roundNumber = 1;
-      renderHome();
-    };
-  }
+      if (backHomeButton) {
+        backHomeButton.onclick = () => {
+          isMultiplayer = false;
+          players = [];
+          currentPlayerIndex = 0;
+          roundNumber = 1;
+          renderHome();
+        };
+      }
+    }
+  });
 }
 
 function darkenColor(hex, factor = 0.75) {
