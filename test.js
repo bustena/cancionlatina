@@ -873,12 +873,7 @@ function renderEndPanel() {
 
   if (isMultiplayer) {
     setLeftPanelBackground(homeMeta?.destacado || "#7a6a2e");
-    leftHeader.style.color = "#ffffff";
-  
-    leftHeader.innerHTML = `
-      <h1 class="app-title">Resultado</h1>
-    `;
-  
+    leftHeader.innerHTML = "";
     return;
   }
 
