@@ -260,12 +260,13 @@ body {
 
 .media-column img,
 .hard-mode-image {
-  width: 100%;
+  width: min(100%, 340px);
   aspect-ratio: 1 / 1;
   display: block;
   border-radius: 16px;
   object-fit: cover;
   object-position: center;
+  margin: 0 auto;
 }
 
 .no-image {
