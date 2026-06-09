@@ -717,7 +717,10 @@ body {
 
 .end-panel,
 .multiplayer-end-panel {
-  width: min(680px, 100%);
+  width: 100%;
+  max-width: 680px;
+  text-align: center;
+  padding: 42px;
 }
 
 .end-kicker {
@@ -861,13 +864,6 @@ body {
   margin: 0 0 24px;
   font-size: 2rem;
   font-weight: 800;
-}
-
-.end-panel,
-.multiplayer-end-panel {
-  width: min(680px, 100%);
-  text-align: center;
-  padding: 42px;
 }
 
 .multiplayer-ranking {
