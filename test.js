@@ -597,6 +597,15 @@ function renderPlayerInputs() {
   `).join("");
 
   container.querySelectorAll("[data-player-name]").forEach(input => {
+    
+    input.addEventListener("focus", () => {
+      input.select();
+    });
+
+    input.addEventListener("click", () => {
+      input.select();
+    });
+    
     input.oninput = () => {
       const index = Number(input.dataset.playerName);
       players[index].name = input.value.trim() || `Jugador ${index + 1}`;
