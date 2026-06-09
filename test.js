@@ -793,7 +793,75 @@ function renderEndPanel() {
 
 }
 
+function renderMultiplayerEndScreen() {
+  stopAudio();
+  renderEndPanel();
+
+  const ranking = [...players].sort((a, b) => b.score - a.score);
+
+  detailEl.innerHTML = `
+    <article class="card end-card">
+      <div class="end-panel">
+
+        <p class="end-kicker">
+          Ronda terminada
+        </p>
+
+        <h1 class="end-title">
+          Clasificación
+        </h1>
+
+        <div class="multiplayer-ranking">
+          ${ranking.map((player, index) => `
+            <div class="ranking-line">
+              <span>${index + 1}. ${player.name}</span>
+              <strong>${player.score}</strong>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="end-actions">
+          <button class="primary-button end-button" id="newRoundButton">
+            Nueva ronda
+          </button>
+
+          <button class="secondary-end-button" id="finishGameButton">
+            Terminar partida
+          </button>
+        </div>
+
+      </div>
+    </article>
+  `;
+
+  const newRoundButton = document.getElementById("newRoundButton");
+
+  if (newRoundButton) {
+    newRoundButton.onclick = () => {
+      roundNumber += 1;
+      renderMultiplayerHome();
+    };
+  }
+
+  const finishGameButton = document.getElementById("finishGameButton");
+
+  if (finishGameButton) {
+    finishGameButton.onclick = () => {
+      isMultiplayer = false;
+      players = [];
+      currentPlayerIndex = 0;
+      roundNumber = 1;
+      renderHome();
+    };
+  }
+}
+
 function renderEndScreen() {
+  if (isMultiplayer) {
+    renderMultiplayerEndScreen();
+    return;
+  }
+
   stopAudio();
   renderEndPanel();
 
