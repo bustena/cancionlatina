@@ -273,11 +273,14 @@ body {
   object-position: center;
 }
 
+.media-column img,
 .hard-mode-image {
-  width: min(100%, 320px);
+  width: 100%;
   aspect-ratio: 1 / 1;
+  display: block;
   border-radius: 16px;
-  margin: 0 auto;
+  object-fit: cover;
+  object-position: center;
 }
 
 .no-image {
@@ -892,7 +895,7 @@ body {
 
 @media (max-width: 980px) {
   html, body { overflow: auto; }
-  .hard-mode-image { width: min(100%, 220px); }
+
   .shell { width: 100%; height: auto; overflow: visible; }
   .left-column, .right-column { position: static; width: 100%; height: auto; }
   .left-column { border-right: 0; border-bottom: 1px solid var(--line); }
@@ -902,11 +905,12 @@ body {
   .card { height: auto; }
   .card-inner { grid-template-columns: 1fr; height: auto; }
   .media-column, .content-column { overflow: visible; }
+
   .home-title {
     font-size: 2rem;
     line-height: 1.05;
   }
-  
+
   .home-subtitle {
     font-size: 0.95rem;
     line-height: 1.35;
