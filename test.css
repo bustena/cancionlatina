@@ -266,7 +266,7 @@ body {
   border-radius: 16px;
   object-fit: cover;
   object-position: center;
-  margin: 16px auto 0;
+  margin: 24px auto 0;
 }
 
 .no-image {
