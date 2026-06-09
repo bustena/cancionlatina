@@ -325,6 +325,17 @@ function renderMultiplayerHome() {
       renderHome();
     };
   }
+  
+  const startMultiplayerButton = document.getElementById("startMultiplayerButton");
+  
+  if (singlePlayerButton) {
+    singlePlayerButton.onclick = () => {
+      isMultiplayer = false;
+      players = [];
+      currentPlayerIndex = 0;
+      renderHome();
+    };
+  }
 }
 
 function renderGamePanel(item = null) {
@@ -483,6 +494,10 @@ function startRound() {
   questionNumber = 0;
   correctCount = 0;
   wrongCount = 0;
+
+  if (isMultiplayer) {
+    currentPlayerIndex = 0;
+  }
 
   const candidates = getValidItemsForMode(selectedMode);
   const uniqueAnswers = getUniqueAnswersForMode(selectedMode);
