@@ -791,6 +791,7 @@ function scheduleFragmentStop() {
 
   fragmentTimer = setTimeout(() => {
     currentAudioPlayer.pause();
+    currentAudioPlayer.currentTime = fragmentStart;
     isPlaying = false;
     updateAudioUI();
   }, remaining * 1000);
