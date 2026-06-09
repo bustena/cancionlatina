@@ -338,6 +338,108 @@ function renderMultiplayerHome() {
   }
 }
 
+function renderMultiplayerRoundHome() {
+  renderHomePanel();
+
+  detailEl.classList.remove("empty");
+
+  detailEl.innerHTML = `
+    <article class="card home-card" style="--accent: var(--app-accent, #8b6a43);">
+      <div class="card-inner">
+        <div class="media-column home-media">
+          <div class="home-branding">
+            <h1 class="home-title">Nueva ronda</h1>
+            <p class="home-subtitle">Elige modalidad y dificultad. Las puntuaciones se mantienen.</p>
+          </div>
+        </div>
+
+        <div class="content-column home-content">
+          <div class="home-section">
+            <h3 class="home-section-title">Modalidad</h3>
+
+            <div class="mode-grid">
+              <button class="tag ${selectedMode === "pais" ? "active" : ""}" data-mode="pais">País</button>
+              <button class="tag ${selectedMode === "ritmo" ? "active" : ""}" data-mode="ritmo">Ritmo</button>
+              <button class="tag ${selectedMode === "ano" ? "active" : ""}" data-mode="ano">Año</button>
+              <button class="tag ${selectedMode === "obra" ? "active" : ""}" data-mode="obra">Obra</button>
+            </div>
+          </div>
+
+          <div class="home-section">
+            <h3 class="home-section-title">Dificultad</h3>
+
+            <div class="difficulty-grid">
+              <button
+                class="tag ${selectedDifficulty === "facil" ? "active" : ""}"
+                data-difficulty="facil"
+                ${selectedMode === "obra" ? "disabled" : ""}
+              >
+                Fácil
+              </button>
+              <button class="tag ${selectedDifficulty === "dificil" ? "active" : ""}" data-difficulty="dificil">Difícil</button>
+            </div>
+          </div>
+
+          <div class="home-section home-random">
+            <div class="home-tags">
+              <button class="tag home-tag primary-start" id="startMultiplayerRoundButton">
+                Empezar
+              </button>
+            </div>
+          </div>
+
+          <button type="button" class="secondary-home-link" id="singlePlayerButton">
+            Modo individual
+          </button>
+        </div>
+      </div>
+    </article>
+  `;
+
+  detailEl.querySelectorAll("[data-mode]").forEach(button => {
+    button.onclick = () => {
+      selectedMode = button.dataset.mode;
+
+      if (selectedMode === "obra") {
+        selectedDifficulty = "dificil";
+      }
+
+      renderMultiplayerRoundHome();
+    };
+  });
+
+  detailEl.querySelectorAll("[data-difficulty]").forEach(button => {
+    button.onclick = () => {
+      if (button.disabled) return;
+
+      selectedDifficulty = button.dataset.difficulty;
+      renderMultiplayerRoundHome();
+    };
+  });
+
+  const startButton = document.getElementById("startMultiplayerRoundButton");
+
+  if (startButton) {
+    startButton.onclick = () => {
+      isMultiplayer = true;
+      currentPlayerIndex = 0;
+      startRound();
+    };
+  }
+
+  const singlePlayerButton = document.getElementById("singlePlayerButton");
+
+  if (singlePlayerButton) {
+    singlePlayerButton.onclick = () => {
+      isMultiplayer = false;
+      players = [];
+      currentPlayerIndex = 0;
+      roundNumber = 1;
+      renderHome();
+    };
+  }
+}
+
 function renderGamePanel(item = null) {
   const leftHeader = document.querySelector(".left-header");
   const rhythmLegend = selectedMode === "ritmo" ? `
@@ -392,10 +494,12 @@ function renderGamePanel(item = null) {
         </div>
       `}
   
-      <div class="game-line">
-        <span class="game-label">Fallos</span>
-        <span class="game-value">${wrongCount}</span>
-      </div>
+      ${!isMultiplayer ? `
+        <div class="game-line">
+          <span class="game-label">Fallos</span>
+          <span class="game-value">${wrongCount}</span>
+        </div>
+      ` : ""}
       ${rhythmLegend}
     </div>
   `;
@@ -837,21 +941,14 @@ function renderMultiplayerEndScreen() {
   const newRoundButton = document.getElementById("newRoundButton");
 
   if (newRoundButton) {
-    newRoundButton.onclick = () => {
-      roundNumber += 1;
-      renderMultiplayerHome();
-    };
+    renderMultiplayerHome();
   }
 
   const finishGameButton = document.getElementById("finishGameButton");
 
   if (finishGameButton) {
     finishGameButton.onclick = () => {
-      isMultiplayer = false;
-      players = [];
-      currentPlayerIndex = 0;
-      roundNumber = 1;
-      renderHome();
+      renderMultiplayerFinalScreen();
     };
   }
 }
@@ -897,6 +994,54 @@ function renderEndScreen() {
 
   if (restartButton) {
     restartButton.onclick = () => {
+      renderHome();
+    };
+  }
+}
+
+function renderMultiplayerFinalScreen() {
+  stopAudio();
+  renderEndPanel();
+
+  const ranking = [...players].sort((a, b) => b.score - a.score);
+
+  detailEl.innerHTML = `
+    <article class="card end-card">
+      <div class="end-panel">
+
+        <p class="end-kicker">
+          Juego terminado
+        </p>
+
+        <h1 class="end-title">
+          Marcador final
+        </h1>
+
+        <div class="multiplayer-ranking">
+          ${ranking.map((player, index) => `
+            <div class="ranking-line">
+              <span>${index + 1}. ${player.name}</span>
+              <strong>${player.score}</strong>
+            </div>
+          `).join("")}
+        </div>
+
+        <button class="primary-button end-button" id="backHomeButton">
+          Volver al inicio
+        </button>
+
+      </div>
+    </article>
+  `;
+
+  const backHomeButton = document.getElementById("backHomeButton");
+
+  if (backHomeButton) {
+    backHomeButton.onclick = () => {
+      isMultiplayer = false;
+      players = [];
+      currentPlayerIndex = 0;
+      roundNumber = 1;
       renderHome();
     };
   }
