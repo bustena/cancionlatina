@@ -317,16 +317,6 @@ function renderMultiplayerHome() {
   });
 
   const singlePlayerButton = document.getElementById("singlePlayerButton");
-
-  if (singlePlayerButton) {
-    singlePlayerButton.onclick = () => {
-      isMultiplayer = false;
-      players = [];
-      renderHome();
-    };
-  }
-  
-  const startMultiplayerButton = document.getElementById("startMultiplayerButton");
   
   if (singlePlayerButton) {
     singlePlayerButton.onclick = () => {
@@ -334,6 +324,16 @@ function renderMultiplayerHome() {
       players = [];
       currentPlayerIndex = 0;
       renderHome();
+    };
+  }
+  
+  const startMultiplayerButton = document.getElementById("startMultiplayerButton");
+  
+  if (startMultiplayerButton) {
+    startMultiplayerButton.onclick = () => {
+      isMultiplayer = true;
+      currentPlayerIndex = 0;
+      startRound();
     };
   }
 }
