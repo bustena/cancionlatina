@@ -939,9 +939,12 @@ function renderMultiplayerEndScreen() {
   `;
 
   const newRoundButton = document.getElementById("newRoundButton");
-
+  
   if (newRoundButton) {
-    renderMultiplayerHome();
+    newRoundButton.onclick = () => {
+      roundNumber += 1;
+      renderMultiplayerRoundHome();
+    };
   }
 
   const finishGameButton = document.getElementById("finishGameButton");
