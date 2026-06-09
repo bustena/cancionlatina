@@ -887,6 +887,8 @@ body {
 }
 
 .end-actions {
+  width: min(420px, 100%);
+  margin: 0 auto;
   display: flex;
   justify-content: center;
   gap: 12px;
