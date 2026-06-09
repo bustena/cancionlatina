@@ -799,22 +799,15 @@ body {
 
 .player-name-list {
   display: grid;
-  gap: 12px;
-  margin: 22px 0;
+  gap: 10px;
+  margin: 18px 0;
 }
 
-.player-name-field {
-  display: grid;
-  gap: 6px;
-  font-weight: 700;
-  color: var(--muted);
-}
-
-.player-name-field input {
+.player-name-input {
   width: 100%;
   border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 999px;
-  padding: 0.8rem 1rem;
+  padding: 0.75rem 1rem;
   font: inherit;
 }
 
