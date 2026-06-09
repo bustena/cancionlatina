@@ -258,8 +258,17 @@ body {
   height: 100%;
 }
 
-.media-column img,
-.hard-mode-image {
+.media-column img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: block;
+  border-radius: 16px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.question-card .media-column img,
+.question-card .hard-mode-image {
   width: min(100%, 340px);
   aspect-ratio: 1 / 1;
   display: block;
