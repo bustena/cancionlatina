@@ -362,6 +362,8 @@ function renderGamePanel(item = null) {
   
   setLeftPanelBackground(panelBg);
 
+  const currentPlayer = isMultiplayer ? getCurrentPlayer() : null;
+
   leftHeader.innerHTML = `
     <h1 class="app-title">Ronda en curso</h1>
   
@@ -376,10 +378,19 @@ function renderGamePanel(item = null) {
         <span class="game-value">${questionNumber} / ${getQuestionsPerRound()}</span>
       </div>
   
-      <div class="game-line">
-        <span class="game-label">Puntos</span>
-        <span class="game-value">${score}</span>
-      </div>
+      ${isMultiplayer ? `
+        <div class="game-line">
+          <span class="game-label">Turno</span>
+          <span class="game-value">${currentPlayer?.name || ""}</span>
+        </div>
+      
+        ${renderPlayersScoreboard()}
+      ` : `
+        <div class="game-line">
+          <span class="game-label">Puntos</span>
+          <span class="game-value">${score}</span>
+        </div>
+      `}
   
       <div class="game-line">
         <span class="game-label">Fallos</span>
@@ -728,6 +739,21 @@ function attachQuestionEvents() {
 
 function getCurrentPlayer() {
   return players[currentPlayerIndex];
+}
+
+function renderPlayersScoreboard() {
+  if (!isMultiplayer) return "";
+
+  return `
+    <div class="player-scoreboard">
+      ${players.map((player, index) => `
+        <div class="player-score-line ${index === currentPlayerIndex ? "active" : ""}">
+          <span>${player.name}</span>
+          <strong>${player.score}</strong>
+        </div>
+      `).join("")}
+    </div>
+  `;
 }
 
 function nextPlayerTurn() {
