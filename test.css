@@ -258,21 +258,6 @@ body {
   height: 100%;
 }
 
-.media-column {
-  background: #edf1f5;
-  padding: 22px;
-  overflow-y: auto;
-}
-
-.media-column img {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  display: block;
-  border-radius: 16px;
-  object-fit: cover;
-  object-position: center;
-}
-
 .media-column img,
 .hard-mode-image {
   width: 100%;
@@ -703,9 +688,9 @@ body {
   color: #ffffff;
 }
 
-.end-panel {
-  text-align: center;
-  padding: 42px;
+.end-panel,
+.multiplayer-end-panel {
+  width: min(460px, 100%);
 }
 
 .end-kicker {
