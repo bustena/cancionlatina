@@ -871,6 +871,17 @@ function renderEndPanel() {
   const leftHeader = document.querySelector(".left-header");
   if (!leftHeader) return;
 
+  if (isMultiplayer) {
+    setLeftPanelBackground(homeMeta?.destacado || "#7a6a2e");
+    leftHeader.style.color = "#ffffff";
+  
+    leftHeader.innerHTML = `
+      <h1 class="app-title">Resultado</h1>
+    `;
+  
+    return;
+  }
+
   setLeftPanelBackground(homeMeta?.destacado || "#7a6a2e");
   leftHeader.style.color = "#ffffff";
 
