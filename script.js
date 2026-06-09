@@ -812,7 +812,6 @@ function togglePlayPause() {
 
 function bindPlayerControls() {
   const playBtn = detailEl.querySelector(".play-btn");
-  const prevBtn = detailEl.querySelector(".prev-btn");
   const nextBtn = detailEl.querySelector(".next-btn");
   const shuffleBtn = detailEl.querySelector(".shuffle-btn");
   const progressBar = detailEl.querySelector(".progress-bar");
@@ -871,12 +870,6 @@ function bindPlayerControls() {
           }
         }
       }
-    };
-  }
-
-  if (prevBtn) {
-    prevBtn.onclick = () => {
-      playPreviousTrack(isPlaying);
     };
   }
 
@@ -1400,11 +1393,6 @@ function renderDetail(item) {
 
           <div class="player">
           <div class="controls">
-            <button type="button" class="control-btn prev-btn" aria-label="Anterior">
-              <svg viewBox="0 0 24 24" class="icon">
-                <path d="M6 5v14M18 6l-8 6 8 6z" fill="currentColor"/>
-              </svg>
-            </button>
           
               <button type="button" class="control-btn play-btn" aria-label="Reproducir" title="Reproducir">
                 <svg viewBox="0 0 24 24" class="icon play-symbol icon-play" aria-hidden="true">
