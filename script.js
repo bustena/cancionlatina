@@ -1412,9 +1412,35 @@ function renderDetail(item) {
               
                 <button type="button" class="control-btn shuffle-btn" aria-label="Modo aleatorio" aria-pressed="false">
                   <svg viewBox="0 0 24 24" class="icon">
-                    <path d="M4 7h3l5 5-5 5H4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M14 7h6v6" fill="none" stroke="currentColor" stroke-width="2"/>
-                    <path d="M20 7l-6 6" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path
+                      d="M16 3h5v5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M4 20l16-16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M15 15l5 5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M4 4l5 5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
                   </svg>
                 </button>
               </div>
