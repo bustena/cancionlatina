@@ -680,7 +680,7 @@ function renderQuestion(item, options) {
 
   detailEl.innerHTML = `
     <article
-      class="card"
+      class="card question-card"
       style="
         --question-accent: ${accentColor};
         --question-accent-dark: ${darkAccentColor};
