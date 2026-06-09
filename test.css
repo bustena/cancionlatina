@@ -33,6 +33,12 @@ body {
   color: var(--muted);
 }
 
+.home-branding {
+  width: 100%;
+  max-width: 320px;
+  padding: 24px;
+}
+
 .home-random {
   display: flex;
   justify-content: center;
