@@ -811,6 +811,13 @@ body {
   font: inherit;
 }
 
+.multiplayer-instruction {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
 @media (max-width: 980px) {
   html, body { overflow: auto; }
   .shell { width: 100%; height: auto; overflow: visible; }
