@@ -818,6 +818,29 @@ body {
   line-height: 1.4;
 }
 
+.player-scoreboard {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.player-score-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  opacity: 0.72;
+}
+
+.player-score-line.active {
+  opacity: 1;
+}
+
+.player-score-line strong {
+  font-weight: 800;
+}
+
 @media (max-width: 980px) {
   html, body { overflow: auto; }
   .shell { width: 100%; height: auto; overflow: visible; }
