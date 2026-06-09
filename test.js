@@ -208,6 +208,8 @@ function renderHome() {
 
   detailEl.querySelectorAll("[data-difficulty]").forEach(button => {
     button.onclick = () => {
+      if (button.disabled) return;
+  
       selectedDifficulty = button.dataset.difficulty;
       renderHome();
     };
@@ -592,23 +594,11 @@ function renderEndPanel() {
     </div>
   `;
 
-  const homeButton = document.getElementById("homeButton");
 }
 
 function renderEndScreen() {
   stopAudio();
   renderEndPanel();
-
-  const leftColumn = document.querySelector(".left-column");
-  if (leftColumn) {
-    setLeftPanelBackground(homeMeta?.destacado || "");
-    
-    const leftHeader = document.querySelector(".left-header");
-    
-    if (leftHeader) {
-      leftHeader.style.color = "#ffffff";
-    }
-  }
 
   detailEl.innerHTML = `
     <article class="card end-card">
