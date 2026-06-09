@@ -1668,15 +1668,8 @@ function loadHomeCSV() {
           homeMeta = mapHomeRow(results.data[0]);
           maxFragmentSeconds = homeMeta.duracion || 120;
 
-          console.log("homeMeta:", homeMeta);
-          console.log("accent:", homeMeta?.destacado);
-
           applyHomeTheme();
 
-          console.log(
-            "css accent:",
-            getComputedStyle(document.documentElement).getPropertyValue("--app-accent")
-          );
         }
         resolve();
       },
