@@ -399,7 +399,6 @@ function scheduleFragmentEnd() {
 
   if (preloadDelay > 0) {
     preloadTimer = setTimeout(() => {
-      preloadNextTrack();
     }, preloadDelay * 1000);
   }
 
@@ -446,10 +445,6 @@ function goToTrack(newIndex, autoplay = false, mode = "manual") {
     incomingAudioPlayer.volume = 1;
     incomingAudioPlayer = null;
   }
-
-  let nextTrackIndex = null;
-  let nextFragmentStart = 0;
-  let nextFragmentDuration = 0;
 
   activeIndex = newIndex;
   currentPlaybackMode = mode;
@@ -529,25 +524,14 @@ function getNextTrackIndexFromIndex(baseIndex) {
   if (isShuffle) {
     return getNextShuffleIndex(baseIndex);
   }
-  
-      const nextFilteredIndex = currentFilteredIndex + 1;
-      
-      if (nextFilteredIndex >= filteredItems.length) {
-        return items.indexOf(filteredItems[0]);
-      }
-      
-      return items.indexOf(filteredItems[nextFilteredIndex]);
+
+  const nextFilteredIndex = currentFilteredIndex + 1;
+
+  if (nextFilteredIndex >= filteredItems.length) {
+    return items.indexOf(filteredItems[0]);
   }
 
-function preloadNextTrack() {
-  const nextIndex = getNextTrackIndex();
-  if (nextIndex === null) return;
-
-  const item = items[nextIndex];
-  if (!item || !item.audio) return;
-
-  const audio = new Audio(item.audio);
-  audio.preload = "auto";
+  return items.indexOf(filteredItems[nextFilteredIndex]);
 }
 
 function playNextTrack(autoplay = true, mode = "auto") {
