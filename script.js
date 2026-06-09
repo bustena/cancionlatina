@@ -1392,58 +1392,89 @@ function renderDetail(item) {
           }
 
           <div class="player">
-          <div class="controls">
           
-              <button type="button" class="control-btn play-btn" aria-label="Reproducir" title="Reproducir">
+            <div class="controls">
+            
+              <button
+                type="button"
+                class="control-btn play-btn"
+                aria-label="Reproducir"
+                title="Reproducir"
+              >
                 <svg viewBox="0 0 24 24" class="icon play-symbol icon-play" aria-hidden="true">
                   <path d="M8 5v14l11-7z" fill="currentColor"/>
                 </svg>
-              
+            
                 <svg viewBox="0 0 24 24" class="icon play-symbol icon-pause" aria-hidden="true">
                   <path d="M6 5h4v14H6zm8 0h4v14h-4z" fill="currentColor"/>
                 </svg>
               </button>
-              
-                <button type="button" class="control-btn next-btn" aria-label="Siguiente">
-                  <svg viewBox="0 0 24 24" class="icon">
-                    <path d="M18 5v14M6 6l8 6-8 6z" fill="currentColor"/>
-                  </svg>
-                </button>
-              
-                <button type="button" class="control-btn shuffle-btn" aria-label="Modo aleatorio" aria-pressed="false">
-                  <svg viewBox="0 0 24 24" class="icon">
-                    <path
-                      d="M16 3h5v5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M4 20l16-16"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                    />
-                    <path
-                      d="M15 15l5 5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                    />
-                    <path
-                      d="M4 4l5 5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                    />
-                  </svg>
-                </button>
-              </div>
+            
+              <button
+                type="button"
+                class="control-btn next-btn"
+                aria-label="Siguiente audición"
+                title="Siguiente audición"
+              >
+                <svg viewBox="0 0 24 24" class="icon">
+                  <polygon
+                    points="5,4 15,12 5,20"
+                    fill="currentColor"
+                  ></polygon>
+            
+                  <line
+                    x1="18"
+                    y1="5"
+                    x2="18"
+                    y2="19"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  ></line>
+                </svg>
+              </button>
+            
+              <button
+                type="button"
+                class="control-btn shuffle-btn"
+                aria-label="Modo aleatorio"
+                title="Modo aleatorio"
+                aria-pressed="false"
+              >
+                <svg viewBox="0 0 24 24" class="icon">
+                  <path
+                    d="M16 3h5v5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M4 20l16-16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M15 15l5 5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M4 4l5 5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+            
+            </div>
 
             <div class="progress-wrap">
               <div class="progress-bar" role="progressbar" aria-label="Progreso de reproducción" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
