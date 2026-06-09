@@ -682,7 +682,11 @@ function attachQuestionEvents() {
       if (value === currentQuestion.correctAnswer) {
         button.classList.add("correct");
 
-        score += 10;
+        if (isMultiplayer) {
+          getCurrentPlayer().score += 10;
+        } else {
+          score += 10;
+        }
         correctCount += 1;
 
         currentQuestion.answered = true;
@@ -700,7 +704,11 @@ function attachQuestionEvents() {
       } else {
         button.classList.add("wrong");
 
-        score -= 2;
+        if (isMultiplayer) {
+          getCurrentPlayer().score -= 2;
+        } else {
+          score -= 2;
+        }
         wrongCount += 1;
 
         feedback.textContent = "✗ Inténtalo de nuevo";
@@ -713,8 +721,20 @@ function attachQuestionEvents() {
   });
 
   nextButton.onclick = () => {
+    nextPlayerTurn();
     startQuestion();
   };
+}
+
+function getCurrentPlayer() {
+  return players[currentPlayerIndex];
+}
+
+function nextPlayerTurn() {
+  if (!isMultiplayer) return;
+
+  currentPlayerIndex =
+    (currentPlayerIndex + 1) % players.length;
 }
 
 function renderEndPanel() {
