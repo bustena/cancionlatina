@@ -153,9 +153,8 @@ function renderHomePanel() {
 }
 
 function renderHome() {
-
   renderHomePanel();
-    
+
   const meta = homeMeta || {
     titulo: "TEST",
     subtitulo: "Pon a prueba tu oído con la canción latinoamericana.",
@@ -209,6 +208,10 @@ function renderHome() {
               </button>
             </div>
           </div>
+
+          <button type="button" class="secondary-home-link" id="multiplayerButton">
+            Multijugador
+          </button>
         </div>
       </div>
     </article>
@@ -216,20 +219,20 @@ function renderHome() {
 
   detailEl.querySelectorAll("[data-mode]").forEach(button => {
     button.onclick = () => {
-    selectedMode = button.dataset.mode;
-    
-    if (selectedMode === "obra") {
-      selectedDifficulty = "dificil";
-    }
-    
-    renderHome();
+      selectedMode = button.dataset.mode;
+
+      if (selectedMode === "obra") {
+        selectedDifficulty = "dificil";
+      }
+
+      renderHome();
     };
   });
 
   detailEl.querySelectorAll("[data-difficulty]").forEach(button => {
     button.onclick = () => {
       if (button.disabled) return;
-  
+
       selectedDifficulty = button.dataset.difficulty;
       renderHome();
     };
@@ -240,6 +243,84 @@ function renderHome() {
   if (startButton) {
     startButton.onclick = () => {
       startRound();
+    };
+  }
+
+  const multiplayerButton = document.getElementById("multiplayerButton");
+
+  if (multiplayerButton) {
+    multiplayerButton.onclick = () => {
+      isMultiplayer = true;
+      renderMultiplayerHome();
+    };
+  }
+}
+
+function renderMultiplayerHome() {
+  renderHomePanel();
+
+  detailEl.classList.remove("empty");
+
+  detailEl.innerHTML = `
+    <article class="card home-card" style="--accent: var(--app-accent, #8b6a43);">
+      <div class="card-inner">
+        <div class="media-column home-media">
+          <div class="home-branding">
+            <h1 class="home-title">Multijugador</h1>
+            <p class="home-subtitle">Configura los jugadores antes de empezar la partida.</p>
+          </div>
+        </div>
+
+        <div class="content-column home-content">
+          <div class="home-section">
+            <h3 class="home-section-title">Jugadores</h3>
+
+            <div class="mode-grid">
+              <button class="tag active" data-player-count="2">2</button>
+              <button class="tag" data-player-count="3">3</button>
+              <button class="tag" data-player-count="4">4</button>
+            </div>
+          </div>
+
+          <div class="player-name-list" id="playerNameList"></div>
+
+          <div class="home-section">
+            <button class="tag home-tag primary-start" id="startMultiplayerButton">
+              Empezar
+            </button>
+          </div>
+
+          <button type="button" class="secondary-home-link" id="singlePlayerButton">
+            Modo individual
+          </button>
+        </div>
+      </div>
+    </article>
+  `;
+
+  setupPlayers(2);
+  renderPlayerInputs();
+
+  detailEl.querySelectorAll("[data-player-count]").forEach(button => {
+    button.onclick = () => {
+      const count = Number(button.dataset.playerCount);
+      setupPlayers(count);
+
+      detailEl.querySelectorAll("[data-player-count]").forEach(btn => {
+        btn.classList.toggle("active", btn === button);
+      });
+
+      renderPlayerInputs();
+    };
+  });
+
+  const singlePlayerButton = document.getElementById("singlePlayerButton");
+
+  if (singlePlayerButton) {
+    singlePlayerButton.onclick = () => {
+      isMultiplayer = false;
+      players = [];
+      renderHome();
     };
   }
 }
@@ -360,6 +441,40 @@ function getUniqueAnswersForMode(mode = selectedMode) {
       .map(item => getAnswerValue(item, mode))
       .filter(Boolean)
   )];
+}
+
+function setupPlayers(count) {
+  players = Array.from({ length: count }, (_, index) => {
+    return players[index] || {
+      name: `Jugador ${index + 1}`,
+      score: 0
+    };
+  });
+
+  currentPlayerIndex = 0;
+}
+
+function renderPlayerInputs() {
+  const container = document.getElementById("playerNameList");
+  if (!container) return;
+
+  container.innerHTML = players.map((player, index) => `
+    <label class="player-name-field">
+      <span>Jugador ${index + 1}</span>
+      <input
+        type="text"
+        value="${player.name}"
+        data-player-name="${index}"
+      >
+    </label>
+  `).join("");
+
+  container.querySelectorAll("[data-player-name]").forEach(input => {
+    input.oninput = () => {
+      const index = Number(input.dataset.playerName);
+      players[index].name = input.value.trim() || `Jugador ${index + 1}`;
+    };
+  });
 }
 
 function startRound() {
