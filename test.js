@@ -6,7 +6,14 @@ const detailEl = document.getElementById("detail");
 let items = [];
 let selectedMode = "pais";
 let selectedDifficulty = "facil";
-const QUESTIONS_PER_ROUND = 8;
+
+const SINGLE_PLAYER_QUESTIONS = 8;
+
+const MULTIPLAYER_QUESTIONS = {
+  2: 10,
+  3: 12,
+  4: 12
+};
 
 let homeMeta = null;
 let currentQuestion = null;
@@ -16,6 +23,11 @@ let correctCount = 0;
 let wrongCount = 0;
 let roundItems = [];
 let roundIndex = 0;
+
+let isMultiplayer = false;
+let players = [];
+let currentPlayerIndex = 0;
+let roundNumber = 1;
 
 let currentAudioPlayer = new Audio();
 let fragmentStart = 0;
@@ -47,6 +59,14 @@ function hexToRgba(hex, alpha) {
   const b = parseInt(clean.slice(4, 6), 16);
 
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function getQuestionsPerRound() {
+  if (!isMultiplayer) return SINGLE_PLAYER_QUESTIONS;
+
+  const playerCount = players.length;
+
+  return MULTIPLAYER_QUESTIONS[playerCount] || SINGLE_PLAYER_QUESTIONS;
 }
 
 function mapHomeRow(row) {
@@ -259,7 +279,7 @@ function renderGamePanel(item = null) {
   
       <div class="game-line">
         <span class="game-label">Pregunta</span>
-        <span class="game-value">${questionNumber} / ${QUESTIONS_PER_ROUND}</span>
+        <span class="game-value">${questionNumber} / ${getQuestionsPerRound()}</span>
       </div>
   
       <div class="game-line">
@@ -351,12 +371,12 @@ function startRound() {
   const candidates = getValidItemsForMode(selectedMode);
   const uniqueAnswers = getUniqueAnswersForMode(selectedMode);
 
-  if (candidates.length < QUESTIONS_PER_ROUND || uniqueAnswers.length < 4) {
+  if (candidates.length < getQuestionsPerRound() || uniqueAnswers.length < 4) {
     alert("No hay suficientes datos para iniciar esta modalidad.");
     return;
   }
 
-  roundItems = shuffle(candidates).slice(0, QUESTIONS_PER_ROUND);
+  roundItems = shuffle(candidates).slice(0, getQuestionsPerRound());
   roundIndex = 0;
 
   startQuestion();
@@ -584,7 +604,7 @@ function renderEndPanel() {
 
       <div class="game-line">
         <span class="game-label">Preguntas</span>
-        <span class="game-value">${QUESTIONS_PER_ROUND}</span>
+        <span class="game-value">${getQuestionsPerRound()}</span>
       </div>
 
       <div class="game-line">
@@ -617,7 +637,7 @@ function renderEndScreen() {
         </p>
 
         <p class="end-summary">
-          Has completado ${QUESTIONS_PER_ROUND} preguntas.
+          Has completado ${getQuestionsPerRound()} preguntas.
         </p>
 
         <button class="primary-button end-button" id="restartButton">
