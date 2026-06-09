@@ -273,7 +273,9 @@ function renderMultiplayerHome() {
 
         <div class="content-column home-content">
           <div class="home-section">
-            <h3 class="home-section-title">Jugadores</h3>
+            <p class="multiplayer-instruction">
+              Selecciona el número de jugadores e introduce sus nombres.
+            </p>
 
             <div class="mode-grid">
               <button class="tag active" data-player-count="2">2</button>
