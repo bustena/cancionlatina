@@ -923,6 +923,24 @@ body {
   .card-inner { grid-template-columns: 1fr; height: auto; }
   .media-column, .content-column { overflow: visible; }
 
+  .question-card .media-column img,
+  .question-card .hard-mode-image,
+  .question-card .test-player {
+    width: min(100%, 300px);
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .question-card .media-column img,
+  .question-card .hard-mode-image {
+    margin-top: 12px;
+  }
+
+  .media-column {
+    padding: 18px;
+  }
+
   .home-title {
     font-size: 2rem;
     line-height: 1.05;
