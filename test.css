@@ -959,4 +959,14 @@ body {
     font-size: 0.95rem;
     line-height: 1.35;
   }
+  
+  .option-button {
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+  }
+
+  .options-grid {
+    width: 100%;
+  }  
 }
