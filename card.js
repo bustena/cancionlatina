@@ -138,6 +138,11 @@ function renderCurrentCard() {
     return;
   }
 
+  if (selectedLayout === "full") {
+    renderFullCard(item);
+    return;
+  }
+
   renderVerticalCard(item);
 }
 
@@ -179,6 +184,49 @@ function renderHorizontalCard(item) {
 
         <div class="horizontal-meta">
           ${renderTags(item)}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderFullCard(item) {
+  if (!item) return;
+
+  cardPreview.innerHTML = `
+    <article class="full-card" style="--item-color: ${item.color};">
+      <div class="full-content">
+        <p class="full-author">${escapeHtml(item.autor)}</p>
+        <h2 class="full-title">${escapeHtml(item.titulo)}</h2>
+
+        <div class="full-text">
+          ${item.texto || ""}
+        </div>
+
+        <div class="full-meta">
+          ${renderTags(item)}
+        </div>
+      </div>
+
+      <div class="full-media">
+        ${
+          item.imagen
+            ? `<img src="${item.imagen}" alt="${escapeHtml(item.titulo || "Imagen")}">`
+            : `<div class="full-no-image">Sin imagen</div>`
+        }
+
+        <div class="fake-player">
+          <div class="fake-controls">
+            <div class="fake-play">▶</div>
+          </div>
+
+          <div class="fake-progress-wrap">
+            <div class="fake-progress-bar">
+              <div class="fake-progress-fill"></div>
+            </div>
+
+            <div class="fake-time">0:00</div>
+          </div>
         </div>
       </div>
     </article>
