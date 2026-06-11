@@ -168,8 +168,8 @@ function renderVerticalCard(item) {
       class="vertical-card"
       style="
         --item-color: ${item.color};
-        --item-color-soft-top: ${hexToRgba(item.color, 0.30)};
-        --item-color-soft-bottom: ${hexToRgba(item.color, 0.18)};
+        --item-color-soft-top: ${hexToRgba(item.color, 0.75)};
+        --item-color-soft-bottom: ${hexToRgba(item.color, 0.45)};
       "
     >
       ${renderImageBox(item, "card-image vertical-image")}
@@ -192,8 +192,8 @@ function renderHorizontalCard(item) {
         class="horizontal-card"
         style="
           --item-color: ${item.color};
-          --item-color-soft-top: ${hexToRgba(item.color, 0.30)};
-          --item-color-soft-bottom: ${hexToRgba(item.color, 0.18)};
+          --item-color-soft-top: ${hexToRgba(item.color, 0.75)};
+          --item-color-soft-bottom: ${hexToRgba(item.color, 0.45)};
         "
       >
       ${renderImageBox(item, "card-image horizontal-image")}
@@ -218,8 +218,8 @@ function renderFullCard(item) {
         class="full-card"
         style="
           --item-color: ${item.color};
-          --item-color-soft-top: ${hexToRgba(item.color, 0.30)};
-          --item-color-soft-bottom: ${hexToRgba(item.color, 0.18)};
+          --item-color-soft-top: ${hexToRgba(item.color, 0.75)};
+          --item-color-soft-bottom: ${hexToRgba(item.color, 0.45)};
         "
       >
       <div class="full-content">
