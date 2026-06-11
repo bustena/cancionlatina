@@ -7,6 +7,16 @@ let items = [];
 let activeIndex = 0;
 let selectedLayout = "vertical";
 
+function applyFavicon() {
+  if (!homeMeta?.icono) return;
+
+  const favicon = document.getElementById("favicon");
+
+  if (favicon) {
+    favicon.href = homeMeta.icono;
+  }
+}
+
 function normalizeHeader(header) {
   return header
     .trim()
