@@ -70,6 +70,27 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+function darkenColor(hex, factor = 0.18) {
+  const color = String(hex || "").replace("#", "");
+
+  if (!/^[0-9a-fA-F]{6}$/.test(color)) {
+    return "#4b5563";
+  }
+
+  const r = parseInt(color.substring(0, 2), 16);
+  const g = parseInt(color.substring(2, 4), 16);
+  const b = parseInt(color.substring(4, 6), 16);
+
+  const nr = Math.round(r * (1 - factor));
+  const ng = Math.round(g * (1 - factor));
+  const nb = Math.round(b * (1 - factor));
+
+  return "#" +
+    nr.toString(16).padStart(2, "0") +
+    ng.toString(16).padStart(2, "0") +
+    nb.toString(16).padStart(2, "0");
+}
+
 function escapeHtml(text) {
   return String(text || "").replace(/[&<>"']/g, function (m) {
     return ({
@@ -224,20 +245,26 @@ function renderHorizontalCard(item) {
       <article
         class="horizontal-card"
         style="
-          --item-color: ${item.color};
-          --item-color-soft-top: ${hexToRgba(item.color, 0.75)};
-          --item-color-soft-bottom: ${hexToRgba(item.color, 0.45)};
+          --item-color: ${darkenColor(item.color, 0.18)};
         "
       >
+      
       ${renderImageBox(item, "card-image horizontal-image")}
 
       <div class="horizontal-content">
-        <h2 class="horizontal-author">${escapeHtml(item.autor)}</h2>
-        <p class="horizontal-title">${escapeHtml(item.titulo)}</p>
-
-        <div class="horizontal-meta">
-          ${renderTags(item)}
+      
+        <h2 class="spotify-title">
+          ${escapeHtml(item.titulo)}
+        </h2>
+      
+        <p class="spotify-author">
+          ${escapeHtml(item.autor)}
+        </p>
+      
+        <div class="spotify-country">
+          ${escapeHtml(item.pais || "")}
         </div>
+      
       </div>
     </article>
   `;
