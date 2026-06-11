@@ -261,8 +261,8 @@ function renderHorizontalCard(item) {
           ${escapeHtml(item.autor)}
         </p>
       
-        <div class="spotify-country">
-          ${escapeHtml(item.pais || "")}
+        <div class="horizontal-meta">
+          ${renderTags(item)}
         </div>
       
       </div>
