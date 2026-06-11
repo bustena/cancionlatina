@@ -5,6 +5,7 @@ const cardPreview = document.getElementById("cardPreview");
 
 let items = [];
 let activeIndex = 0;
+let selectedLayout = "vertical";
 
 function normalizeHeader(header) {
   return header
@@ -125,7 +126,19 @@ function renderTags(item) {
 }
 
 function renderCurrentCard() {
-  renderVerticalCard(items[activeIndex]);
+  const item = items[activeIndex];
+
+  if (selectedLayout === "vertical") {
+    renderVerticalCard(item);
+    return;
+  }
+
+  if (selectedLayout === "horizontal") {
+    renderHorizontalCard(item);
+    return;
+  }
+
+  renderVerticalCard(item);
 }
 
 function renderVerticalCard(item) {
@@ -147,6 +160,43 @@ function renderVerticalCard(item) {
       </div>
     </article>
   `;
+}
+
+function renderHorizontalCard(item) {
+  if (!item) return;
+
+  cardPreview.innerHTML = `
+    <article class="horizontal-card" style="--item-color: ${item.color};">
+      ${
+        item.imagen
+          ? `<img src="${item.imagen}" alt="${escapeHtml(item.titulo || "Imagen")}">`
+          : `<div class="horizontal-no-image">Sin imagen</div>`
+      }
+
+      <div class="horizontal-content">
+        <h2 class="horizontal-author">${escapeHtml(item.autor)}</h2>
+        <p class="horizontal-title">${escapeHtml(item.titulo)}</p>
+
+        <div class="horizontal-meta">
+          ${renderTags(item)}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function bindLayoutButtons() {
+  document.querySelectorAll("[data-layout]").forEach(button => {
+    button.onclick = () => {
+      selectedLayout = button.dataset.layout;
+
+      document.querySelectorAll("[data-layout]").forEach(btn => {
+        btn.classList.toggle("active", btn === button);
+      });
+
+      renderCurrentCard();
+    };
+  });
 }
 
 function loadCSV() {
@@ -171,6 +221,7 @@ function loadCSV() {
       activeIndex = 0;
       renderTimeline();
       renderCurrentCard();
+      bindLayoutButtons();
     },
 
     error() {
