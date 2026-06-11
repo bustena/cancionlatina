@@ -392,11 +392,7 @@ body {
 }
 
 .full-media {
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--item-color, #8b6a43) 75%, white),
-    color-mix(in srgb, var(--item-color, #8b6a43) 45%, white)
-  );
+  background: var(--item-color, #8b6a43);
   padding: 28px;
   display: flex;
   flex-direction: column;
