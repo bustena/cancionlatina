@@ -261,8 +261,20 @@ function renderHorizontalCard(item) {
           ${escapeHtml(item.autor)}
         </p>
       
-        <div class="horizontal-meta">
-          ${renderTags(item)}
+        <div class="spotify-meta">
+        
+          ${item.ano ? `
+            <span class="spotify-pill">
+              ${escapeHtml(item.ano)}
+            </span>
+          ` : ""}
+        
+          ${item.pais ? `
+            <span class="spotify-pill">
+              ${escapeHtml(item.pais)}
+            </span>
+          ` : ""}
+        
         </div>
       
       </div>
