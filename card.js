@@ -1,9 +1,10 @@
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSJM_fPxtlc5UEyNf0DHLNg5B4tGIm8Qbba3k78kbQDRj9a9jGpSDRHwz_UOgAz4jbpcRJKHEUe1eNY/pub?gid=0&single=true&output=csv";
 
-const itemSelect = document.getElementById("itemSelect");
+const timelineEl = document.getElementById("timeline");
 const cardPreview = document.getElementById("cardPreview");
 
 let items = [];
+let activeIndex = 0;
 
 function normalizeHeader(header) {
   return header
@@ -56,17 +57,51 @@ function mapRow(row) {
   };
 }
 
-function renderSelect() {
-  itemSelect.innerHTML = items.map((item, index) => `
-    <option value="${index}">
-      ${escapeHtml(item.autor)} — ${escapeHtml(item.titulo)}
-    </option>
-  `).join("");
+function sortItems(data) {
+  return data.sort((a, b) => {
+    const yearA = parseInt((a.ano || "").match(/\d{3,4}/)?.[0] || "9999", 10);
+    const yearB = parseInt((b.ano || "").match(/\d{3,4}/)?.[0] || "9999", 10);
+    return yearA - yearB;
+  });
+}
 
-  itemSelect.onchange = () => {
-    const item = items[Number(itemSelect.value)];
-    renderVerticalCard(item);
-  };
+function extractFlagEmoji(pais) {
+  if (!pais) return "";
+  return pais.trim().split(" ")[0];
+}
+
+function renderTimeline() {
+  timelineEl.innerHTML = `
+    <div class="timeline-list">
+      ${items.map((item, index) => `
+        <div
+          class="timeline-item ${index === activeIndex ? "active" : ""}"
+          style="--item-color: ${item.color};"
+        >
+          <button
+            type="button"
+            class="timeline-button"
+            data-index="${index}"
+          >
+            <span class="timeline-year">
+              ${escapeHtml(item.ano || "s. f.")}
+              <span>${escapeHtml(extractFlagEmoji(item.pais))}</span>
+            </span>
+            <span class="timeline-title">${escapeHtml(item.titulo || "Sin título")}</span>
+            <span class="timeline-author">${escapeHtml(item.autor || "")}</span>
+          </button>
+        </div>
+      `).join("")}
+    </div>
+  `;
+
+  timelineEl.querySelectorAll("[data-index]").forEach(button => {
+    button.onclick = () => {
+      activeIndex = Number(button.dataset.index);
+      renderTimeline();
+      renderCurrentCard();
+    };
+  });
 }
 
 function renderTags(item) {
@@ -80,6 +115,10 @@ function renderTags(item) {
   return tags.map(tag => `
     <span class="vertical-tag">${escapeHtml(tag)}</span>
   `).join("");
+}
+
+function renderCurrentCard() {
+  renderVerticalCard(items[activeIndex]);
 }
 
 function renderVerticalCard(item) {
@@ -110,23 +149,25 @@ function loadCSV() {
     skipEmptyLines: true,
 
     complete(results) {
-      items = results.data
-        .map(mapRow)
-        .filter(item => item.autor || item.titulo || item.imagen);
+      items = sortItems(
+        results.data
+          .map(mapRow)
+          .filter(item => item.autor || item.titulo || item.imagen)
+      );
 
       if (!items.length) {
         cardPreview.textContent = "No se han encontrado datos.";
-        itemSelect.innerHTML = `<option>Sin datos</option>`;
+        timelineEl.textContent = "";
         return;
       }
 
-      renderSelect();
-      renderVerticalCard(items[0]);
+      activeIndex = 0;
+      renderTimeline();
+      renderCurrentCard();
     },
 
     error() {
       cardPreview.textContent = "Error cargando el CSV.";
-      itemSelect.innerHTML = `<option>Error</option>`;
     }
   });
 }
