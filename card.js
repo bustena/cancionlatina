@@ -25,6 +25,27 @@ function normalizeColor(value) {
   return "#8b6a43";
 }
 
+function lightenColor(hex, factor = 0.86) {
+  const color = String(hex || "").replace("#", "");
+
+  if (!/^[0-9a-fA-F]{6}$/.test(color)) {
+    return "#eef1f5";
+  }
+
+  const r = parseInt(color.substring(0, 2), 16);
+  const g = parseInt(color.substring(2, 4), 16);
+  const b = parseInt(color.substring(4, 6), 16);
+
+  const nr = Math.round(r + (255 - r) * factor);
+  const ng = Math.round(g + (255 - g) * factor);
+  const nb = Math.round(b + (255 - b) * factor);
+
+  return "#" +
+    nr.toString(16).padStart(2, "0") +
+    ng.toString(16).padStart(2, "0") +
+    nb.toString(16).padStart(2, "0");
+}
+
 function escapeHtml(text) {
   return String(text || "").replace(/[&<>"']/g, function (m) {
     return ({
@@ -167,7 +188,13 @@ function renderHorizontalCard(item) {
   if (!item) return;
 
   cardPreview.innerHTML = `
-    <article class="horizontal-card" style="--item-color: ${item.color};">
+      <article
+        class="horizontal-card"
+        style="
+          --item-color: ${item.color};
+          --item-color-light: ${lightenColor(item.color, 0.86)};
+        "
+      >
       ${renderImageBox(item, "card-image horizontal-image")}
 
       <div class="horizontal-content">
@@ -186,7 +213,13 @@ function renderFullCard(item) {
   if (!item) return;
 
   cardPreview.innerHTML = `
-    <article class="full-card" style="--item-color: ${item.color};">
+      <article
+        class="full-card"
+        style="
+          --item-color: ${item.color};
+          --item-color-light: ${lightenColor(item.color, 0.86)};
+        "
+      >
       <div class="full-content">
         <p class="full-author">${escapeHtml(item.autor)}</p>
         <h2 class="full-title">${escapeHtml(item.titulo)}</h2>
