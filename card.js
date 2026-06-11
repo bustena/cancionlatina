@@ -247,6 +247,49 @@ function bindLayoutButtons() {
   });
 }
 
+function slugify(text) {
+  return String(text || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+function downloadCard() {
+  const card = cardPreview.querySelector("article");
+  const item = items[activeIndex];
+
+  if (!card || !item) return;
+
+  html2canvas(card, {
+    backgroundColor: null,
+    scale: 2,
+    useCORS: true
+  }).then(canvas => {
+    const link = document.createElement("a");
+    const filename = [
+      "card",
+      selectedLayout,
+      slugify(item.autor),
+      slugify(item.titulo)
+    ].filter(Boolean).join("-");
+
+    link.download = `${filename}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+}
+
+function bindDownloadButton() {
+  const downloadButton = document.getElementById("downloadButton");
+
+  if (downloadButton) {
+    downloadButton.onclick = downloadCard;
+  }
+}
+
 function loadCSV() {
   Papa.parse(CSV_URL, {
     download: true,
@@ -270,6 +313,7 @@ function loadCSV() {
       renderTimeline();
       renderCurrentCard();
       bindLayoutButtons();
+      bindDownloadButton();
     },
 
     error() {
