@@ -3,25 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tarjetas canción latina</title>
+  <title>Tarjetas canción latinoamericana</title>
   <link rel="stylesheet" href="card.css">
 </head>
 <body>
-  <main class="app">
-    <section class="toolbar">
-      <h1>Tarjetas canción latina</h1>
+  <main class="shell">
+    <aside class="left-column">
+      <div class="left-header">
+        <h1 class="app-title">Canción latinoamericana</h1>
+        <p class="app-subtitle">Generador de tarjetas</p>
+      </div>
 
-      <label class="selector-label">
-        Audición
-        <select id="itemSelect">
-          <option>Cargando…</option>
-        </select>
-      </label>
-    </section>
+      <div class="left-scroll">
+        <div id="timeline" class="timeline"></div>
+      </div>
+    </aside>
 
-    <section class="preview-wrap">
-      <div id="cardPreview" class="card-preview">
-        Cargando datos…
+    <section class="right-column">
+      <div class="right-fixed">
+        <div id="cardPreview" class="card-preview">
+          Cargando datos…
+        </div>
       </div>
     </section>
   </main>
