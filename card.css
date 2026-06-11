@@ -185,10 +185,10 @@ body {
 
 .vertical-card {
   width: min(420px, 100%);
-  background: var(--item-color, #8b6a43);
+  background: var(--item-color-light, #eef1f5);
   border-radius: 28px;
   padding: 28px;
-  color: #ffffff;
+  color: #151821;
   box-shadow: var(--shadow);
 }
 
@@ -210,6 +210,7 @@ body {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  color: #2f3440;
 }
 
 .vertical-title {
@@ -218,6 +219,20 @@ body {
   font-size: 1.35rem;
   line-height: 1.25;
   font-weight: 400;
+  color: #4b5563;
+  position: relative;
+  padding-left: 14px;
+}
+
+.vertical-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.22em;
+  width: 5px;
+  height: 1.05em;
+  border-radius: 999px;
+  background: var(--item-color, #8b6a43);
 }
 
 .vertical-meta {
