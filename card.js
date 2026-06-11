@@ -171,7 +171,13 @@ function renderVerticalCard(item) {
   if (!item) return;
 
   cardPreview.innerHTML = `
-    <article class="vertical-card" style="--item-color: ${item.color};">
+      <article
+        class="vertical-card"
+        style="
+          --item-color: ${item.color};
+          --item-color-light: ${lightenColor(item.color, 0.86)};
+        "
+      >
       ${renderImageBox(item, "card-image vertical-image")}
 
       <h2 class="vertical-author">${escapeHtml(item.autor)}</h2>
