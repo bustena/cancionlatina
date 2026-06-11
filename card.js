@@ -286,25 +286,76 @@ function downloadCard() {
 }
 
 async function downloadAllCards() {
+  const zip = new JSZip();
+
   const originalIndex = activeIndex;
 
-  for (let i = 0; i < items.length; i++) {
-    activeIndex = i;
+  const downloadAllButton = document.getElementById("downloadAllButton");
+
+  if (downloadAllButton) {
+    downloadAllButton.disabled = true;
+    downloadAllButton.textContent = "Generando ZIP...";
+  }
+
+  try {
+    for (let i = 0; i < items.length; i++) {
+      activeIndex = i;
+
+      renderTimeline();
+      renderCurrentCard();
+
+      await new Promise(resolve => setTimeout(resolve, 150));
+
+      const card = cardPreview.querySelector("article");
+      const item = items[i];
+
+      const canvas = await html2canvas(card, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true
+      });
+
+      const dataUrl = canvas.toDataURL("image/png");
+
+      const base64 = dataUrl.split(",")[1];
+
+      const filename = [
+        selectedLayout,
+        slugify(item.autor),
+        slugify(item.titulo)
+      ].filter(Boolean).join("-");
+
+      zip.file(`${filename}.png`, base64, {
+        base64: true
+      });
+    }
+
+    const content = await zip.generateAsync({
+      type: "blob"
+    });
+
+    const url = URL.createObjectURL(content);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = `card-${selectedLayout}.zip`;
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
+  finally {
+    activeIndex = originalIndex;
 
     renderTimeline();
     renderCurrentCard();
 
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    downloadCard();
-
-    await new Promise(resolve => setTimeout(resolve, 500));
+    if (downloadAllButton) {
+      downloadAllButton.disabled = false;
+      downloadAllButton.textContent = "Descargar todas";
+    }
   }
-
-  activeIndex = originalIndex;
-
-  renderTimeline();
-  renderCurrentCard();
 }
 
 function bindDownloadButton() {
