@@ -338,6 +338,19 @@ body {
   font-size: 1.25rem;
   line-height: 1.25;
   color: #4b5563;
+  position: relative;
+  padding-left: 14px;
+}
+
+.horizontal-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.22em;
+  width: 5px;
+  height: 1.05em;
+  border-radius: 999px;
+  background: var(--item-color, #8b6a43);
 }
 
 .horizontal-meta {
