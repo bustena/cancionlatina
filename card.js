@@ -1,4 +1,5 @@
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSJM_fPxtlc5UEyNf0DHLNg5B4tGIm8Qbba3k78kbQDRj9a9jGpSDRHwz_UOgAz4jbpcRJKHEUe1eNY/pub?gid=0&single=true&output=csv";
+const HOME_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSJM_fPxtlc5UEyNf0DHLNg5B4tGIm8Qbba3k78kbQDRj9a9jGpSDRHwz_UOgAz4jbpcRJKHEUe1eNY/pub?gid=1844389020&single=true&output=csv";
 
 const timelineEl = document.getElementById("timeline");
 const cardPreview = document.getElementById("cardPreview");
@@ -6,6 +7,26 @@ const cardPreview = document.getElementById("cardPreview");
 let items = [];
 let activeIndex = 0;
 let selectedLayout = "vertical";
+
+let homeMeta = null;
+
+function mapHomeRow(row) {
+  const normalized = {};
+
+  for (const key in row) {
+    normalized[normalizeHeader(key)] = String(row[key] || "").trim();
+  }
+
+  return {
+    titulo: normalized.titulo || "",
+    subtitulo: normalized.subtitulo || "",
+    icono: normalized.icono || "",
+    enlace: normalized.enlace || "",
+    fondo: normalizeColor(normalized.fondo),
+    texto: normalizeColor(normalized.texto),
+    destacado: normalizeColor(normalized.destacado)
+  };
+}
 
 function applyFavicon() {
   if (!homeMeta?.icono) return;
@@ -452,4 +473,29 @@ function loadCSV() {
   });
 }
 
-loadCSV();
+function loadHomeCSV() {
+  return new Promise((resolve) => {
+    Papa.parse(HOME_CSV_URL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+
+      complete(results) {
+        if (results.data && results.data.length) {
+          homeMeta = mapHomeRow(results.data[0]);
+          applyFavicon();
+        }
+
+        resolve();
+      },
+
+      error() {
+        resolve();
+      }
+    });
+  });
+}
+
+loadHomeCSV().then(() => {
+  loadCSV();
+});
