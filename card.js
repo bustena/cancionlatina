@@ -25,25 +25,18 @@ function normalizeColor(value) {
   return "#8b6a43";
 }
 
-function lightenColor(hex, factor = 0.86) {
-  const color = String(hex || "").replace("#", "");
+function hexToRgba(hex, alpha) {
+  const clean = String(hex || "").replace("#", "").trim();
 
-  if (!/^[0-9a-fA-F]{6}$/.test(color)) {
-    return "#eef1f5";
+  if (!/^[0-9a-fA-F]{6}$/.test(clean)) {
+    return `rgba(201, 183, 156, ${alpha})`;
   }
 
-  const r = parseInt(color.substring(0, 2), 16);
-  const g = parseInt(color.substring(2, 4), 16);
-  const b = parseInt(color.substring(4, 6), 16);
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
 
-  const nr = Math.round(r + (255 - r) * factor);
-  const ng = Math.round(g + (255 - g) * factor);
-  const nb = Math.round(b + (255 - b) * factor);
-
-  return "#" +
-    nr.toString(16).padStart(2, "0") +
-    ng.toString(16).padStart(2, "0") +
-    nb.toString(16).padStart(2, "0");
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function escapeHtml(text) {
@@ -171,13 +164,14 @@ function renderVerticalCard(item) {
   if (!item) return;
 
   cardPreview.innerHTML = `
-      <article
-        class="vertical-card"
-        style="
-          --item-color: ${item.color};
-          --item-color-light: ${lightenColor(item.color, 0.86)};
-        "
-      >
+    <article
+      class="vertical-card"
+      style="
+        --item-color: ${item.color};
+        --item-color-soft-top: ${hexToRgba(item.color, 0.30)};
+        --item-color-soft-bottom: ${hexToRgba(item.color, 0.18)};
+      "
+    >
       ${renderImageBox(item, "card-image vertical-image")}
 
       <h2 class="vertical-author">${escapeHtml(item.autor)}</h2>
