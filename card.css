@@ -483,6 +483,32 @@ body {
   background: #151821;
 }
 
+.card-image {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.vertical-image,
+.no-card-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  margin-bottom: 26px;
+}
+
+.horizontal-image {
+  width: 180px;
+  aspect-ratio: 1 / 1;
+  border-radius: 18px;
+}
+
+.full-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+}
+
 @media (max-width: 980px) {
   html,
   body {
