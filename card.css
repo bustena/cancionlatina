@@ -486,6 +486,11 @@ body {
   background: #151821;
 }
 
+.download-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
 .card-image {
   background-size: cover;
   background-position: center;
