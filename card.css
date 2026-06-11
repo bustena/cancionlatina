@@ -333,7 +333,7 @@ body {
 .spotify-title {
   margin: 0 0 8px;
   color: #ffffff;
-  font-size: 1.55rem;
+  font-size: 1.60rem;
   font-weight: 800;
   line-height: 1.15;
 }
@@ -341,22 +341,28 @@ body {
 .spotify-author {
   margin: 0 0 18px;
   color: rgba(255,255,255,0.82);
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   line-height: 1.3;
 }
 
-.spotify-country {
-  margin-top: 16px;
+.spotify-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
 
-  display: inline-block;
+.spotify-pill {
+  display: inline-flex;
+  align-items: center;
 
   padding: 6px 12px;
 
   border-radius: 999px;
 
-  background: rgba(255,255,255,0.14);
+  background: #eef1f5;
 
-  color: rgba(255,255,255,0.92);
+  color: #4b5563;
 
   font-size: 0.8rem;
   font-weight: 700;
