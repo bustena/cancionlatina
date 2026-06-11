@@ -151,11 +151,7 @@ function renderVerticalCard(item) {
 
   cardPreview.innerHTML = `
     <article class="vertical-card" style="--item-color: ${item.color};">
-      ${
-        item.imagen
-          ? `<img src="${item.imagen}" alt="${escapeHtml(item.titulo || "Imagen")}">`
-          : `<div class="no-image">Sin imagen</div>`
-      }
+      ${renderImageBox(item, "card-image vertical-image")}
 
       <h2 class="vertical-author">${escapeHtml(item.autor)}</h2>
       <p class="vertical-title">${escapeHtml(item.titulo)}</p>
@@ -172,11 +168,7 @@ function renderHorizontalCard(item) {
 
   cardPreview.innerHTML = `
     <article class="horizontal-card" style="--item-color: ${item.color};">
-      ${
-        item.imagen
-          ? `<img src="${item.imagen}" alt="${escapeHtml(item.titulo || "Imagen")}">`
-          : `<div class="horizontal-no-image">Sin imagen</div>`
-      }
+      ${renderImageBox(item, "card-image horizontal-image")}
 
       <div class="horizontal-content">
         <h2 class="horizontal-author">${escapeHtml(item.autor)}</h2>
@@ -209,11 +201,7 @@ function renderFullCard(item) {
       </div>
 
       <div class="full-media">
-        ${
-          item.imagen
-            ? `<img src="${item.imagen}" alt="${escapeHtml(item.titulo || "Imagen")}">`
-            : `<div class="full-no-image">Sin imagen</div>`
-        }
+        ${renderImageBox(item, "card-image full-image")}
 
         <div class="fake-player">
           <div class="fake-controls">
@@ -255,6 +243,21 @@ function slugify(text) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
+}
+
+function renderImageBox(item, className) {
+  if (!item.imagen) {
+    return `<div class="${className} no-card-image">Sin imagen</div>`;
+  }
+
+  return `
+    <div
+      class="${className}"
+      style="background-image: url('${item.imagen}');"
+      role="img"
+      aria-label="${escapeHtml(item.titulo || "Imagen")}"
+    ></div>
+  `;
 }
 
 function downloadCard() {
