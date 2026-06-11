@@ -187,13 +187,20 @@ body {
   width: min(420px, 100%);
   background: linear-gradient(
     180deg,
-    var(--item-color-soft-top, rgba(201,183,156,0.75)),
-    var(--item-color-soft-bottom, rgba(201,183,156,0.45))
+    var(--item-color-soft-top),
+    var(--item-color-soft-bottom)
   );
   border-radius: 28px;
   padding: 28px;
-  color: #151821;
   box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.vertical-info {
+  margin: 26px -28px -28px;
+  padding: 24px 28px 28px;
+  background: #eef1f5;
+  color: #151821;
 }
 
 .vertical-card img,
