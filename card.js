@@ -192,7 +192,8 @@ function renderHorizontalCard(item) {
         class="horizontal-card"
         style="
           --item-color: ${item.color};
-          --item-color-light: ${lightenColor(item.color, 0.86)};
+          --item-color-soft-top: ${hexToRgba(item.color, 0.30)};
+          --item-color-soft-bottom: ${hexToRgba(item.color, 0.18)};
         "
       >
       ${renderImageBox(item, "card-image horizontal-image")}
@@ -217,7 +218,8 @@ function renderFullCard(item) {
         class="full-card"
         style="
           --item-color: ${item.color};
-          --item-color-light: ${lightenColor(item.color, 0.86)};
+          --item-color-soft-top: ${hexToRgba(item.color, 0.30)};
+          --item-color-soft-bottom: ${hexToRgba(item.color, 0.18)};
         "
       >
       <div class="full-content">
