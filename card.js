@@ -205,11 +205,13 @@ function renderVerticalCard(item) {
     >
       ${renderImageBox(item, "card-image vertical-image")}
 
-      <h2 class="vertical-author">${escapeHtml(item.autor)}</h2>
-      <p class="vertical-title">${escapeHtml(item.titulo)}</p>
-
-      <div class="vertical-meta">
-        ${renderTags(item)}
+      <div class="vertical-info">
+        <h2 class="vertical-author">${escapeHtml(item.autor)}</h2>
+        <p class="vertical-title">${escapeHtml(item.titulo)}</p>
+      
+        <div class="vertical-meta">
+          ${renderTags(item)}
+        </div>
       </div>
     </article>
   `;
