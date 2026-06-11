@@ -70,6 +70,13 @@ function extractFlagEmoji(pais) {
   return pais.trim().split(" ")[0];
 }
 
+function parseGenres(value) {
+  return String(value || "")
+    .split(";")
+    .map(tag => tag.trim())
+    .filter(Boolean);
+}
+
 function renderTimeline() {
   timelineEl.innerHTML = `
     <div class="timeline-list">
@@ -109,11 +116,11 @@ function renderTags(item) {
     item.ano,
     item.pais,
     item.ritmo,
-    item.genero
+    ...parseGenres(item.genero)
   ].filter(Boolean);
 
   return tags.map(tag => `
-    <span class="vertical-tag">${escapeHtml(tag)}</span>
+    <span class="card-tag">${escapeHtml(tag)}</span>
   `).join("");
 }
 
