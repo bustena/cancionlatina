@@ -285,11 +285,41 @@ function downloadCard() {
   });
 }
 
+async function downloadAllCards() {
+  const originalIndex = activeIndex;
+
+  for (let i = 0; i < items.length; i++) {
+    activeIndex = i;
+
+    renderTimeline();
+    renderCurrentCard();
+
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    downloadCard();
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+
+  activeIndex = originalIndex;
+
+  renderTimeline();
+  renderCurrentCard();
+}
+
 function bindDownloadButton() {
   const downloadButton = document.getElementById("downloadButton");
 
   if (downloadButton) {
     downloadButton.onclick = downloadCard;
+  }
+}
+
+function bindDownloadAllButton() {
+  const button = document.getElementById("downloadAllButton");
+
+  if (button) {
+    button.onclick = downloadAllCards;
   }
 }
 
@@ -317,6 +347,7 @@ function loadCSV() {
       renderCurrentCard();
       bindLayoutButtons();
       bindDownloadButton();
+      bindDownloadAllButton();
     },
 
     error() {
