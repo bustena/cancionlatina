@@ -184,6 +184,7 @@ body {
 }
 
 .vertical-card {
+  width: min(420px, 100%);
   background: var(--item-color, #8b6a43);
   border-radius: 28px;
   padding: 28px;
@@ -191,26 +192,13 @@ body {
   box-shadow: var(--shadow);
 }
 
-.vertical-card img {
+.vertical-card img,
+.no-image {
   width: 100%;
   aspect-ratio: 1 / 1;
   display: block;
   object-fit: cover;
   object-position: center;
-  border-radius: 20px;
-  margin-bottom: 26px;
-}
-
-.no-image {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 20px;
-  margin-bottom: 26px;
-  background: rgba(255,255,255,0.22);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-style: italic;
 }
 
 .vertical-author {
