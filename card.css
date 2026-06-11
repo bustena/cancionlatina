@@ -372,11 +372,7 @@ body {
 
 .full-content {
   padding: 42px 46px;
-  background: linear-gradient(
-    180deg,
-    var(--item-color-soft-top),
-    var(--item-color-soft-bottom)
-  );
+  background: #f1f3f6;
   color: #151821;
   display: flex;
   flex-direction: column;
