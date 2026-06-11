@@ -1,1 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CARD</title>
+  <link rel="stylesheet" href="card.css">
+</head>
+<body>
+  <main class="app">
+    <section class="toolbar">
+      <h1>CARD</h1>
 
+      <label class="selector-label">
+        Audición
+        <select id="itemSelect">
+          <option>Cargando…</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="preview-wrap">
+      <div id="cardPreview" class="card-preview">
+        Cargando datos…
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="card.js"></script>
+</body>
+</html>
