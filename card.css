@@ -162,41 +162,36 @@ body {
 }
 
 /* HOME */
-
-/* HOME CARD */
-
-.card-home-card {
-  width: 100%;
-  height: 100%;
-  background: var(--card);
-  border-radius: 22px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+.home-card .card-inner {
+  min-height: 100%;
 }
 
-.card-home-inner {
-  display: grid;
-  grid-template-columns: minmax(280px, 400px) 1fr;
-  height: 100%;
-}
-
-.card-home-media {
-  background: #8b6a43;
+.media-column.home-media {
+  background: var(--app-accent, #8b6a43);
   color: #ffffff;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 28px;
+  height: 100%;
 }
 
-.card-home-branding {
+.home-content {
+  background: #ffffff;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.75rem;
+}
+
+.home-branding {
   width: 100%;
   max-width: 420px;
   text-align: left;
 }
 
-.card-home-title {
+.home-title {
   margin: 0 0 0.75rem 0;
   font-size: 2.8rem;
   line-height: 1.02;
@@ -205,91 +200,75 @@ body {
   color: #ffffff;
 }
 
-.card-home-subtitle {
+.home-subtitle {
   margin: 0;
   font-size: 1.18rem;
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.96);
 }
 
-.card-home-content {
-  background: #ffffff;
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1.75rem;
-  padding: 30px 34px 32px;
-}
-
-.card-home-section {
+.home-section {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
 }
 
-.card-home-section h3 {
+.home-section-title {
   margin: 0;
   font-size: 1rem;
   font-weight: 700;
   color: var(--text);
 }
 
-.card-home-tags {
+.home-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
 }
 
-.card-home-tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.7rem 1rem;
-  border-radius: 999px;
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  color: #2f3440;
-  font: inherit;
+.home-tag {
   font-size: 1rem;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  padding: 0.7rem 1rem;
 }
 
-.card-home-tag:hover {
-  transform: translateY(-1px);
-  background: #f8fafc;
+.home-random {
+  align-self: center;
 }
 
-.card-home-tag.primary {
-  background: #8b6a43;
-  border-color: #8b6a43;
+.home-random .home-tag {
+  font-size: 1.05rem;
+  padding: 0.85rem 1.3rem;
+  background: color-mix(in srgb, var(--app-accent) 85%, white);
+  border-color: var(--app-accent);
   color: #ffffff;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-.card-home-mockups {
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+.home-random .home-tag:hover {
+  transform: translateY(-2px);
+  background: var(--app-accent);
 }
 
-.card-home-link {
+.home-mockups {
+  flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.home-return-button-static {
   border: 0;
   background: transparent;
   color: var(--muted);
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
-  opacity: 0.72;
+  opacity: 0.65;
 }
 
-.card-home-link:hover {
+.home-return-button-static:hover {
   opacity: 1;
-  color: #8b6a43;
+  color: var(--app-accent, #8b6a43);
 }
 
 /* Tarjeta vertical */
