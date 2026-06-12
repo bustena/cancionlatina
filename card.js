@@ -603,15 +603,21 @@ function renderTimelineHomeMockup() {
             También puedes entrar desde la línea de tiempo de la izquierda.
           </p>
 
-          <div class="mockup-footer">
-            <button class="home-return-button" data-return-home>
-              Inicio
-            </button>
-          </div>
-
         </div>
       </div>
     </article>
+  `;
+
+    cardPreview.innerHTML = `
+    <div class="export-view-wrap">
+      <article class="card home-card" data-export style="--accent: #8b6a43;">
+        ...
+      </article>
+  
+      <button class="outside-home-button" data-return-home>
+        Inicio
+      </button>
+    </div>
   `;
 
   const backButton = cardPreview.querySelector("[data-return-home]");
