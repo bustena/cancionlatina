@@ -161,6 +161,137 @@ body {
   color: #ffffff;
 }
 
+/* HOME */
+
+/* HOME CARD */
+
+.card-home-card {
+  width: 100%;
+  height: 100%;
+  background: var(--card);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.card-home-inner {
+  display: grid;
+  grid-template-columns: minmax(280px, 400px) 1fr;
+  height: 100%;
+}
+
+.card-home-media {
+  background: #8b6a43;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+}
+
+.card-home-branding {
+  width: 100%;
+  max-width: 420px;
+  text-align: left;
+}
+
+.card-home-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 2.8rem;
+  line-height: 1.02;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.card-home-subtitle {
+  margin: 0;
+  font-size: 1.18rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.card-home-content {
+  background: #ffffff;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.75rem;
+  padding: 30px 34px 32px;
+}
+
+.card-home-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.card-home-section h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.card-home-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.card-home-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  color: #2f3440;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.card-home-tag:hover {
+  transform: translateY(-1px);
+  background: #f8fafc;
+}
+
+.card-home-tag.primary {
+  background: #8b6a43;
+  border-color: #8b6a43;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.card-home-mockups {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.card-home-link {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0.72;
+}
+
+.card-home-link:hover {
+  opacity: 1;
+  color: #8b6a43;
+}
+
 /* Tarjeta vertical */
 
 .card-preview {
@@ -592,5 +723,18 @@ body {
   
   .full-media {
     order: -1;
+  }
+  
+  .card-home-card {
+    height: auto;
+  }
+  
+  .card-home-inner {
+    grid-template-columns: 1fr;
+  }
+  
+  .card-home-media,
+  .card-home-content {
+    min-height: auto;
   }
 }
