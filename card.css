@@ -688,6 +688,7 @@ body {
 .spotify-recording {
   font-weight: 400;
   opacity: 0.9;
+  letter-spacing: 0.01em;
 }
 
 .spotify-header {
