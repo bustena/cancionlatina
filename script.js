@@ -1171,23 +1171,30 @@ function scrollActiveTimelineItemIntoView() {
 
 function bindKeyboardNavigation() {
   document.addEventListener("keydown", (event) => {
-    if (!items.length) return;
-
     if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+
+    const visibleItems = getFilteredItems();
+
+    if (!visibleItems.length) return;
 
     event.preventDefault();
 
-    if (event.key === "ArrowUp") {
-      activeIndex = Math.max(0, activeIndex - 1);
+    const currentItem = items[activeIndex];
+    let visibleIndex = visibleItems.indexOf(currentItem);
+
+    if (visibleIndex === -1) {
+      visibleIndex = 0;
+    } else if (event.key === "ArrowUp") {
+      visibleIndex = Math.max(0, visibleIndex - 1);
+    } else if (event.key === "ArrowDown") {
+      visibleIndex = Math.min(visibleItems.length - 1, visibleIndex + 1);
     }
 
-    if (event.key === "ArrowDown") {
-      activeIndex = Math.min(items.length - 1, activeIndex + 1);
-    }
+    activeIndex = items.indexOf(visibleItems[visibleIndex]);
 
     renderTimeline();
-    renderCurrentCard();
-    scrollActiveTimelineItemIntoView?.();
+    renderCurrentDetail();
+    scrollActiveTimelineItemIntoView();
   });
 }
 
