@@ -329,6 +329,41 @@ body {
   color: var(--app-accent, #8b6a43);
 }
 
+/* MOCKUP TEST */
+
+.mode-grid,
+.difficulty-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.test-home-mockup .tag.active {
+  background: var(--app-accent, #8b6a43);
+  border-color: var(--app-accent, #8b6a43);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+}
+
+.primary-start {
+  background: color-mix(in srgb, var(--app-accent) 85%, white);
+  border-color: var(--app-accent);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.secondary-home-link,
+.test-multiplayer-mock {
+  align-self: center;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
 /* BASE FICHA / HOME */
 
 .card-preview {
