@@ -348,6 +348,10 @@ body {
   margin-top: 38px;
 }
 
+.test-home-mockup {
+  position: relative;
+}
+
 .test-home-mockup .home-content {
   gap: 2.05rem;
 }
@@ -370,9 +374,11 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-.secondary-home-link,
 .test-multiplayer-mock {
-  align-self: center;
+  position: absolute;
+  right: 22px;
+  bottom: 18px;
+
   border: 0;
   background: transparent;
   color: var(--muted);
