@@ -344,12 +344,13 @@ function bindCardHomeEvents() {
   });
 
   const randomButton = cardPreview.querySelector("[data-card-random]");
-
+  
   if (randomButton) {
     randomButton.onclick = () => {
       if (!items.length) return;
-
+  
       activeIndex = Math.floor(Math.random() * items.length);
+  
       renderTimeline();
       renderCurrentCard();
     };
