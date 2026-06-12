@@ -406,6 +406,13 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
+.test-home-mockup .primary-start {
+  background: var(--app-accent, #8b6a43);
+  border-color: var(--app-accent, #8b6a43);
+  color: #ffffff;
+  box-shadow: none;
+}
+
 .test-multiplayer-mock {
   position: absolute;
   right: 22px;
