@@ -282,9 +282,9 @@ function renderCardHome() {
       <div class="card-inner">
         <div class="media-column home-media">
           <div class="home-branding">
-            <h1 class="home-title">CARD</h1>
+            <h1 class="home-title">Generador de tarjetas</h1>
             <p class="home-subtitle">
-              Generador de tarjetas para la canción latinoamericana.
+              Exporta las fichas de la Canción latinoamericana en imágenes PNG.
             </p>
           </div>
         </div>
