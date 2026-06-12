@@ -659,8 +659,8 @@ body {
 }
 
 .spotify-author {
-  margin: 0;
-  font-size: 1.25rem;
+  margin: 0 0 2px;
+  font-size: 1.80rem;
   font-weight: 800;
   line-height: 1.15;
   color: #ffffff;
@@ -668,7 +668,7 @@ body {
 
 .spotify-title {
   margin: 0 0 8px;
-  font-size: 0.95rem;
+  font-size: 1.50rem;
   font-weight: 400;
   line-height: 1.4;
   color: rgba(255,255,255,0.88);
