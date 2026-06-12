@@ -702,6 +702,9 @@ function renderTestHomeMockup() {
           </span>
         </div>
       </div>
+      <span class="secondary-home-link test-multiplayer-mock">
+        Multijugador
+      </span>
     </article>
   `;
 }
