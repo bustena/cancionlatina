@@ -380,7 +380,16 @@ function bindCardHomeEvents() {
     timelineHomeButton.onclick = () => {
       renderTimelineHomeMockup();
     };
-  } 
+  }
+
+  const testHomeButton = cardPreview.querySelector("[data-show-test-home]");
+  
+  if (testHomeButton) {
+    testHomeButton.onclick = () => {
+      renderTestHomeMockup();
+    };
+  }  
+  
 }
 
 function renderTags(item) {
@@ -634,6 +643,67 @@ function renderTimelineHomeMockup() {
       renderCardHome();
     };
   }
+}
+
+function renderTestHomeMockup() {
+  currentView = "test-home";
+
+  const meta = homeMeta || {
+    titulo: "TEST",
+    subtitulo: "Pon a prueba tu oído con la canción latinoamericana."
+  };
+
+  cardPreview.innerHTML = `
+    <article class="card home-card test-home-mockup" data-export style="--accent: var(--app-accent, #8b6a43);">
+      <div class="card-inner">
+        <div class="media-column home-media">
+          <div class="home-branding">
+            <h1 class="home-title">
+              ${escapeHtml(meta.titulo || "TEST")}
+            </h1>
+
+            <p class="home-subtitle">
+              ${escapeHtml(meta.subtitulo || "Pon a prueba tu oído con la canción latinoamericana.")}
+            </p>
+          </div>
+        </div>
+
+        <div class="content-column home-content">
+          <div class="home-section">
+            <h3 class="home-section-title">Modalidad</h3>
+
+            <div class="mode-grid">
+              <span class="tag active">País</span>
+              <span class="tag">Ritmo</span>
+              <span class="tag">Año</span>
+              <span class="tag">Obra</span>
+            </div>
+          </div>
+
+          <div class="home-section">
+            <h3 class="home-section-title">Dificultad</h3>
+
+            <div class="difficulty-grid">
+              <span class="tag active">Fácil</span>
+              <span class="tag">Difícil</span>
+            </div>
+          </div>
+
+          <div class="home-section home-random">
+            <div class="home-tags">
+              <span class="tag home-tag primary-start">
+                Empezar
+              </span>
+            </div>
+          </div>
+
+          <span class="secondary-home-link test-multiplayer-mock">
+            Multijugador
+          </span>
+        </div>
+      </div>
+    </article>
+  `;
 }
 
 function bindLayoutButtons() {
