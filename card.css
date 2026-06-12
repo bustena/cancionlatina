@@ -658,6 +658,15 @@ body {
   border-radius: 18px;
 }
 
+.horizontal-content {
+  flex: 1;
+  padding: 22px 24px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .spotify-author {
   margin: 0 0 2px;
   font-size: 1.80rem;
@@ -679,11 +688,16 @@ body {
   opacity: 0.9;
 }
 
+.spotify-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .spotify-meta {
   display: flex;
+  gap: 10px;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 18px;
 }
 
 .spotify-pill {
