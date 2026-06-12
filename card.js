@@ -183,6 +183,177 @@ function renderTimeline() {
   });
 }
 
+function getTopCountries(limit = 6) {
+  const counts = new Map();
+
+  items.forEach(item => {
+    const country = String(item.pais || "").trim();
+    if (!country) return;
+    counts.set(country, (counts.get(country) || 0) + 1);
+  });
+
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(entry => entry[0]);
+}
+
+function getTopRhythms(limit = 6) {
+  const counts = new Map();
+
+  items.forEach(item => {
+    const rhythm = String(item.ritmo || "").trim();
+    if (!rhythm) return;
+    counts.set(rhythm, (counts.get(rhythm) || 0) + 1);
+  });
+
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(entry => entry[0]);
+}
+
+function getTopGenres(limit = 6) {
+  const counts = new Map();
+
+  items.forEach(item => {
+    parseGenres(item.genero).forEach(genre => {
+      if (!genre) return;
+      counts.set(genre, (counts.get(genre) || 0) + 1);
+    });
+  });
+
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(entry => entry[0]);
+}
+
+function renderCardHome() {
+  currentView = "card-home";
+
+  const topCountries = getTopCountries(6);
+  const topRhythms = getTopRhythms(6);
+  const topGenres = getTopGenres(6);
+
+  const countryButtons = topCountries.map(country => `
+    <button
+      type="button"
+      class="card-home-tag"
+      data-card-home-action="pais"
+      data-card-home-value="${escapeHtml(country)}"
+    >
+      ${escapeHtml(country)}
+    </button>
+  `).join("");
+
+  const rhythmButtons = topRhythms.map(rhythm => `
+    <button
+      type="button"
+      class="card-home-tag"
+      data-card-home-action="ritmo"
+      data-card-home-value="${escapeHtml(rhythm)}"
+    >
+      ${escapeHtml(rhythm)}
+    </button>
+  `).join("");
+
+  const genreButtons = topGenres.map(genre => `
+    <button
+      type="button"
+      class="card-home-tag"
+      data-card-home-action="genero"
+      data-card-home-value="${escapeHtml(genre)}"
+    >
+      ${escapeHtml(genre)}
+    </button>
+  `).join("");
+
+  cardPreview.innerHTML = `
+    <article class="card-home-card" data-export>
+      <div class="card-home-inner">
+        <div class="card-home-media">
+          <div class="card-home-branding">
+            <h1 class="card-home-title">CARD</h1>
+            <p class="card-home-subtitle">
+              Generador de tarjetas para la canción latinoamericana.
+            </p>
+          </div>
+        </div>
+
+        <div class="card-home-content">
+          <div class="card-home-section">
+            <h3>Explorar por país</h3>
+            <div class="card-home-tags">${countryButtons}</div>
+          </div>
+
+          <div class="card-home-section">
+            <h3>Explorar por ritmo</h3>
+            <div class="card-home-tags">${rhythmButtons}</div>
+          </div>
+
+          <div class="card-home-section">
+            <h3>Explorar por género</h3>
+            <div class="card-home-tags">${genreButtons}</div>
+          </div>
+
+          <div class="card-home-section card-home-random">
+            <button type="button" class="card-home-tag primary" data-card-random>
+              Descubrir al azar
+            </button>
+          </div>
+
+          <div class="card-home-section card-home-mockups">
+            <button type="button" class="card-home-link" data-show-timeline-home>
+              Ver HOME de TIMELINE
+            </button>
+
+            <button type="button" class="card-home-link" data-show-test-home>
+              Ver HOME de TEST
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  `;
+
+  bindCardHomeEvents();
+}
+
+function bindCardHomeEvents() {
+  cardPreview.querySelectorAll("[data-card-home-action]").forEach(button => {
+    button.onclick = () => {
+      const type = button.dataset.cardHomeAction;
+      const value = button.dataset.cardHomeValue;
+
+      const candidates = items.filter(item => {
+        if (type === "pais") return item.pais === value;
+        if (type === "ritmo") return item.ritmo === value;
+        if (type === "genero") return parseGenres(item.genero).includes(value);
+        return false;
+      });
+
+      if (!candidates.length) return;
+
+      activeIndex = items.indexOf(candidates[0]);
+      renderTimeline();
+      renderCurrentCard();
+    };
+  });
+
+  const randomButton = cardPreview.querySelector("[data-card-random]");
+
+  if (randomButton) {
+    randomButton.onclick = () => {
+      if (!items.length) return;
+
+      activeIndex = Math.floor(Math.random() * items.length);
+      renderTimeline();
+      renderCurrentCard();
+    };
+  }
+}
+
 function renderTags(item) {
   const tags = [
     item.ano,
@@ -512,7 +683,7 @@ function loadCSV() {
 
       activeIndex = 0;
       renderTimeline();
-      renderCurrentCard();
+      renderCardHome();
       bindLayoutButtons();
       bindDownloadButton();
       bindDownloadAllButton();
