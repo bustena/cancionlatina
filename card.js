@@ -133,7 +133,9 @@ function mapRow(row) {
     audio: normalized.audio || "",
     imagen: normalized.imagen || "",
     texto: normalized.texto || "",
-    color: normalizeColor(normalized.color)
+    color: normalizeColor(normalized.color),
+    interprete: normalized.interprete || "",
+    anoG: normalized.ano_g || ""
   };
 }
 
@@ -488,28 +490,24 @@ function renderHorizontalCard(item) {
 
       <div class="horizontal-content">
       
-        <h2 class="spotify-title">
-          ${escapeHtml(item.titulo)}
-        </h2>
-      
         <p class="spotify-author">
           ${escapeHtml(item.autor)}
         </p>
       
+        <h2 class="spotify-title">
+          ${escapeHtml(item.titulo)}
+          ${
+            item.interprete || item.anoG
+              ? `<span class="spotify-recording">
+                  (${[item.interprete, item.anoG].filter(Boolean).map(escapeHtml).join(", ")})
+                </span>`
+              : ""
+          }
+        </h2>
+      
         <div class="spotify-meta">
-        
-          ${item.ano ? `
-            <span class="spotify-pill">
-              ${escapeHtml(item.ano)}
-            </span>
-          ` : ""}
-        
-          ${item.pais ? `
-            <span class="spotify-pill">
-              ${escapeHtml(item.pais)}
-            </span>
-          ` : ""}
-        
+          ${item.ano ? `<span class="spotify-pill">${escapeHtml(item.ano)}</span>` : ""}
+          ${item.pais ? `<span class="spotify-pill">${escapeHtml(item.pais)}</span>` : ""}
         </div>
       
       </div>
