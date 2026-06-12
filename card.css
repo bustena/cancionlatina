@@ -284,10 +284,12 @@ body {
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
+  opacity: 0.75;
 }
 
 .home-return-button:hover {
-  text-decoration: underline;
+  opacity: 1;
+  color: var(--app-accent, #8b6a43);
 }
 
 .home-return-button-static {
