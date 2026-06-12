@@ -239,7 +239,7 @@ function renderCardHome() {
   const countryButtons = topCountries.map(country => `
     <button
       type="button"
-      class="card-home-tag"
+      class="tag filter-tag home-tag"
       data-card-home-action="pais"
       data-card-home-value="${escapeHtml(country)}"
     >
@@ -250,7 +250,7 @@ function renderCardHome() {
   const rhythmButtons = topRhythms.map(rhythm => `
     <button
       type="button"
-      class="card-home-tag"
+      class="tag filter-tag home-tag"
       data-card-home-action="ritmo"
       data-card-home-value="${escapeHtml(rhythm)}"
     >
@@ -261,7 +261,7 @@ function renderCardHome() {
   const genreButtons = topGenres.map(genre => `
     <button
       type="button"
-      class="card-home-tag"
+      class="tag filter-tag home-tag"
       data-card-home-action="genero"
       data-card-home-value="${escapeHtml(genre)}"
     >
@@ -270,45 +270,47 @@ function renderCardHome() {
   `).join("");
 
   cardPreview.innerHTML = `
-    <article class="card-home-card" data-export>
-      <div class="card-home-inner">
-        <div class="card-home-media">
-          <div class="card-home-branding">
-            <h1 class="card-home-title">Tarjetas png</h1>
-            <p class="card-home-subtitle">
+    <article class="card home-card" data-export style="--accent: #8b6a43;">
+      <div class="card-inner">
+        <div class="media-column home-media">
+          <div class="home-branding">
+            <h1 class="home-title">CARD</h1>
+            <p class="home-subtitle">
               Generador de tarjetas para la canción latinoamericana.
             </p>
           </div>
         </div>
-
-        <div class="card-home-content">
-          <div class="card-home-section">
-            <h3>Explorar por país</h3>
-            <div class="card-home-tags">${countryButtons}</div>
+  
+        <div class="content-column home-content">
+          <div class="home-section">
+            <h3 class="home-section-title">Explorar por país</h3>
+            <div class="home-tags">${countryButtons}</div>
           </div>
-
-          <div class="card-home-section">
-            <h3>Explorar por ritmo</h3>
-            <div class="card-home-tags">${rhythmButtons}</div>
+  
+          <div class="home-section">
+            <h3 class="home-section-title">Explorar por ritmo</h3>
+            <div class="home-tags">${rhythmButtons}</div>
           </div>
-
-          <div class="card-home-section">
-            <h3>Explorar por género</h3>
-            <div class="card-home-tags">${genreButtons}</div>
+  
+          <div class="home-section">
+            <h3 class="home-section-title">Explorar por género</h3>
+            <div class="home-tags">${genreButtons}</div>
           </div>
-
-          <div class="card-home-section card-home-random">
-            <button type="button" class="card-home-tag primary" data-card-random>
-              Descubrir al azar
-            </button>
+  
+          <div class="home-section home-random">
+            <div class="home-tags">
+              <button class="tag home-tag" data-card-random>
+                Descubrir al azar
+              </button>
+            </div>
           </div>
-
-          <div class="card-home-section card-home-mockups">
-            <button type="button" class="card-home-link" data-show-timeline-home>
+  
+          <div class="home-section home-mockups">
+            <button type="button" class="home-return-button-static" data-show-timeline-home>
               Ver HOME de TIMELINE
             </button>
-
-            <button type="button" class="card-home-link" data-show-test-home>
+  
+            <button type="button" class="home-return-button-static" data-show-test-home>
               Ver HOME de TEST
             </button>
           </div>
