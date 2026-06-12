@@ -274,7 +274,7 @@ function renderCardHome() {
       <div class="card-home-inner">
         <div class="card-home-media">
           <div class="card-home-branding">
-            <h1 class="card-home-title">CARD</h1>
+            <h1 class="card-home-title">Tarjetas png</h1>
             <p class="card-home-subtitle">
               Generador de tarjetas para la canción latinoamericana.
             </p>
