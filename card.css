@@ -270,6 +270,26 @@ body {
   gap: 1rem;
 }
 
+.mockup-footer {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.home-return-button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.home-return-button:hover {
+  text-decoration: underline;
+}
+
 .home-return-button-static {
   border: 0;
   background: transparent;
