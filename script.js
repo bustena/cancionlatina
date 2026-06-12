@@ -1169,6 +1169,28 @@ function scrollActiveTimelineItemIntoView() {
   });
 }
 
+function bindKeyboardNavigation() {
+  document.addEventListener("keydown", (event) => {
+    if (!items.length) return;
+
+    if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+
+    event.preventDefault();
+
+    if (event.key === "ArrowUp") {
+      activeIndex = Math.max(0, activeIndex - 1);
+    }
+
+    if (event.key === "ArrowDown") {
+      activeIndex = Math.min(items.length - 1, activeIndex + 1);
+    }
+
+    renderTimeline();
+    renderCurrentCard();
+    scrollActiveTimelineItemIntoView?.();
+  });
+}
+
 function renderCountryTag(country) {
   const activeClass = isFilterActive("pais", country) ? " active" : "";
   return `
@@ -1754,6 +1776,7 @@ function loadCSV() {
       isHomeView = true;
       renderTimeline();
       scrollActiveTimelineItemIntoView();
+      bindKeyboardNavigation();
       renderHome();
     },
     error: function () {
