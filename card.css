@@ -71,7 +71,7 @@ body {
 }
 
 .right-column {
-  position: relative;
+  position: fixed;
   top: 0;
   left: var(--left-width);
   right: 0;
