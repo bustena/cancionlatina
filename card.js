@@ -543,6 +543,22 @@ function renderTimelineHomeMockup() {
 
   const meta = homeMeta || {};
 
+  const topCountries = getTopCountries(6);
+  const topRhythms = getTopRhythms(6);
+  const topGenres = getTopGenres(6);
+  
+  const countryTags = topCountries.map(country => `
+    <span class="tag home-tag">${escapeHtml(country)}</span>
+  `).join("");
+  
+  const rhythmTags = topRhythms.map(rhythm => `
+    <span class="tag home-tag">${escapeHtml(rhythm)}</span>
+  `).join("");
+  
+  const genreTags = topGenres.map(genre => `
+    <span class="tag home-tag">${escapeHtml(genre)}</span>
+  `).join("");
+
   cardPreview.innerHTML = `
     <div class="export-view-wrap">
       <article class="card home-card" data-export style="--accent: #8b6a43;">
@@ -569,12 +585,7 @@ function renderTimelineHomeMockup() {
               <h3 class="home-section-title">Explorar por país</h3>
 
               <div class="home-tags">
-                <span class="tag home-tag">Cuba</span>
-                <span class="tag home-tag">México</span>
-                <span class="tag home-tag">Brasil</span>
-                <span class="tag home-tag">Argentina</span>
-                <span class="tag home-tag">Chile</span>
-                <span class="tag home-tag">Perú</span>
+                ${countryTags}
               </div>
             </div>
 
@@ -582,12 +593,7 @@ function renderTimelineHomeMockup() {
               <h3 class="home-section-title">Explorar por ritmo</h3>
 
               <div class="home-tags">
-                <span class="tag home-tag">Bolero</span>
-                <span class="tag home-tag">Son</span>
-                <span class="tag home-tag">Tango</span>
-                <span class="tag home-tag">Vals</span>
-                <span class="tag home-tag">Samba</span>
-                <span class="tag home-tag">Ranchera</span>
+                ${rhythmTags}
               </div>
             </div>
 
@@ -595,10 +601,7 @@ function renderTimelineHomeMockup() {
               <h3 class="home-section-title">Explorar por género</h3>
 
               <div class="home-tags">
-                <span class="tag home-tag">Romántica</span>
-                <span class="tag home-tag">Tradicional</span>
-                <span class="tag home-tag">Folclórica</span>
-                <span class="tag home-tag">Urbana</span>
+                ${genreTags}
               </div>
             </div>
 
