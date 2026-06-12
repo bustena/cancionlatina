@@ -330,6 +330,16 @@ function renderCardHome() {
   bindCardHomeEvents();
 }
 
+function bindGlobalHomeButton() {
+  const button = document.getElementById("globalHomeButton");
+
+  if (button) {
+    button.onclick = () => {
+      renderCardHome();
+    };
+  }
+}
+
 function bindCardHomeEvents() {
   cardPreview.querySelectorAll("[data-card-home-action]").forEach(button => {
     button.onclick = () => {
@@ -801,6 +811,7 @@ function loadCSV() {
       bindLayoutButtons();
       bindDownloadButton();
       bindDownloadAllButton();
+      bindGlobalHomeButton();
     },
 
     error() {
