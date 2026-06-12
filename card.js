@@ -56,7 +56,7 @@ function normalizeHeader(header) {
 }
 
 function getExportTarget() {
-  return cardPreview.querySelector("[data-export]");
+  return cardPreview.querySelector("article[data-export]");
 }
 
 function normalizeColor(value) {
@@ -750,6 +750,10 @@ function renderImageBox(item, className) {
 }
 
 function downloadCard() {
+
+  console.log("currentView:", currentView);
+  console.log("target:", getExportTarget());
+  
   const target = getExportTarget();
 
   if (!target) return;
