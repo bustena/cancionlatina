@@ -801,6 +801,10 @@ function makeCardFilename() {
 }
 
 async function downloadAllCards() {
+  if (currentView !== "card") {
+    return;
+  }
+  
   const zip = new JSZip();
 
   const originalIndex = activeIndex;
