@@ -766,28 +766,38 @@ function renderImageBox(item, className) {
 }
 
 function downloadCard() {
-  const card = getExportTarget();
-  const item = items[activeIndex];
+  const target = getExportTarget();
 
-  if (!card || !item) return;
+  if (!target) return;
 
-  html2canvas(card, {
+  html2canvas(target, {
     backgroundColor: null,
     scale: 2,
     useCORS: true
   }).then(canvas => {
     const link = document.createElement("a");
-    const filename = [
-      "card",
-      selectedLayout,
-      slugify(item.autor),
-      slugify(item.titulo)
-    ].filter(Boolean).join("-");
+
+    const filename =
+      currentView === "card-home" ? "home-card" :
+      currentView === "timeline-home" ? "home-timeline" :
+      currentView === "test-home" ? "home-test" :
+      makeCardFilename();
 
     link.download = `${filename}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
   });
+}
+
+function makeCardFilename() {
+  const item = items[activeIndex];
+
+  return [
+    "card",
+    selectedLayout,
+    slugify(item?.autor),
+    slugify(item?.titulo)
+  ].filter(Boolean).join("-");
 }
 
 async function downloadAllCards() {
