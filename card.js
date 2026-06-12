@@ -387,6 +387,28 @@ function scrollActiveTimelineItemIntoView() {
   });
 }
 
+function bindKeyboardNavigation() {
+  document.addEventListener("keydown", event => {
+    if (currentView !== "card") return;
+
+    if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+
+    event.preventDefault();
+
+    if (event.key === "ArrowUp") {
+      activeIndex = Math.max(0, activeIndex - 1);
+    }
+
+    if (event.key === "ArrowDown") {
+      activeIndex = Math.min(items.length - 1, activeIndex + 1);
+    }
+
+    renderTimeline();
+    renderCurrentCard();
+    scrollActiveTimelineItemIntoView();
+  });
+}
+
 function renderTags(item) {
   const tags = [
     item.ano,
@@ -883,6 +905,7 @@ function loadCSV() {
       bindDownloadButton();
       bindDownloadAllButton();
       bindGlobalHomeButton();
+      bindKeyboardNavigation();
     },
 
     error() {
