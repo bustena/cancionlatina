@@ -534,86 +534,80 @@ function renderTimelineHomeMockup() {
   const meta = homeMeta || {};
 
   cardPreview.innerHTML = `
-    <article class="card home-card" data-export style="--accent: #8b6a43;">
-      <div class="card-inner">
-
-        <div class="media-column home-media">
-          <div class="home-branding">
-            <h1 class="home-title">
-              ${escapeHtml(meta.titulo || "Canción latina")}
-            </h1>
-
-            <p class="home-subtitle">
-              ${escapeHtml(
-                meta.subtitulo ||
-                "Una cronología sonora para explorar obras, autores, países y géneros."
-              )}
-            </p>
-          </div>
-        </div>
-
-        <div class="content-column home-content">
-
-          <div class="home-section">
-            <h3 class="home-section-title">Explorar por país</h3>
-
-            <div class="home-tags">
-              <span class="tag home-tag">Cuba</span>
-              <span class="tag home-tag">México</span>
-              <span class="tag home-tag">Brasil</span>
-              <span class="tag home-tag">Argentina</span>
-              <span class="tag home-tag">Chile</span>
-              <span class="tag home-tag">Perú</span>
-            </div>
-          </div>
-
-          <div class="home-section">
-            <h3 class="home-section-title">Explorar por ritmo</h3>
-
-            <div class="home-tags">
-              <span class="tag home-tag">Bolero</span>
-              <span class="tag home-tag">Son</span>
-              <span class="tag home-tag">Tango</span>
-              <span class="tag home-tag">Vals</span>
-              <span class="tag home-tag">Samba</span>
-              <span class="tag home-tag">Ranchera</span>
-            </div>
-          </div>
-
-          <div class="home-section">
-            <h3 class="home-section-title">Explorar por género</h3>
-
-            <div class="home-tags">
-              <span class="tag home-tag">Romántica</span>
-              <span class="tag home-tag">Tradicional</span>
-              <span class="tag home-tag">Folclórica</span>
-              <span class="tag home-tag">Urbana</span>
-            </div>
-          </div>
-
-          <div class="home-section home-random">
-            <div class="home-tags">
-              <span class="tag home-tag">
-                Descubrir al azar
-              </span>
-            </div>
-          </div>
-
-          <p class="home-note">
-            También puedes entrar desde la línea de tiempo de la izquierda.
-          </p>
-
-        </div>
-      </div>
-    </article>
-  `;
-
-    cardPreview.innerHTML = `
     <div class="export-view-wrap">
       <article class="card home-card" data-export style="--accent: #8b6a43;">
-        ...
+        <div class="card-inner">
+
+          <div class="media-column home-media">
+            <div class="home-branding">
+              <h1 class="home-title">
+                ${escapeHtml(meta.titulo || "Canción latina")}
+              </h1>
+
+              <p class="home-subtitle">
+                ${escapeHtml(
+                  meta.subtitulo ||
+                  "Una cronología sonora para explorar obras, autores, países y géneros."
+                )}
+              </p>
+            </div>
+          </div>
+
+          <div class="content-column home-content">
+
+            <div class="home-section">
+              <h3 class="home-section-title">Explorar por país</h3>
+
+              <div class="home-tags">
+                <span class="tag home-tag">Cuba</span>
+                <span class="tag home-tag">México</span>
+                <span class="tag home-tag">Brasil</span>
+                <span class="tag home-tag">Argentina</span>
+                <span class="tag home-tag">Chile</span>
+                <span class="tag home-tag">Perú</span>
+              </div>
+            </div>
+
+            <div class="home-section">
+              <h3 class="home-section-title">Explorar por ritmo</h3>
+
+              <div class="home-tags">
+                <span class="tag home-tag">Bolero</span>
+                <span class="tag home-tag">Son</span>
+                <span class="tag home-tag">Tango</span>
+                <span class="tag home-tag">Vals</span>
+                <span class="tag home-tag">Samba</span>
+                <span class="tag home-tag">Ranchera</span>
+              </div>
+            </div>
+
+            <div class="home-section">
+              <h3 class="home-section-title">Explorar por género</h3>
+
+              <div class="home-tags">
+                <span class="tag home-tag">Romántica</span>
+                <span class="tag home-tag">Tradicional</span>
+                <span class="tag home-tag">Folclórica</span>
+                <span class="tag home-tag">Urbana</span>
+              </div>
+            </div>
+
+            <div class="home-section home-random">
+              <div class="home-tags">
+                <span class="tag home-tag">
+                  Descubrir al azar
+                </span>
+              </div>
+            </div>
+
+            <p class="home-note">
+              También puedes entrar desde la línea de tiempo de la izquierda.
+            </p>
+
+          </div>
+        </div>
       </article>
-  
+
       <button class="outside-home-button" data-return-home>
         Inicio
       </button>
