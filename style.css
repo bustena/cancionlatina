@@ -169,17 +169,6 @@ body {
   padding-left: 20px;
 }
 
-.timeline-list::before {
-  content: "";
-  position: absolute;
-  left: 11px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: linear-gradient(to bottom, #d0d6e2, #c2c9d8);
-  border-radius: 999px;
-}
-
 .active-filter-banner {
   display: flex;
   align-items: center;
@@ -271,21 +260,7 @@ body {
   opacity: 0.92;
 }
 
-.timeline-button::before {
-  content: "";
-  position: absolute;
-  left: -25px;
-  top: 7px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--item-color, #b8ab95);
-  border: 2px solid var(--panel);
-  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.06);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.timeline-item.active .timeline-button::before {
+.timeline-item.active {
   transform: scale(1.25);
   box-shadow: 0 0 0 6px rgba(15, 23, 42, 0.10);
 }
