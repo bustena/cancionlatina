@@ -646,20 +646,8 @@ function renderTimelineHomeMockup() {
           </div>
         </div>
       </article>
-
-      <button class="outside-home-button" data-return-home>
-        Inicio
-      </button>
     </div>
   `;
-
-  const backButton = cardPreview.querySelector("[data-return-home]");
-
-  if (backButton) {
-    backButton.onclick = () => {
-      renderCardHome();
-    };
-  }
 }
 
 function renderTestHomeMockup() {
@@ -713,10 +701,6 @@ function renderTestHomeMockup() {
               </span>
             </div>
           </div>
-
-          <span class="secondary-home-link test-multiplayer-mock">
-            Multijugador
-          </span>
         </div>
       </div>
       <span class="secondary-home-link test-multiplayer-mock">
