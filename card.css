@@ -281,9 +281,11 @@ body {
   cursor: pointer;
 }
 
-.home-random:hover {
+.home-random .home-tag:hover {
   transform: translateY(-2px);
   background: var(--app-accent);
+  border-color: var(--app-accent);
+  color: #ffffff;
 }
 
 .home-mockups {
