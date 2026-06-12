@@ -347,11 +347,12 @@ function bindCardHomeEvents() {
   if (randomButton) {
     randomButton.onclick = () => {
       if (!items.length) return;
-  
+    
       activeIndex = Math.floor(Math.random() * items.length);
-  
+    
       renderTimeline();
       renderCurrentCard();
+      scrollActiveTimelineItemIntoView();
     };
   }
 
