@@ -7,6 +7,7 @@ const cardPreview = document.getElementById("cardPreview");
 let items = [];
 let activeIndex = 0;
 let selectedLayout = "vertical";
+let currentView = "card";
 
 let homeMeta = null;
 
@@ -44,6 +45,10 @@ function normalizeHeader(header) {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
+}
+
+function getExportTarget() {
+  return cardPreview.querySelector("[data-export]");
 }
 
 function normalizeColor(value) {
@@ -192,6 +197,8 @@ function renderTags(item) {
 }
 
 function renderCurrentCard() {
+  currentView = "card";
+  
   const item = items[activeIndex];
 
   if (selectedLayout === "vertical") {
@@ -218,6 +225,7 @@ function renderVerticalCard(item) {
   cardPreview.innerHTML = `
     <article
       class="vertical-card"
+      data-export
       style="
         --item-color: ${item.color};
         --item-color-soft-top: ${hexToRgba(item.color, 0.75)};
@@ -244,6 +252,7 @@ function renderHorizontalCard(item) {
   cardPreview.innerHTML = `
       <article
         class="horizontal-card"
+        data-export
         style="
           --item-color: ${darkenColor(item.color, 0.18)};
         "
@@ -288,6 +297,7 @@ function renderFullCard(item) {
   cardPreview.innerHTML = `
       <article
         class="full-card"
+        data-export
         style="
           --item-color: ${item.color};
           --item-color-soft-top: ${hexToRgba(item.color, 0.75)};
@@ -368,7 +378,7 @@ function renderImageBox(item, className) {
 }
 
 function downloadCard() {
-  const card = cardPreview.querySelector("article");
+  const card = getExportTarget();
   const item = items[activeIndex];
 
   if (!card || !item) return;
