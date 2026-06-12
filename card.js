@@ -789,10 +789,11 @@ function makeCardFilename() {
 }
 
 async function downloadAllCards() {
+
   if (currentView !== "card") {
-    return;
+    return downloadAllHomes();
   }
-  
+
   const zip = new JSZip();
 
   const originalIndex = activeIndex;
@@ -863,6 +864,64 @@ async function downloadAllCards() {
       downloadAllButton.textContent = "Descargar todas";
     }
   }
+}
+
+async function downloadAllHomes() {
+  const zip = new JSZip();
+
+  const views = [
+    {
+      name: "home-card",
+      render: () => renderCardHome()
+    },
+    {
+      name: "home-timeline",
+      render: () => renderTimelineHomeMockup()
+    },
+    {
+      name: "home-test",
+      render: () => renderTestHomeMockup()
+    }
+  ];
+
+  for (const view of views) {
+    view.render();
+
+    await new Promise(resolve => setTimeout(resolve, 150));
+
+    const target = getExportTarget();
+
+    const canvas = await html2canvas(target, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true
+    });
+
+    const dataUrl = canvas.toDataURL("image/png");
+
+    zip.file(
+      `${view.name}.png`,
+      dataUrl.split(",")[1],
+      { base64: true }
+    );
+  }
+
+  const content = await zip.generateAsync({
+    type: "blob"
+  });
+
+  const url = URL.createObjectURL(content);
+
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "homes.zip";
+
+  link.click();
+
+  URL.revokeObjectURL(url);
+
+  renderCardHome();
 }
 
 function bindDownloadButton() {
