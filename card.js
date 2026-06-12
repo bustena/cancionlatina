@@ -488,13 +488,15 @@ function renderHorizontalCard(item) {
       
       ${renderImageBox(item, "card-image horizontal-image")}
 
-      <div class="horizontal-content">
-      
+    <div class="horizontal-content">
+    
+      <div class="spotify-header">
+    
         <p class="spotify-author">
           ${escapeHtml(item.autor)}
         </p>
-      
-        <h2 class="spotify-title">
+    
+        <p class="spotify-title">
           ${escapeHtml(item.titulo)}
           ${
             item.interprete || item.anoG
@@ -503,14 +505,27 @@ function renderHorizontalCard(item) {
                 </span>`
               : ""
           }
-        </h2>
-      
-        <div class="spotify-meta">
-          ${item.ano ? `<span class="spotify-pill">${escapeHtml(item.ano)}</span>` : ""}
-          ${item.pais ? `<span class="spotify-pill">${escapeHtml(item.pais)}</span>` : ""}
-        </div>
-      
+        </p>
+    
       </div>
+    
+      <div class="spotify-meta">
+    
+        ${item.ano ? `
+          <span class="spotify-pill">
+            ${escapeHtml(item.ano)}
+          </span>
+        ` : ""}
+    
+        ${item.pais ? `
+          <span class="spotify-pill">
+            ${escapeHtml(item.pais)}
+          </span>
+        ` : ""}
+    
+      </div>
+    
+    </div>
     </article>
   `;
 }
