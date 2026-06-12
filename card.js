@@ -341,25 +341,6 @@ function bindGlobalHomeButton() {
 }
 
 function bindCardHomeEvents() {
-  cardPreview.querySelectorAll("[data-card-home-action]").forEach(button => {
-    button.onclick = () => {
-      const type = button.dataset.cardHomeAction;
-      const value = button.dataset.cardHomeValue;
-
-      const candidates = items.filter(item => {
-        if (type === "pais") return item.pais === value;
-        if (type === "ritmo") return item.ritmo === value;
-        if (type === "genero") return parseGenres(item.genero).includes(value);
-        return false;
-      });
-
-      if (!candidates.length) return;
-
-      activeIndex = items.indexOf(candidates[0]);
-      renderTimeline();
-      renderCurrentCard();
-    };
-  });
 
   const randomButton = cardPreview.querySelector("[data-card-random]");
   
@@ -390,6 +371,19 @@ function bindCardHomeEvents() {
     };
   }  
   
+}
+
+function scrollActiveTimelineItemIntoView() {
+  requestAnimationFrame(() => {
+    const activeItem = timelineEl.querySelector(".timeline-item.active");
+
+    if (!activeItem) return;
+
+    activeItem.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  });
 }
 
 function renderTags(item) {
