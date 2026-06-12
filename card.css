@@ -673,6 +673,11 @@ body {
   line-height: 1.3;
 }
 
+.spotify-recording {
+  font-weight: 500;
+  opacity: 0.82;
+}
+
 .spotify-meta {
   display: flex;
   flex-wrap: wrap;
