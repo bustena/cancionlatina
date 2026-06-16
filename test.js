@@ -169,7 +169,7 @@ function renderHome() {
       <div class="card-inner">
         <div class="media-column home-media">
           <div class="home-branding">
-            <h1 class="home-title">${meta.titulo || "TEST"}</h1>
+            <h1 class="home-title">El juego de la canción latinoamericana</h1>
             <p class="home-subtitle">${meta.subtitulo || ""}</p>
           </div>
         </div>
