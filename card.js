@@ -677,7 +677,7 @@ function renderTestHomeMockup() {
         <div class="media-column home-media">
           <div class="home-branding">
             <h1 class="home-title">
-              ${escapeHtml(meta.titulo || "TEST")}
+              El juego de la canción latinoamericana
             </h1>
 
             <p class="home-subtitle">
